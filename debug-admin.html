@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Admin Route</title>
+</head>
+<body>
+    <script>
+        // Test localStorage admin status
+        console.log('localStorage isAdmin:', localStorage.getItem('isAdmin'));
+        
+        // Test wouter routing
+        window.location.hash = '#/admin';
+        
+        // Check if we can access the admin route
+        setTimeout(() => {
+            if (window.location.pathname === '/admin') {
+                console.log('Successfully navigated to /admin');
+            } else {
+                console.log('Failed to navigate to /admin, current path:', window.location.pathname);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,310 @@
+Objective
+
+Build a high-converting EdTech homepage for SkillVeda that attracts college students and fresh graduates and converts them into leads for:
+	1.	Free Webinar
+	2.	Hospitality / Customer Success programs
+	3.	Parentships program
+
+The design should be modern, clean, conversion focused and mobile responsive.
+
+Use React + Tailwind CSS.
+
+⸻
+
+Section 1 — Hero Webinar Banner
+
+Create a large hero banner at the top of the homepage.
+
+Layout
+
+Left side
+	•	Headline
+	•	Short description
+	•	Bullet points
+	•	CTA button
+
+Right side
+	•	Circular mentor photos
+	•	Tech/AI illustration
+
+Banner Content
+
+Headline
+
+No Idea How to Get Into AI Companies or Customer Success Roles?
+
+Subtext
+
+This FREE Live Webinar will show you how students are entering SaaS & AI companies and building careers in Customer Success roles with up to 12 LPA salary.
+
+Bullet points
+
+• Understand the SaaS & AI job market
+• Learn the Customer Success career path
+• Discover companies hiring freshers
+• Live Q&A with industry mentors
+
+CTA Button
+
+Join Upcoming Webinar
+
+CTA action
+Scroll to Webinar Registration section
+
+Add small trust text under button
+
+Limited seats available
+
+Background style
+
+Modern gradient background with subtle tech elements.
+
+⸻
+
+Section 2 — Mentor Section
+
+Below the hero banner show a mentor showcase section.
+
+Title
+
+Learn From Industry Mentors
+
+Layout
+
+Display mentor photos in circular format.
+
+Example structure
+
+Mentor photo
+Name
+Role
+
+Example
+
+Customer Success Leader
+SaaS Industry Expert
+AI Company Advisor
+
+Add hover animation on mentor cards.
+
+⸻
+
+Section 3 — Company Logo Ribbon
+
+Add a horizontal scrolling ribbon showing logos of companies where students can work.
+
+This ribbon should move slowly like a marquee animation.
+
+Title above ribbon
+
+Companies Hiring Customer Success Professionals
+
+Use existing logos from the website assets.
+
+Examples:
+
+HubSpot
+Freshworks
+Zoho
+Salesforce
+Zendesk
+Intercom
+
+Logos should appear clean and professional.
+
+⸻
+
+Section 4 — Career Opportunity Section
+
+Title
+
+Build a Career in High Growth SaaS & AI Companies
+
+Content
+
+Explain that students can build careers in:
+
+Customer Success
+Account Management
+SaaS Consulting
+Client Strategy
+
+Add 3 feature cards
+
+Card 1
+
+High Salary Growth
+Up to 12 LPA packages
+
+Card 2
+
+Industry Exposure
+Work with fast growing SaaS startups
+
+Card 3
+
+Mentorship
+Guidance from industry experts
+
+⸻
+
+Section 5 — Webinar Registration Section
+
+Create a lead capture form.
+
+Title
+
+Register for the Free Webinar
+
+Subtitle
+
+Learn how to enter AI companies and Customer Success careers.
+
+Form Fields
+
+Full Name
+Email Address
+Phone Number
+College / University
+Graduation Year
+
+Question Field
+
+What interests you most about this webinar?
+
+Submit Button
+
+Reserve My Seat
+
+⸻
+
+Lead Capture Logic
+
+IMPORTANT:
+
+Students should be able to download webinar material or access webinar details only after filling the form.
+
+On submit
+
+Store data in backend database.
+
+Fields stored
+
+Name
+Email
+Phone
+College
+Interest
+
+⸻
+
+Section 6 — Enrol Program Section
+
+Title
+
+Explore Our Career Programs
+
+Show program cards.
+
+Card 1
+
+Hospitality Management Program
+
+3 year program
+70% work + 30% theory
+Monthly stipend
+
+Button
+
+Enrol Now
+
+⸻
+
+Card 2
+
+Customer Success Career Program
+
+Learn SaaS tools
+Client management
+Industry mentorship
+
+Button
+
+View Details
+
+⸻
+
+Section 7 — Student Success Section
+
+Title
+
+Our Students Are Working With Top Companies
+
+Show
+
+Student photos
+Short testimonials
+
+Example
+
+“I transitioned into Customer Success in a SaaS company.”
+
+⸻
+
+Section 8 — Final Call to Action
+
+Large CTA banner.
+
+Headline
+
+Your Career in SaaS & AI Starts Here
+
+Button
+
+Join the Free Webinar
+
+⸻
+
+Design Requirements
+
+Use
+
+Modern EdTech UI style
+Clean typography (Inter / Poppins)
+Rounded cards
+Soft shadows
+Smooth animations
+
+Ensure
+
+Mobile responsive design
+Fast loading
+SEO friendly
+
+⸻
+
+Extra Features
+
+Add
+
+Scroll animations
+Smooth transitions
+Hover effects
+CTA button pulse animation
+
+⸻
+
+Tech Stack
+
+Frontend
+
+React
+Tailwind CSS
+
+Backend
+
+Node.js / simple API to capture leads
+
+Store leads in
+
+Database or Google Sheets.

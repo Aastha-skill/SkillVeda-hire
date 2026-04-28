@@ -1,0 +1,176 @@
+🚀 PROMPT FOR REPLIT AGENT — ENROL PAGE FLOW
+
+Create a dedicated Enrol Now page for the SkillVeda Customer Success Career Accelerator program.
+
+The design must closely match the reference UI and strictly follow skillveda.ai branding (colors, fonts, spacing, premium look).
+
+⚠️ Key Requirement:
+When user clicks Enrol Now, open a separate enrol page that first builds trust with company logos and then collects candidate details.
+
+⸻
+
+🔗 ROUTING
+
+Enrol Button Behavior
+
+From program page:
+
+Enrol Now → navigate to:
+
+/customer-success-enrol
+
+(No modal — full page experience)
+
+⸻
+
+🦸 SECTION 1 — Trust Hero (Top Section)
+
+Create a premium hero section similar to reference.
+
+Content
+
+Top small label:
+SkillVeda
+
+Main headline (large, centered):
+
+Join thousands of professionals
+who have transformed their careers
+and landed in world-class companies.
+
+⸻
+
+🏢 Trusted By Section (VERY IMPORTANT — FIRST)
+
+Immediately below headline show:
+
+Trusted by
+
+Create logo grid.
+
+Logos to include (use placeholders if needed):
+	•	Samsung
+	•	Google
+	•	Walmart
+	•	Zomato
+	•	Slack
+	•	Meta
+
+⸻
+
+🎨 Logo Grid Design
+	•	Clean white logo cards
+	•	Rounded corners
+	•	Soft shadow
+	•	Even spacing
+	•	Responsive grid
+	•	Mobile: 2 per row
+	•	Desktop: 3–4 per row
+	•	Match SkillVeda tone
+
+This section must appear before the form to build trust.
+
+⸻
+
+📝 SECTION 2 — Enrolment Form
+
+Below the trust section, create the candidate form.
+
+Add heading:
+
+Upgrade Your Skills to Achieve Your Dream Job
+
+⸻
+
+✅ Form Fields (Match Reference)
+
+Required fields
+	•	Full Name*
+	•	Email Address*
+	•	Contact Number* (with +91 default)
+
+Additional fields
+	•	Designation
+	•	Years of Experience (dropdown)
+	•	Current Company/College Name
+	•	Program Preference* (default selected: Customer Success Career Accelerator)
+
+⸻
+
+🎯 Dropdown Values
+
+Years of Experience
+	•	Fresher
+	•	0–1 years
+	•	1–3 years
+	•	3–5 years
+	•	5+ years
+
+⸻
+
+⚙️ Form Behavior
+
+Must implement:
+
+✅ Required field validation
+✅ Email format validation
+✅ Phone validation
+✅ Loading state on submit
+✅ Success message after submit
+✅ Store lead in database
+✅ Prevent duplicate submissions
+✅ Mobile optimized
+✅ Accessible labels
+
+⸻
+
+📩 Submission Handling
+
+On successful submit:
+	•	Show success toast/message
+	•	Optionally redirect to thank-you state
+	•	Tag lead source as:
+
+Customer Success Enrol Lead
+
+⸻
+
+🎨 Design Requirements
+	•	Fully responsive
+	•	Mobile-first
+	•	Premium clean UI
+	•	Same SkillVeda colors
+	•	Proper spacing
+	•	Rounded inputs
+	•	Sticky submit button on mobile (optional but recommended)
+	•	No layout shift
+	•	Fast loading
+
+⸻
+
+🧱 Technical Requirements
+	•	Build as reusable React components
+	•	Clean form state management
+	•	Proper error handling
+	•	Lazy load logos
+	•	SEO friendly
+	•	No console errors
+
+⸻
+
+🔗 Navigation
+
+Ensure:
+	•	Enrol Now buttons across site point to
+/customer-success-enrol
+	•	Page added to router properly
+
+⸻
+
+✅ EXPECTED OUTPUT
+	•	High-converting enrol page
+	•	Trust-first layout
+	•	Working validated form
+	•	Database integration
+	•	Mobile optimized
+	•	Production ready

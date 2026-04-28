@@ -1,0 +1,86 @@
+Add a rich text editor to the admin job 
+posting form for the Job Description field.
+Do not change anything else.
+
+════════════════════════════════════
+STEP 1 — INSTALL PACKAGE
+════════════════════════════════════
+The project already has react-quill-new 
+installed. Use that — do not install 
+anything new.
+
+════════════════════════════════════
+STEP 2 — REPLACE JD TEXTAREA WITH QUILL
+In admin-complete.tsx job create/edit form
+════════════════════════════════════
+Find the Job Description textarea field.
+Replace it with ReactQuillNew editor.
+
+Import at top of admin-complete.tsx:
+import ReactQuillNew from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
+
+Quill toolbar config:
+modules: {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ color: [] }],
+    ["clean"]
+  ]
+}
+
+Editor styling:
+- Min-height: 300px
+- Border-radius: 10px
+- Font: DM Sans or existing site font
+- Full width
+
+Save the HTML output from Quill to the 
+description field in the jobs table.
+(Quill returns HTML string — save as-is)
+
+════════════════════════════════════
+STEP 3 — DISPLAY HTML ON FRONTEND
+In the apply modal job description section
+════════════════════════════════════
+The description field now contains HTML.
+Instead of white-space: pre-wrap,
+render it as HTML:
+
+Replace:
+<p style={{whiteSpace: "pre-wrap"}}>
+  {job.description}
+</p>
+
+With:
+<div 
+  className="job-description-content"
+  dangerouslySetInnerHTML={{__html: job.description}}
+/>
+
+Add these styles for the rendered HTML:
+.job-description-content h1 { font-size: 20px; font-weight: 700; margin: 16px 0 8px; }
+.job-description-content h2 { font-size: 18px; font-weight: 600; margin: 14px 0 8px; }
+.job-description-content h3 { font-size: 16px; font-weight: 600; margin: 12px 0 6px; }
+.job-description-content p { font-size: 14px; line-height: 1.7; margin-bottom: 10px; color: #3D3D4E; }
+.job-description-content ul { padding-left: 20px; margin-bottom: 10px; }
+.job-description-content ol { padding-left: 20px; margin-bottom: 10px; }
+.job-description-content li { font-size: 14px; line-height: 1.7; margin-bottom: 4px; color: #3D3D4E; }
+.job-description-content strong { font-weight: 600; color: #0A0A0F; }
+
+Also apply same dangerouslySetInnerHTML 
+wherever else job description is displayed
+on the website.
+
+════════════════════════════════════
+RULES
+════════════════════════════════════
+- Use existing react-quill-new package only
+- Do not change job cards layout
+- Do not change registration or apply modals
+- Do not touch any other admin sections
+- Test: type formatted JD in admin → 
+  save → open apply modal → 
+  confirm headings and bullets show correctly

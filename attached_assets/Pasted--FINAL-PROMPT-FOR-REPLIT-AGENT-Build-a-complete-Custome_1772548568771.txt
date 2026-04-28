@@ -1,0 +1,273 @@
+🚀 FINAL PROMPT FOR REPLIT AGENT
+
+Build a complete Customer Success Career Accelerator program funnel on the SkillVeda website. The UI must strictly follow skillveda.ai branding (colors, fonts, spacing, premium feel).
+
+The implementation must include:
+	•	Programs listing card
+	•	Dedicated program page
+	•	Gated curriculum download (lead capture mandatory)
+	•	Student application form
+	•	Mentors showcase
+	•	Homepage promotion
+
+Use clean, production-ready React components and make everything fully responsive (mobile-first).
+
+⸻
+
+🧩 PART 1 — Programs Page: Add Program Card
+
+Create a reusable ProgramCard component and add it to the Programs grid.
+
+Content
+	•	Title: Customer Success Career Accelerator
+	•	Duration badge: 2 Months
+	•	Highlights:
+	•	Industry-focused Customer Success training
+	•	Hands-on projects & mentorship
+	•	Placement opportunities: 4–12 LPA
+	•	CTA: Explore Program
+
+Design
+	•	Match existing SkillVeda cards
+	•	Rounded corners
+	•	Soft shadow
+	•	Hover lift effect
+	•	Mobile responsive
+	•	Premium look
+
+Click Behavior
+
+Card click OR Explore Program →
+
+Navigate to:
+
+/customer-success-program
+
+⸻
+
+🚀 PART 2 — Program Detail Page
+
+Create new route:
+
+/customer-success-program
+
+⸻
+
+🦸 Hero Section
+
+Content
+
+Headline:
+Customer Success Career Accelerator
+
+Subtext:
+2-Month intensive program designed for freshers and early professionals.
+
+Placement highlight:
+Placement opportunities: 4 LPA – 12 LPA
+
+⸻
+
+🔘 Hero CTAs
+
+Primary Button
+
+Enrol Now
+
+Behavior: scroll to application form.
+
+Secondary Button
+
+Download Curriculum
+
+⚠️ IMPORTANT: This must be a gated download (see Part 6).
+
+⸻
+
+📦 PART 3 — What You Will Get
+
+Create benefits grid with icons.
+
+Include:
+	•	Live instructor-led sessions
+	•	Real Customer Success case studies
+	•	Hands-on tools training (CRM/support tools)
+	•	Resume & interview preparation
+	•	Dedicated placement support
+	•	Industry mentor guidance
+
+Responsive grid, clean layout.
+
+⸻
+
+👩‍🏫 PART 4 — Mentors Section (Premium)
+
+Create mentor showcase grid.
+
+Each card must include:
+	•	Photo
+	•	Name
+	•	Designation
+	•	Company
+	•	Short bio
+
+Design must feel premium and trust-building.
+
+Use placeholder mentor data for now.
+
+⸻
+
+💼 PART 5 — Placement Section
+
+Highlight strongly:
+
+Salary Range: 4 LPA – 12 LPA
+
+Include:
+	•	Hiring logos (placeholders OK)
+	•	Credibility messaging
+	•	Clean responsive layout
+
+⸻
+
+📝 PART 6 — Student Application Form (Separate Flow)
+
+Create mobile-first application form.
+
+Fields
+	•	Full Name (required)
+	•	Email (required)
+	•	Phone (required)
+	•	Current Status (dropdown)
+	•	Years of Experience
+	•	Current Location
+	•	Resume Upload
+	•	Submit button
+
+Behavior
+	•	Validate required fields
+	•	Show success message
+	•	Store in database
+	•	Prevent duplicate submissions
+	•	Optimize for mobile
+
+⚠️ This form is ONLY for Enrol Now, not for brochure download.
+
+⸻
+
+🔐 PART 7 — GATED CURRICULUM DOWNLOAD (VERY IMPORTANT)
+
+The curriculum must NOT download directly.
+
+⸻
+
+Flow
+
+When user clicks Download Curriculum:
+	1.	Open modal (mobile-first)
+	2.	Show lead capture form
+	3.	On successful submit → auto-download PDF
+	4.	Store lead in database
+	5.	Close modal (optional)
+
+⸻
+
+Lead Capture Form Fields
+
+ALL required:
+	•	Full Name
+	•	Email ID (validate format)
+	•	Phone Number (validate)
+	•	What interests you in this program?
+
+Interest dropdown options:
+	•	Career switch
+	•	First job opportunity
+	•	Upskilling
+	•	Better salary
+	•	Exploring Customer Success
+	•	Other
+
+⸻
+
+Form Behavior
+	•	Client-side validation
+	•	Loading state on submit
+	•	Prevent empty submissions
+	•	Store with tag: Curriculum Download Lead
+	•	After success:
+	•	Show success toast/message
+	•	Trigger automatic PDF download
+	•	Smooth UX (no page reload)
+
+⸻
+
+UX Microcopy (must show under button)
+
+Display small helper text:
+
+“Enter your details to download the detailed curriculum.”
+
+⸻
+
+🏠 PART 8 — Homepage Promotion
+
+Update homepage to promote this program.
+
+⸻
+
+A. Hero Banner
+
+Add prominent banner:
+
+Customer Success Career Accelerator
+2-Month Program | Placement 4–12 LPA
+
+CTA → Apply Now → program page
+
+Must be highly visible on mobile.
+
+⸻
+
+B. Featured Program Section
+
+Add program highlight card on homepage with:
+	•	Program name
+	•	Duration
+	•	Short description
+	•	Apply Now button
+
+⸻
+
+⚙️ PART 9 — Technical Requirements
+	•	Fully responsive
+	•	Mobile-first
+	•	SEO friendly
+	•	Fast loading
+	•	Accessible labels
+	•	Reusable components
+	•	Lazy load images
+	•	Clean React structure
+	•	Follow SkillVeda theme exactly
+	•	Smooth scrolling
+	•	No console errors
+
+⸻
+
+🔗 PART 10 — Navigation
+
+Add under Programs menu.
+
+Slug:
+
+/customer-success-program
+
+⸻
+
+✅ EXPECTED OUTPUT
+	•	Production-ready UI
+	•	Working gated download
+	•	Working application form
+	•	Premium mentor section
+	•	Homepage updated
+	•	Clean reusable components

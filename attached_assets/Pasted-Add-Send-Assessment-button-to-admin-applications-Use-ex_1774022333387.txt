@@ -1,0 +1,178 @@
+Add "Send Assessment" button to admin 
+applications. Use existing Brevo email setup.
+Do not change anything else.
+
+════════════════════════════════════
+STEP 1 — SCHEMA CHANGE
+════════════════════════════════════
+Add to applications table in shared/schema.ts:
+assessmentSentAt (timestamp, nullable)
+Run: npm run db:push
+
+════════════════════════════════════
+STEP 2 — API ENDPOINT
+Add to server/routes.ts
+════════════════════════════════════
+POST /api/applications/:id/send-assessment
+Requires admin-password header.
+
+- Fetch application + job details from DB
+- Split fullName by space, take first word 
+  as firstName
+- Send email via existing Brevo setup:
+
+To: application.email
+
+Subject: 
+"no pressure but… this is kind of a big deal 👀"
+
+HTML Body:
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;
+background:#ffffff;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" 
+cellspacing="0" border="0"
+style="background:#ffffff;">
+<tr><td align="center" style="padding:40px 20px;">
+<table width="560" cellpadding="0" 
+cellspacing="0" border="0"
+style="max-width:560px;width:100%;">
+
+<tr><td style="padding-bottom:32px;">
+<span style="font-size:18px;font-weight:700;
+color:#0A0A0F;">Skill Veda</span>
+</td></tr>
+
+<tr><td style="padding-bottom:20px;">
+<p style="font-size:16px;color:#0A0A0F;
+margin:0;line-height:1.6;">
+Hey [FIRST_NAME],
+</p>
+</td></tr>
+
+<tr><td style="padding-bottom:20px;">
+<p style="font-size:16px;color:#0A0A0F;
+margin:0;line-height:1.6;font-weight:600;">
+You applied. Respect. 🙌
+</p>
+</td></tr>
+
+<tr><td style="padding-bottom:24px;">
+<p style="font-size:15px;color:#3D3D4E;
+margin:0;line-height:1.8;">
+Real talk — AI is flipping Customer Success 
+upside down and the people who move now are 
+the ones who'll look back and say 
+<strong style="color:#0A0A0F;">
+"yeah, I saw that coming."</strong>
+</p>
+</td></tr>
+
+<tr><td style="padding-bottom:16px;">
+<p style="font-size:15px;color:#0A0A0F;
+margin:0;font-weight:600;">
+Your move: a 25-min assessment. That's it.
+</p>
+</td></tr>
+
+<tr><td style="padding-bottom:28px;">
+<p style="font-size:14px;color:#3D3D4E;
+margin:0 0 8px 0;line-height:1.7;">
+→ Quick MCQ on CS basics
+</p>
+<p style="font-size:14px;color:#3D3D4E;
+margin:0;line-height:1.7;">
+→ Short video (just talk like a human, 
+you've got this)
+</p>
+</td></tr>
+
+<tr><td style="padding-bottom:28px;">
+<p style="font-size:14px;color:#3D3D4E;
+margin:0;line-height:1.7;">
+Do it within 
+<strong style="color:#0A0A0F;">48 hours</strong> 
+and you're in — a community of CS people 
+sharing what actually works, not just 
+LinkedIn fluff.
+</p>
+</td></tr>
+
+<tr><td style="padding-bottom:32px;">
+<a href="https://app.goodfit.so/jobs/skill-veda/Customer-Success-Skill-Veda-Assessment?id=Vlfk1AU6"
+target="_blank"
+style="display:inline-block;
+background:#0A0A0F;color:#ffffff;
+padding:14px 28px;border-radius:10px;
+font-size:15px;font-weight:600;
+text-decoration:none;">
+👉 Take the Assessment
+</a>
+</td></tr>
+
+<tr><td style="padding-bottom:24px;">
+<hr style="border:none;
+border-top:1px solid rgba(0,0,0,0.08);
+margin:0;" />
+</td></tr>
+
+<tr><td>
+<p style="font-size:14px;color:#0A0A0F;
+margin:0 0 4px 0;font-weight:600;">
+Prerit Choudhary
+</p>
+<p style="font-size:13px;color:#8888A0;
+margin:0 0 2px 0;">Skill Veda</p>
+<p style="font-size:13px;color:#8888A0;
+margin:0;">skillveda.ai</p>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>
+
+Replace [FIRST_NAME] with first word of 
+application.fullName before sending.
+
+- Set application assessmentSentAt = now()
+- Return { success: true }
+
+════════════════════════════════════
+STEP 3 — ADMIN BUTTON
+In admin-complete.tsx applications table
+════════════════════════════════════
+Add to each application row actions column:
+
+If assessmentSentAt is null:
+  Show button: "Send Assessment"
+  Style: 12px, border 1px solid #7C3AED,
+  color #7C3AED, white bg, border-radius 6px
+  Hover: purple bg, white text
+
+  On click:
+  - Confirm: "Send assessment to [email]?"
+  - POST /api/applications/:id/send-assessment
+    with admin-password header
+  - Success toast: "Sent to [email] ✓"
+  - Replace button with green "Sent ✓"
+  - Show sent date below
+
+If assessmentSentAt is not null:
+  Show: green "Sent ✓" text
+  Show: small date sent below
+  Show: "Resend" small muted link
+
+════════════════════════════════════
+RULES
+════════════════════════════════════
+- Use existing Brevo setup only
+- Do not touch any other page or section
+- Do not change jobs page or modals
+- Test: click Send Assessment in admin →
+  confirm email arrives with correct 
+  first name and assessment link
+- Test: button shows Sent ✓ after sending

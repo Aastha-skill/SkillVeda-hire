@@ -1,0 +1,272 @@
+Task: Build Email Campaign System with Tracking in SkillVeda Admin Dashboard
+
+We already have a working Leads dashboard in our admin panel where leads are stored with fields like:
+
+Name  
+Email  
+Phone  
+College  
+Grad Year  
+Interest  
+Source  
+Date  
+Status  
+
+We want to extend this system to build a complete Email Campaign feature inside the admin panel, similar to a mini email marketing tool (like Mailchimp or HubSpot). This should allow admins to select leads, send campaigns, and track engagement.
+
+---
+
+1. Add Lead Selection System
+
+In the Leads table, add a checkbox column at the beginning of each row.
+
+Features required:
+
+• Select individual leads  
+• Select multiple leads  
+• Add a Select All checkbox in the table header to select all leads  
+
+Example UI:
+
+[ ] Select All  
+
+[ ] Lead 1  
+[ ] Lead 2  
+[ ] Lead 3  
+
+Selected leads should be stored in the frontend state so they can be used for campaigns.
+
+---
+
+2. Add “Create Email Campaign” Button
+
+Above the leads table add a button:
+
+Create Email Campaign
+
+When clicked:
+
+Open a Campaign Creation Modal.
+
+The campaign should automatically target the currently selected leads.
+
+---
+
+3. Campaign Creation Modal
+
+The modal should contain the following fields:
+
+Campaign Name  
+Example: Webinar Invite Campaign
+
+Email Subject  
+Example: Join our Webinar: Break into AI Companies
+
+Email Body  
+
+Provide a rich text editor or a large textarea where admins can compose the email.
+
+Support personalization variables:
+
+{{name}}  
+{{college}}
+
+Example email body:
+
+Hi {{name}},  
+
+We are hosting a live webinar where we explain how students can enter Customer Success roles in SaaS and AI companies with salaries up to 12 LPA.
+
+Join us and learn directly from industry mentors.
+
+---
+
+4. Send Campaign
+
+When admin clicks Send Campaign, the system should:
+
+• Collect all selected leads  
+• Send email to each lead individually  
+• Replace variables like {{name}} with actual values  
+• Log the campaign in the database  
+• Track delivery status.
+
+---
+
+5. Campaign Database Tables
+
+Create a new table:
+
+email_campaigns
+
+Fields:
+
+id  
+campaign_name  
+subject  
+body  
+created_at  
+created_by  
+
+Create another table:
+
+email_campaign_recipients
+
+Fields:
+
+id  
+campaign_id  
+lead_id  
+email  
+status  
+opened  
+clicked  
+sent_at  
+opened_at  
+clicked_at  
+
+---
+
+6. Email Sending Integration
+
+Integrate an email API service such as Resend.
+
+Install dependency and create a reusable utility function.
+
+Example structure:
+
+/utils/emailService.ts
+
+Function:
+
+sendEmail(to, subject, html)
+
+This function will be used to send all campaign emails.
+
+---
+
+7. Email Open Tracking
+
+Each email should include a tracking pixel to detect when the email is opened.
+
+Add this at the bottom of the email:
+
+<img src="/api/email/open/{campaign_id}/{lead_id}" width="1" height="1"/>
+
+When this endpoint is triggered:
+
+Update database:
+
+opened = true  
+opened_at = current timestamp
+
+---
+
+8. Link Click Tracking
+
+All links inside emails should go through a tracking redirect.
+
+Example:
+
+Original link
+
+https://skillveda.ai/webinar
+
+Tracked link
+
+https://skillveda.ai/api/email/click/{campaign_id}/{lead_id}?redirect=https://skillveda.ai/webinar
+
+When clicked:
+
+• Update database: clicked = true  
+• Save clicked_at timestamp  
+• Redirect user to the original URL.
+
+---
+
+9. Campaign Analytics Dashboard
+
+Create a new page in admin:
+
+Email Campaigns
+
+Show list of all campaigns.
+
+Columns should include:
+
+Campaign Name  
+Emails Sent  
+Emails Opened  
+Links Clicked  
+Open Rate  
+Click Rate  
+Created Date
+
+Example row:
+
+Webinar Invite Campaign  
+Sent: 120  
+Opened: 64  
+Clicked: 21  
+Open Rate: 53%
+
+---
+
+10. Lead Engagement Indicators
+
+In the Leads table add a new column:
+
+Email Engagement
+
+Possible values:
+
+No Activity  
+Opened Email  
+Clicked Link
+
+Use colored badges for easy visibility.
+
+Example:
+
+Gray → No Activity  
+Blue → Opened  
+Green → Clicked
+
+---
+
+11. Filters in Leads Dashboard
+
+Add filters so admins can quickly find engaged leads.
+
+Filters:
+
+Opened Emails  
+Clicked Emails  
+No Engagement
+
+This will help identify high-interest leads.
+
+---
+
+12. Campaign Logs Page
+
+Each campaign should have a detail view showing:
+
+List of recipients  
+Email delivery status  
+Open time  
+Click time  
+
+Admins should be able to see which leads engaged with the email.
+
+---
+
+Goal
+
+The admin dashboard should work like a mini email marketing platform where SkillVeda can:
+
+• Select leads  
+• Send email campaigns  
+• Track email opens and clicks  
+• Identify engaged students  
+• Improve webinar and program conversion rates.

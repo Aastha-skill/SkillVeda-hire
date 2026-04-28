@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CS Live Simulation — skillveda.ai</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080e1a;
+  --bg2:#0d1526;
+  --bg3:#121d33;
+  --bg4:#192540;
+  --blue:#3b82f6;
+  --blue2:#2563eb;
+  --green:#10b981;
+  --amber:#f59e0b;
+  --violet:#8b5cf6;
+  --pink:#ec4899;
+  --red:#ef4444;
+  --cream:#e2e8f0;
+  --cream2:#94a3b8;
+  --border:rgba(255,255,255,.06);
+  --border2:rgba(255,255,255,.11);
+  --glow:0 0 60px rgba(59,130,246,.12);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--cream);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* subtle dot grid */
+body::after{content:’’;position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(rgba(59,130,246,.035) 1px,transparent 1px);background-size:32px 32px}
+.z1{position:relative;z-index:1}
+
+/* ════ UTILITY ══════════════════════════ */
+.hidden{display:none!important}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+@keyframes ripple{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.2);opacity:0}}
+@keyframes speaking{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.6)}}
+@keyframes waveBar{0%,100%{height:4px}50%{height:18px}}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes countDown{from{stroke-dashoffset:0}to{stroke-dashoffset:283}}
+@keyframes shine{0%{background-position:-200% center}100%{background-position:200% center}}
+
+/* ════ NAV ══════════════════════════════ */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:58px;border-bottom:1px solid var(–border);background:rgba(8,14,26,.85);backdrop-filter:blur(14px);position:sticky;top:0;z-index:100}
+.nav-logo{font-family:‘Lora’,serif;font-size:17px;font-weight:600;color:var(–cream);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-sq{width:26px;height:26px;background:var(–blue);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.nav-center{display:flex;align-items:center;gap:10px}
+.nav-sim-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(–cream2)}
+.nav-progress-bar{width:200px;height:4px;background:rgba(255,255,255,.08);border-radius:100px;overflow:hidden}
+.nav-progress-fill{height:100%;background:var(–blue);border-radius:100px;transition:width .6s ease}
+.nav-q-label{font-size:12.5px;font-weight:600;color:var(–cream2)}
+
+/* ════════════════════════════════════════
+SCREEN: INTRO
+════════════════════════════════════════ */
+#s-intro{animation:fadeUp .5s ease}
+.intro-wrap{max-width:820px;margin:0 auto;padding:56px 32px 80px;text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:6px 16px;font-size:12px;font-weight:700;color:var(–blue);letter-spacing:.5px;text-transform:uppercase;margin-bottom:22px}
+.eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(–blue);animation:pulse 2s infinite}
+.intro-h{font-family:‘Lora’,serif;font-size:48px;font-weight:600;line-height:1.1;letter-spacing:-.5px;color:var(–cream);margin-bottom:14px}
+.intro-h em{font-style:italic;color:var(–blue)}
+.intro-sub{font-size:16px;color:var(–cream2);line-height:1.72;max-width:580px;margin:0 auto 44px}
+
+/* HOW IT WORKS */
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:44px;text-align:left}
+.how-card{background:var(–bg2);border:1px solid var(–border);border-radius:14px;padding:18px;position:relative;overflow:hidden}
+.how-card::before{content:’’;position:absolute;top:0;left:0;right:0;height:2px}
+.how-card:nth-child(1)::before{background:var(–blue)}
+.how-card:nth-child(2)::before{background:var(–green)}
+.how-card:nth-child(3)::before{background:var(–amber)}
+.how-card:nth-child(4)::before{background:var(–violet)}
+.how-num{font-family:‘Lora’,serif;font-size:28px;font-weight:700;color:rgba(255,255,255,.07);margin-bottom:8px}
+.how-icon{font-size:24px;margin-bottom:8px;display:block}
+.how-title{font-size:13.5px;font-weight:700;color:var(–cream);margin-bottom:4px}
+.how-desc{font-size:12.5px;color:var(–cream2);line-height:1.5}
+
+/* COMPETENCY STRIP */
+.comp-strip{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+.comp-pill{display:flex;align-items:center;gap:6px;background:var(–bg2);border:1px solid var(–border);border-radius:100px;padding:7px 14px;font-size:12.5px;color:var(–cream2)}
+.cp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* REGISTRATION */
+.reg-box{background:var(–bg2);border:1px solid var(–border2);border-radius:20px;padding:28px 32px;text-align:left;max-width:560px;margin:0 auto}
+.reg-h{font-family:‘Lora’,serif;font-size:19px;font-weight:600;color:var(–cream);margin-bottom:18px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fl{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(–cream2)}
+.fi,.fs{background:var(–bg3);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:11px 13px;font-family:‘DM Sans’,sans-serif;font-size:14px;color:var(–cream);outline:none;transition:border-color .15s;width:100%}
+.fi:focus,.fs:focus{border-color:var(–blue);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.fi::placeholder{color:var(–cream2)}
+.fs option{background:var(–bg)}
+.mic-check{display:flex;align-items:center;gap:10px;background:var(–bg3);border:1px solid var(–border);border-radius:9px;padding:12px 14px;margin-bottom:16px}
+.mic-icon{font-size:18px}
+.mic-text{flex:1;font-size:13px;color:var(–cream2)}
+.mic-status{font-size:12px;font-weight:600}
+.mic-ok{color:var(–green)}
+.mic-bad{color:var(–red)}
+.mic-test-btn{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:var(–blue);border-radius:7px;padding:6px 14px;font-family:‘DM Sans’,sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s}
+.mic-test-btn:hover{background:rgba(59,130,246,.25)}
+.start-btn{width:100%;background:var(–blue);color:#fff;border:none;border-radius:12px;padding:15px;font-family:‘DM Sans’,sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:9px}
+.start-btn:hover{background:var(–blue2);transform:translateY(-1px);box-shadow:0 8px 28px rgba(59,130,246,.35)}
+
+/* ════════════════════════════════════════
+SCREEN: ROLEPLAY
+════════════════════════════════════════ */
+#s-roleplay{animation:fadeIn .4s ease}
+.rp-layout{max-width:1200px;margin:0 auto;padding:24px 32px 60px;display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:flex-start}
+
+/* LEFT — VIDEO + CONTROLS */
+.rp-left{}
+
+/* SCENARIO BANNER */
+.scenario-banner{background:var(–bg2);border:1px solid var(–border);border-radius:14px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
+.sb-cat{display:flex;align-items:center;gap:9px}
+.sb-cat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.sb-cat-name{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.sb-scenario{font-size:12px;color:var(–cream2);font-weight:500}
+.sb-right{display:flex;align-items:center;gap:12px}
+.sb-progress{font-size:13px;color:var(–cream2)}
+.sb-progress strong{color:var(–cream)}
+
+/* VIDEO STAGE */
+.video-stage{background:linear-gradient(160deg,#0a1628 0%,#0f1e38 50%,#0a1628 100%);border-radius:18px;overflow:hidden;border:1px solid var(–border);position:relative;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+
+/* BACKGROUND EFFECT */
+.stage-bg{position:absolute;inset:0;overflow:hidden}
+.stage-bg-circle{position:absolute;border-radius:50%;filter:blur(60px)}
+.stage-bg-circle.c1{width:300px;height:300px;background:rgba(59,130,246,.08);top:-80px;left:-80px}
+.stage-bg-circle.c2{width:250px;height:250px;background:rgba(16,185,129,.06);bottom:-60px;right:-60px}
+
+/* CUSTOMER AVATAR — center stage */
+.customer-stage{display:flex;flex-direction:column;align-items:center;gap:16px;z-index:2;animation:fadeUp .5s ease}
+.customer-ring{position:relative;width:140px;height:140px}
+.customer-ring-svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.customer-av{width:120px;height:120px;border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;font-family:‘Lora’,serif;font-size:44px;font-weight:700;color:#fff;overflow:hidden;border:3px solid rgba(255,255,255,.12)}
+.customer-av img{width:100%;height:100%;object-fit:cover}
+
+/* SPEAKING ANIMATION */
+.customer-ring.speaking .customer-av{border-color:rgba(59,130,246,.6);box-shadow:0 0 0 0 rgba(59,130,246,.4);animation:none}
+.ripple-ring{position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(59,130,246,.3);opacity:0}
+.customer-ring.speaking .ripple-ring{animation:ripple 1.4s ease-out infinite}
+.customer-ring.speaking .ripple-ring:nth-child(2){animation-delay:.5s}
+
+.customer-info{text-align:center}
+.c-name{font-family:‘Lora’,serif;font-size:22px;font-weight:600;color:#fff;margin-bottom:3px}
+.c-title{font-size:12.5px;color:rgba(255,255,255,.55)}
+.c-company{font-size:12px;color:rgba(255,255,255,.35);margin-top:2px}
+
+/* SPEECH BUBBLE */
+.speech-wrap{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:90%;max-width:600px;z-index:3}
+.speech-bubble{background:rgba(13,21,38,.88);border:1px solid rgba(59,130,246,.2);border-radius:16px;padding:14px 20px;backdrop-filter:blur(12px)}
+.speech-text{font-size:14.5px;color:rgba(255,255,255,.88);line-height:1.65;text-align:center}
+
+/* LIVE BADGE */
+.live-badge{position:absolute;top:14px;left:14px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.55);border:1px solid rgba(239,68,68,.4);border-radius:100px;padding:5px 12px;z-index:4}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#ef4444;animation:pulse 1.2s infinite}
+.live-text{font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px}
+
+/* SITUATION TAG */
+.situation-tag{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.55);border:1px solid var(–border2);border-radius:100px;padding:5px 14px;font-size:11.5px;font-weight:600;z-index:4}
+
+/* COUNTDOWN TIMER */
+.timer-ring{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:4}
+.timer-ring svg{transform:rotate(-90deg)}
+.timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;font-family:‘DM Sans’,sans-serif}
+
+/* PHASE INDICATOR */
+.phase-bar{background:var(–bg2);border:1px solid var(–border);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.phase-item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(–cream2);opacity:.4;transition:all .3s}
+.phase-item.active{color:var(–cream);opacity:1;font-weight:600}
+.phase-item.done{color:var(–green);opacity:.7}
+.phase-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0}
+.phase-sep{flex:1;height:1px;background:var(–border)}
+
+/* RECORDING CONTROLS */
+.record-controls{background:var(–bg2);border:1px solid var(–border);border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px}
+.rec-left{flex:1}
+.rec-status-row{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.rec-status-dot{width:9px;height:9px;border-radius:50%;background:var(–cream2);flex-shrink:0;transition:background .3s}
+.rec-status-dot.recording{background:var(–red);animation:pulse .8s infinite}
+.rec-status-dot.ready{background:var(–green)}
+.rec-status-text{font-size:13.5px;font-weight:600;color:var(–cream)}
+.waveform{display:flex;align-items:center;gap:3px;height:28px}
+.wave-bar{width:4px;background:var(–blue);border-radius:100px;height:4px;transition:height .15s}
+.wave-bar.active{animation:waveBar .4s ease-in-out infinite}
+.wave-bar.active:nth-child(2){animation-delay:.1s}
+.wave-bar.active:nth-child(3){animation-delay:.2s}
+.wave-bar.active:nth-child(4){animation-delay:.3s}
+.wave-bar.active:nth-child(5){animation-delay:.15s}
+.wave-bar.active:nth-child(6){animation-delay:.25s}
+.wave-bar.active:nth-child(7){animation-delay:.05s}
+.wave-bar.active:nth-child(8){animation-delay:.35s}
+
+.rec-timer{font-family:‘Lora’,serif;font-size:28px;font-weight:600;color:var(–cream);font-variant-numeric:tabular-nums;min-width:60px}
+.rec-timer.warning{color:var(–amber)}
+.rec-timer.danger{color:var(–red)}
+
+.rec-btn{width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s;position:relative;font-size:22px}
+.rec-btn::before{content:’’;position:absolute;inset:-4px;border-radius:50%;border:2px solid transparent;transition:border-color .15s}
+.rec-btn.idle{background:rgba(239,68,68,.15);border:2px solid rgba(239,68,68,.3);color:var(–red)}
+.rec-btn.idle:hover{background:rgba(239,68,68,.25);border-color:var(–red)}
+.rec-btn.recording{background:var(–red);border:2px solid var(–red);color:#fff;animation:pulse .8s infinite}
+.rec-btn.recording::before{border-color:rgba(239,68,68,.4);animation:ripple 1.2s infinite}
+.rec-btn.done{background:rgba(16,185,129,.15);border:2px solid rgba(16,185,129,.3);color:var(–green)}
+
+.submit-btn{background:var(–blue);color:#fff;border:none;border-radius:10px;padding:12px 22px;font-family:‘DM Sans’,sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;opacity:.4;pointer-events:none;display:flex;align-items:center;gap:7px}
+.submit-btn.ready{opacity:1;pointer-events:all}
+.submit-btn.ready:hover{background:var(–blue2);transform:translateY(-1px)}
+
+/* ═══ RIGHT SIDEBAR ═══════════════════ */
+.rp-right{position:sticky;top:78px;display:flex;flex-direction:column;gap:16px}
+
+/* SCORING PANEL */
+.scoring-panel{background:var(–bg2);border:1px solid var(–border);border-radius:16px;overflow:hidden}
+.sp-header{padding:16px 18px;border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between}
+.sp-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(–cream2)}
+.sp-live-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(–blue)}
+.sp-live-dot{width:6px;height:6px;border-radius:50%;background:var(–blue);animation:pulse 1.5s infinite}
+
+.scoring-cats{padding:14px}
+.score-cat-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.score-cat-row:last-child{margin-bottom:0}
+.scat-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.scat-info{flex:1;min-width:0}
+.scat-name{font-size:12px;font-weight:600;color:var(–cream);margin-bottom:4px}
+.scat-bar{height:4px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden}
+.scat-fill{height:100%;border-radius:100px;transition:width .6s cubic-bezier(.4,0,.2,1);width:0%}
+.scat-pct{font-size:12.5px;font-weight:700;min-width:34px;text-align:right}
+
+/* CURRENT SCORE */
+.current-score{background:var(–bg3);border-radius:10px;padding:12px 14px;margin:0 14px 14px;text-align:center}
+.cs-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(–cream2);margin-bottom:4px}
+.cs-num{font-family:‘Lora’,serif;font-size:32px;font-weight:700;color:var(–blue);line-height:1}
+.cs-sub{font-size:11.5px;color:var(–cream2);margin-top:3px}
+
+/* CANDIDATE INFO PANEL */
+.candidate-panel{background:var(–bg2);border:1px solid var(–border);border-radius:14px;padding:16px}
+.cp-head{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(–cream2);margin-bottom:12px}
+.cp-person{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.cp-av{width:38px;height:38px;border-radius:50%;background:var(–blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
+.cp-name{font-size:14px;font-weight:600;color:var(–cream)}
+.cp-role{font-size:12px;color:var(–cream2)}
+.cp-scenarios{display:flex;flex-wrap:wrap;gap:5px}
+.cp-sc{width:22px;height:22px;border-radius:5px;border:1px solid var(–border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(–cream2);transition:all .25s}
+.cp-sc.done{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.4);color:var(–green)}
+.cp-sc.current{background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.5);color:var(–blue)}
+
+/* TIPS PANEL */
+.tips-panel{background:var(–bg2);border:1px solid var(–border);border-radius:14px;padding:16px}
+.tips-head{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(–cream2);margin-bottom:10px}
+.tip-text{font-size:13px;color:var(–cream2);line-height:1.65;border-left:2px solid var(–blue);padding-left:10px}
+
+/* ════════════════════════════════════════
+SCREEN: REVIEWING (AI Analysis)
+════════════════════════════════════════ */
+#s-reviewing{animation:fadeIn .4s ease}
+.reviewing-wrap{max-width:600px;margin:80px auto;text-align:center;padding:0 24px}
+.reviewing-anim{width:120px;height:120px;margin:0 auto 28px;position:relative}
+.rev-ring{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(59,130,246,.15)}
+.rev-spin{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;border-top-color:var(–blue);animation:spin 1s linear infinite}
+.rev-inner{position:absolute;inset:12px;border-radius:50%;background:var(–bg2);display:flex;align-items:center;justify-content:center;font-size:36px}
+.rev-title{font-family:‘Lora’,serif;font-size:28px;font-weight:600;color:var(–cream);margin-bottom:10px}
+.rev-sub{font-size:15px;color:var(–cream2);line-height:1.6;margin-bottom:32px}
+.rev-steps{display:flex;flex-direction:column;gap:10px;text-align:left}
+.rev-step{display:flex;align-items:center;gap:12px;background:var(–bg2);border:1px solid var(–border);border-radius:10px;padding:12px 16px;font-size:13.5px;color:var(–cream2);animation:slideIn .4s ease both}
+.rev-step:nth-child(2){animation-delay:.15s}
+.rev-step:nth-child(3){animation-delay:.3s}
+.rev-step:nth-child(4){animation-delay:.45s}
+.rev-step-icon{font-size:18px;flex-shrink:0}
+.rev-step.done{color:var(–green)}
+.rev-step.done .rev-step-icon::after{content:’ ✓’}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ════════════════════════════════════════
+SCREEN: RESULTS
+════════════════════════════════════════ */
+#s-results{animation:fadeUp .5s ease}
+.results-wrap{max-width:1060px;margin:0 auto;padding:36px 32px 80px}
+
+/* TOP */
+.results-top{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:flex-start;margin-bottom:28px}
+.rt-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(–blue);margin-bottom:6px}
+.rt-title{font-family:‘Lora’,serif;font-size:32px;font-weight:600;color:var(–cream);letter-spacing:-.3px;margin-bottom:6px}
+.rt-sub{font-size:14px;color:var(–cream2);line-height:1.6}
+.rt-actions{display:flex;gap:10px;flex-shrink:0}
+.btn-outline{display:flex;align-items:center;gap:6px;background:var(–bg2);border:1px solid var(–border2);color:var(–cream);border-radius:9px;padding:10px 18px;font-family:‘DM Sans’,sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-outline:hover{border-color:var(–blue);color:var(–blue)}
+.btn-filled{display:flex;align-items:center;gap:6px;background:var(–blue);color:#fff;border:none;border-radius:9px;padding:10px 18px;font-family:‘DM Sans’,sans-serif;font-size:13.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-filled:hover{background:var(–blue2)}
+
+/* SCORE HERO */
+.score-hero{display:grid;grid-template-columns:280px 1fr;gap:20px;margin-bottom:20px}
+
+/* DONUT */
+.donut-card{background:var(–bg2);border:1px solid var(–border);border-radius:18px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-wrap{position:relative;width:160px;height:160px;margin-bottom:14px}
+.donut-wrap svg{transform:rotate(-90deg)}
+.donut-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-pct{font-family:‘Lora’,serif;font-size:36px;font-weight:700;color:var(–cream);line-height:1}
+.donut-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(–cream2);font-weight:600;margin-top:2px}
+.donut-grade{font-family:‘Lora’,serif;font-size:22px;font-weight:700;margin-bottom:4px}
+.donut-grade-label{font-size:13px;color:var(–cream2);text-align:center;line-height:1.4}
+
+/* COMPETENCY CARDS */
+.comp-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.comp-result-card{background:var(–bg2);border:1px solid var(–border);border-radius:14px;padding:16px;transition:border-color .15s}
+.comp-result-card:hover{border-color:var(–border2)}
+.crc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.crc-left{display:flex;align-items:center;gap:8px}
+.crc-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.crc-name{font-size:12.5px;font-weight:600;color:var(–cream)}
+.crc-pct{font-family:‘Lora’,serif;font-size:19px;font-weight:700}
+.crc-bar{height:5px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden;margin-bottom:7px}
+.crc-fill{height:100%;border-radius:100px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.crc-level{font-size:11.5px;font-weight:600}
+
+/* RESPONSE REVIEW */
+.response-review{margin-top:24px}
+.rr-title{font-family:‘Lora’,serif;font-size:22px;font-weight:600;color:var(–cream);margin-bottom:14px}
+.rr-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.rr-tab{background:var(–bg2);border:1px solid var(–border);border-radius:8px;padding:7px 16px;font-family:‘DM Sans’,sans-serif;font-size:12.5px;font-weight:600;color:var(–cream2);cursor:pointer;transition:all .15s}
+.rr-tab.active,.rr-tab:hover{border-color:var(–blue);color:var(–blue);background:rgba(59,130,246,.08)}
+.rr-cards{display:flex;flex-direction:column;gap:14px}
+.rr-card{background:var(–bg2);border:1px solid var(–border);border-radius:14px;overflow:hidden}
+.rr-card-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(–border);gap:12px}
+.rrc-scenario{font-size:13.5px;font-weight:600;color:var(–cream);flex:1}
+.rrc-cat{font-size:11px;font-weight:600;padding:3px 9px;border-radius:100px}
+.rrc-score{font-family:‘Lora’,serif;font-size:18px;font-weight:700}
+.rr-card-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.rr-response-area{}
+.rr-sub-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(–cream2);margin-bottom:7px}
+.rr-response-text{font-size:13px;color:var(–cream2);line-height:1.65;background:var(–bg3);border-radius:8px;padding:12px;font-style:italic}
+.rr-metrics{display:flex;flex-direction:column;gap:8px}
+.metric-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.metric-name{font-size:12px;color:var(–cream2);flex:1}
+.metric-bar{flex:2;height:5px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden}
+.metric-fill{height:100%;border-radius:100px}
+.metric-val{font-size:12px;font-weight:700;min-width:30px;text-align:right}
+.rr-feedback{padding:14px 18px;border-top:1px solid var(–border);font-size:13px;color:var(–cream2);line-height:1.65;border-left:3px solid var(–blue)}
+
+/* HIRING SIGNAL */
+.hiring-card{background:var(–bg2);border:1px solid var(–border2);border-radius:18px;padding:24px 28px;margin-top:24px;display:flex;align-items:center;gap:24px}
+.hc-left{flex:1}
+.hc-eye{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(–blue);margin-bottom:6px}
+.hc-title{font-family:‘Lora’,serif;font-size:20px;font-weight:600;color:var(–cream);margin-bottom:6px}
+.hc-desc{font-size:13.5px;color:var(–cream2);line-height:1.65}
+.hc-verdict{text-align:center;flex-shrink:0;min-width:150px}
+.hc-badge{font-size:13px;font-weight:700;padding:10px 20px;border-radius:10px;display:block;margin-bottom:8px}
+.hc-note{font-size:11.5px;color:var(–cream2);line-height:1.4}
+
+/* RESTART */
+.restart-row{display:flex;justify-content:center;gap:12px;margin-top:28px}
+.btn-restart{background:var(–bg2);border:1px solid var(–border2);color:var(–cream);border-radius:10px;padding:12px 24px;font-family:‘DM Sans’,sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-restart:hover{border-color:var(–blue);color:var(–blue)}
+
+/* ════ RESPONSIVE ═══════════════════════ */
+@media(max-width:1000px){
+.rp-layout{grid-template-columns:1fr}
+.rp-right{position:static;flex-direction:row;flex-wrap:wrap}
+.scoring-panel,.candidate-panel,.tips-panel{flex:1;min-width:260px}
+.score-hero{grid-template-columns:1fr}
+.donut-card{flex-direction:row;gap:20px}
+.comp-cards{grid-template-columns:1fr 1fr}
+.how-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+.nav{padding:0 16px}
+.intro-wrap,.rp-layout,.results-wrap{padding-left:16px;padding-right:16px}
+.intro-h{font-size:30px}
+.how-grid{grid-template-columns:1fr}
+.comp-cards{grid-template-columns:1fr}
+.rr-card-body{grid-template-columns:1fr}
+.hiring-card{flex-direction:column}
+.frow{grid-template-columns:1fr}
+}
+</style>
+
+</head>
+<body>
+
+<!-- ════ NAV ════════════════════════════ -->
+
+<nav class="nav z1">
+  <a href="#" class="nav-logo z1">
+    <div class="logo-sq">⚡</div>
+    skillveda.ai
+  </a>
+  <div class="nav-center z1 hidden" id="navCenter">
+    <span class="nav-sim-label">CS Simulation</span>
+    <div class="nav-progress-bar"><div class="nav-progress-fill" id="navFill" style="width:0%"></div></div>
+    <span class="nav-q-label" id="navQLabel">0 / 18</span>
+  </div>
+  <div class="z1"></div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     SCREEN 1 — INTRO
+════════════════════════════════════════ -->
+
+<div id="s-intro" class="z1">
+  <div class="intro-wrap z1">
+    <div class="eyebrow z1"><span class="eyebrow-dot"></span>Live Role-Play Assessment</div>
+    <h1 class="intro-h">Prove your CS skills<br>in a <em>live scenario</em></h1>
+    <p class="intro-sub">You'll face 18 real Customer Success situations played by virtual customers. Speak your response out loud. Get scored instantly on empathy, strategy, communication and more.</p>
+
+```
+<div class="how-grid z1">
+  <div class="how-card">
+    <span class="how-num">01</span>
+    <span class="how-icon">🎬</span>
+    <div class="how-title">Watch the scenario</div>
+    <div class="how-desc">A virtual CS customer presents a real-world challenge — churn risk, escalation, renewal, and more.</div>
+  </div>
+  <div class="how-card">
+    <span class="how-num">02</span>
+    <span class="how-icon">🎙️</span>
+    <div class="how-title">Speak your response</div>
+    <div class="how-desc">Hit record and speak how you'd actually respond. No typing. This is a live role-play, not a quiz.</div>
+  </div>
+  <div class="how-card">
+    <span class="how-num">03</span>
+    <span class="how-icon">⏱️</span>
+    <div class="how-title">90 seconds per scenario</div>
+    <div class="how-desc">A countdown timer runs. Real CS calls don't wait — neither does this simulation.</div>
+  </div>
+  <div class="how-card">
+    <span class="how-num">04</span>
+    <span class="how-icon">📊</span>
+    <div class="how-title">Full scorecard report</div>
+    <div class="how-desc">Get scored across 6 competencies with a detailed breakdown and hiring recommendation.</div>
+  </div>
+</div>
+
+<div class="comp-strip z1">
+  <div class="comp-pill"><div class="cp-dot" style="background:#10b981"></div>Empathy</div>
+  <div class="comp-pill"><div class="cp-dot" style="background:#f59e0b"></div>Renewal</div>
+  <div class="comp-pill"><div class="cp-dot" style="background:#8b5cf6"></div>Upsell</div>
+  <div class="comp-pill"><div class="cp-dot" style="background:#3b82f6"></div>Onboarding</div>
+  <div class="comp-pill"><div class="cp-dot" style="background:#ef4444"></div>Problem Solving</div>
+  <div class="comp-pill"><div class="cp-dot" style="background:#ec4899"></div>Strategy</div>
+</div>
+
+<div class="reg-box z1">
+  <div class="reg-h">Start your simulation</div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Full Name</label><input class="fi" id="iName" placeholder="Jane Smith" type="text"></div>
+    <div class="fg"><label class="fl">Email</label><input class="fi" id="iEmail" placeholder="jane@company.com" type="email"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Current Role</label><input class="fi" id="iRole" placeholder="e.g. CSM, Account Manager"></div>
+    <div class="fg"><label class="fl">Years in CS</label>
+      <select class="fs" id="iExp">
+        <option value="">Select experience</option>
+        <option>0–1 year (Breaking into CS)</option>
+        <option>1–3 years</option>
+        <option>3–6 years</option>
+        <option>6–10 years</option>
+        <option>10+ years</option>
+      </select>
+    </div>
+  </div>
+  <div class="mic-check" id="micCheck">
+    <span class="mic-icon">🎙️</span>
+    <span class="mic-text">Microphone access required for voice recording</span>
+    <span class="mic-status mic-bad" id="micStatus">Not connected</span>
+    <button class="mic-test-btn" onclick="testMic()">Test Mic</button>
+  </div>
+  <button class="start-btn" onclick="startSim()">
+    Begin Live Simulation
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+  </button>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SCREEN 2 — LIVE ROLE PLAY
+════════════════════════════════════════ -->
+
+<div id="s-roleplay" class="z1 hidden">
+  <div class="rp-layout z1">
+
+```
+<!-- LEFT -->
+<div class="rp-left z1">
+
+  <!-- SCENARIO BANNER -->
+  <div class="scenario-banner z1">
+    <div class="sb-cat">
+      <div class="sb-cat-icon" id="sbIcon"></div>
+      <div><div class="sb-cat-name" id="sbCatName"></div></div>
+    </div>
+    <div class="sb-scenario" id="sbScenario"></div>
+    <div class="sb-right">
+      <div class="sb-progress">Scenario <strong id="sbNum">1</strong> of <strong>18</strong></div>
+    </div>
+  </div>
+
+  <!-- PHASE PROGRESS -->
+  <div class="phase-bar z1">
+    <div class="phase-item" id="ph1"><div class="phase-dot"></div>Watch</div>
+    <div class="phase-sep"></div>
+    <div class="phase-item" id="ph2"><div class="phase-dot"></div>Think</div>
+    <div class="phase-sep"></div>
+    <div class="phase-item" id="ph3"><div class="phase-dot"></div>Record Response</div>
+    <div class="phase-sep"></div>
+    <div class="phase-item" id="ph4"><div class="phase-dot"></div>Submit</div>
+  </div>
+
+  <!-- VIDEO STAGE -->
+  <div class="video-stage z1">
+    <div class="stage-bg">
+      <div class="stage-bg-circle c1"></div>
+      <div class="stage-bg-circle c2"></div>
+    </div>
+
+    <div class="live-badge"><div class="live-dot"></div><div class="live-text">LIVE</div></div>
+    <div class="situation-tag" id="situationTag"></div>
+
+    <!-- COUNTDOWN TIMER (top center) -->
+    <div class="timer-ring" id="timerRing">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>
+        <circle cx="30" cy="30" r="26" fill="none" stroke="var(--blue)" stroke-width="4"
+          stroke-dasharray="163" stroke-dashoffset="163" id="timerCircle" stroke-linecap="round"
+          style="transition:stroke-dashoffset .9s linear,stroke .3s"/>
+      </svg>
+      <div class="timer-num" id="timerNum">90</div>
+    </div>
+
+    <!-- CUSTOMER -->
+    <div class="customer-stage" id="customerStage">
+      <div class="customer-ring" id="customerRing">
+        <div class="ripple-ring"></div>
+        <div class="ripple-ring"></div>
+        <div class="customer-av" id="customerAv"></div>
+        <svg class="customer-ring-svg" width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="62" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="customer-info">
+        <div class="c-name" id="cName"></div>
+        <div class="c-title" id="cTitle"></div>
+        <div class="c-company" id="cCompany"></div>
+      </div>
+    </div>
+
+    <!-- SPEECH BUBBLE -->
+    <div class="speech-wrap">
+      <div class="speech-bubble" id="speechBubble">
+        <div class="speech-text" id="speechText">Loading scenario…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECORD CONTROLS -->
+  <div class="record-controls z1">
+    <div class="rec-left">
+      <div class="rec-status-row">
+        <div class="rec-status-dot" id="recDot"></div>
+        <div class="rec-status-text" id="recStatus">Press the button to start recording your response</div>
+      </div>
+      <div class="waveform" id="waveform">
+        <div class="wave-bar" id="wb1"></div>
+        <div class="wave-bar" id="wb2"></div>
+        <div class="wave-bar" id="wb3"></div>
+        <div class="wave-bar" id="wb4"></div>
+        <div class="wave-bar" id="wb5"></div>
+        <div class="wave-bar" id="wb6"></div>
+        <div class="wave-bar" id="wb7"></div>
+        <div class="wave-bar" id="wb8"></div>
+      </div>
+    </div>
+    <div class="rec-timer" id="recTimer">1:30</div>
+    <button class="rec-btn idle" id="recBtn" onclick="toggleRecording()">🎙️</button>
+    <button class="submit-btn" id="submitBtn" onclick="submitResponse()">
+      Submit Response
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- RIGHT SIDEBAR -->
+<div class="rp-right z1">
+
+  <!-- SCORING PANEL -->
+  <div class="scoring-panel z1">
+    <div class="sp-header">
+      <div class="sp-title">Live Competency Score</div>
+      <div class="sp-live-badge"><div class="sp-live-dot"></div>Updating</div>
+    </div>
+    <div class="scoring-cats" id="scoringCats"></div>
+    <div class="current-score">
+      <div class="cs-label">Overall Score</div>
+      <div class="cs-num" id="overallNum">—</div>
+      <div class="cs-sub" id="overallSub">Complete scenarios to see score</div>
+    </div>
+  </div>
+
+  <!-- CANDIDATE -->
+  <div class="candidate-panel z1">
+    <div class="cp-head">Candidate Progress</div>
+    <div class="cp-person">
+      <div class="cp-av" id="cpAv">?</div>
+      <div>
+        <div class="cp-name" id="cpName">—</div>
+        <div class="cp-role" id="cpRole">—</div>
+      </div>
+    </div>
+    <div class="cp-scenarios" id="cpScenarios"></div>
+  </div>
+
+  <!-- TIP -->
+  <div class="tips-panel z1">
+    <div class="tips-head">💡 Scoring Tip</div>
+    <div class="tip-text" id="tipText">Your response is evaluated on empathy, clarity, strategic thinking, and CS best practices. Speak naturally as if you're on a real call.</div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SCREEN 3 — AI REVIEWING
+════════════════════════════════════════ -->
+
+<div id="s-reviewing" class="z1 hidden">
+  <div class="reviewing-wrap z1">
+    <div class="reviewing-anim">
+      <div class="rev-ring"></div>
+      <div class="rev-spin"></div>
+      <div class="rev-inner">🧠</div>
+    </div>
+    <h2 class="rev-title">Analysing your responses…</h2>
+    <p class="rev-sub">Our AI is evaluating your 18 role-play responses across 6 CS competencies. This takes about 10 seconds.</p>
+    <div class="rev-steps">
+      <div class="rev-step" id="rs1"><span class="rev-step-icon">🎙️</span> Processing voice recordings</div>
+      <div class="rev-step" id="rs2"><span class="rev-step-icon">🤝</span> Scoring empathy and communication</div>
+      <div class="rev-step" id="rs3"><span class="rev-step-icon">📊</span> Analysing strategic responses</div>
+      <div class="rev-step" id="rs4"><span class="rev-step-icon">📋</span> Generating your full report</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SCREEN 4 — RESULTS
+════════════════════════════════════════ -->
+
+<div id="s-results" class="z1 hidden">
+  <div class="results-wrap z1">
+    <div class="results-top z1">
+      <div>
+        <div class="rt-eyebrow">Simulation Complete</div>
+        <div class="rt-title" id="rtTitle">Your CS Skills Report</div>
+        <div class="rt-sub" id="rtSub">Here's how you performed across all 6 Customer Success competencies.</div>
+      </div>
+      <div class="rt-actions">
+        <button class="btn-outline" onclick="shareResults()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share
+        </button>
+        <button class="btn-filled" onclick="downloadReport()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </button>
+      </div>
+    </div>
+
+```
+<!-- SCORE HERO -->
+<div class="score-hero z1">
+  <div class="donut-card">
+    <div class="donut-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="66" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="12"/>
+        <circle cx="80" cy="80" r="66" fill="none" stroke="var(--blue)" stroke-width="12"
+          stroke-dasharray="415" stroke-dashoffset="415" id="donutCircle" stroke-linecap="round"
+          style="transition:stroke-dashoffset 1.8s cubic-bezier(.4,0,.2,1)"/>
+      </svg>
+      <div class="donut-num">
+        <div class="donut-pct" id="donutPct">0%</div>
+        <div class="donut-label">Overall</div>
+      </div>
+    </div>
+    <div class="donut-grade" id="donutGrade">—</div>
+    <div class="donut-grade-label" id="donutGradeLabel">—</div>
+  </div>
+  <div class="comp-cards" id="compCards"></div>
+</div>
+
+<!-- RESPONSE REVIEW -->
+<div class="response-review z1">
+  <div class="rr-title">Scenario-by-Scenario Review</div>
+  <div class="rr-tabs" id="rrTabs"></div>
+  <div class="rr-cards" id="rrCards"></div>
+</div>
+
+<!-- HIRING SIGNAL -->
+<div class="hiring-card z1" id="hiringCard">
+  <div class="hc-left">
+    <div class="hc-eye">skillveda.ai Hiring Signal</div>
+    <div class="hc-title" id="hcTitle">—</div>
+    <div class="hc-desc" id="hcDesc">—</div>
+  </div>
+  <div class="hc-verdict">
+    <span class="hc-badge" id="hcBadge">—</span>
+    <div class="hc-note" id="hcNote">—</div>
+  </div>
+</div>
+
+<div class="restart-row z1">
+  <button class="btn-restart" onclick="restart()">Retake Simulation</button>
+  <button class="btn-filled" onclick="shareResults()">Share My Results</button>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
+
+<script>
+/* ══════════════════════════════════════
+   COMPETENCY DEFINITIONS
+══════════════════════════════════════ */
+const CATS=[
+  {id:'empathy',  name:'Empathy & Communication', icon:'🤝', color:'#10b981', bg:'rgba(16,185,129,.14)'},
+  {id:'renewal',  name:'Renewal & Retention',      icon:'🔄', color:'#f59e0b', bg:'rgba(245,158,11,.14)'},
+  {id:'upsell',   name:'Upsell & Expansion',       icon:'📈', color:'#8b5cf6', bg:'rgba(139,92,246,.14)'},
+  {id:'onboard',  name:'Onboarding & Activation',  icon:'🚀', color:'#3b82f6', bg:'rgba(59,130,246,.14)'},
+  {id:'problem',  name:'Problem Solving',           icon:'⚡', color:'#ef4444', bg:'rgba(239,68,68,.14)'},
+  {id:'strategy', name:'Strategic Thinking',        icon:'🎯', color:'#ec4899', bg:'rgba(236,72,153,.14)'},
+];
+
+/* ══════════════════════════════════════
+   18 SCENARIOS — cat index, customer, speech, question, tip
+══════════════════════════════════════ */
+const SCENARIOS=[
+  // EMPATHY
+  {cat:0,customer:{name:'Riya Sharma',initials:'RS',color:'#1e4d6b',title:'Head of Operations',company:'TechCorp Ltd'},situation:'Frustrated Customer',
+   speech:"I'm extremely frustrated. Six months in and my team still can't use half the features. I feel like nobody at your company actually cares about our success. I'm seriously thinking about cancelling.",
+   question:"Riya is angry on a live call. Respond as if you're her CSM — right now, in real time.",
+   tip:"Lead with empathy. Validate her frustration before any problem-solving."},
+
+  {cat:0,customer:{name:'James Okafor',initials:'JO',color:'#2d1b69',title:'CTO',company:'FinAxis Technologies'},situation:'Communication Failure',
+   speech:"I've sent three emails this week and got zero replies. I don't even know who my point of contact is. For what we're paying, this is completely unacceptable.",
+   question:"James is right — there was a CSM handover and things slipped. Respond directly to him right now.",
+   tip:"Own the failure without excuses. Give a specific next step, don't just apologise."},
+
+  {cat:0,customer:{name:'Priya Nair',initials:'PN',color:'#1a3a4a',title:'Marketing Director',company:'GrowthBase'},situation:'Personal Vulnerability',
+   speech:"Honestly, I pushed hard internally to buy your product. Now adoption is low and my team is blaming me. I'm worried about my job if we can't show results soon.",
+   question:"Priya just shared something personal. Respond with genuine empathy and a path forward.",
+   tip:"Acknowledge the personal before the professional. She needs to feel supported, not sold to."},
+
+  // RENEWAL
+  {cat:1,customer:{name:'Vikram Singh',initials:'VS',color:'#3a1c1c',title:'VP of Product',company:'DataFlow — $180k ARR'},situation:'Churn Risk · 60 Days',
+   speech:"We've been evaluating competitors. Your product does 80% of what we need but that last 20% is critical for us and you don't have it. I'm not sure we'll renew.",
+   question:"Vikram's renewal is in 60 days. This is the first you're hearing about this gap. Respond.",
+   tip:"Diagnose before you prescribe. Never lead with price concessions."},
+
+  {cat:1,customer:{name:'Layla Hassan',initials:'LH',color:'#1a3a1a',title:'Operations Manager',company:'RetailPro — Renewal next month'},situation:'Silent & Disengaged',
+   speech:"Oh hi. We've just been really busy. The product is… fine, I guess. I'll need to check with finance about the renewal — things are tight right now.",
+   question:"Layla has gone quiet for 3 months and seems disengaged. 30 days to renewal. Respond.",
+   tip:"Before renewal, your job is to rediscover value, not close a contract."},
+
+  {cat:1,customer:{name:'Tom Brennan',initials:'TB',color:'#2d2d0a',title:'CEO',company:'LegalEdge Solutions'},situation:'Formal Cancellation',
+   speech:"I've already sent the cancellation email. We're moving to a competitor. Please just process the offboarding and let me know the steps.",
+   question:"Tom has formally cancelled. Respond professionally — no desperate saves.",
+   tip:"A cancellation is a learning opportunity. Ask for an exit call with zero sales pressure."},
+
+  // UPSELL
+  {cat:2,customer:{name:'Neha Kapoor',initials:'NK',color:'#1a1a3a',title:'Head of Customer Experience',company:'ScaleUp SaaS'},situation:'Expansion Signal',
+   speech:"Things have been going really well. We've grown from 50 to 200 users in 6 months and the team loves the product. We're starting a whole new department next quarter too.",
+   question:"Neha just gave you three expansion signals. Respond and move the conversation forward.",
+   tip:"Ask about the new department before mentioning anything commercial."},
+
+  {cat:2,customer:{name:'Aryan Mehta',initials:'AM',color:'#1a2d1a',title:'COO',company:'BuildCo Tech'},situation:'Budget Objection',
+   speech:"We'd love more seats but budget is honestly really tight this half. We know we need it, we just don't have the money right now.",
+   question:"Aryan wants to expand but says budget is the blocker. Respond with a path forward.",
+   tip:"Help them make the internal business case. Don't just cut the price."},
+
+  {cat:2,customer:{name:'Sara Mitchell',initials:'SM',color:'#2d1a2d',title:'Digital Director',company:'MediaHouse Agency'},situation:'Organic Cross-sell',
+   speech:"We didn't even know about your analytics add-on until today. What does it actually do? We've been doing all our analytics manually which is taking forever.",
+   question:"Sara just discovered your analytics add-on organically. Move this conversation forward naturally.",
+   tip:"Find her specific pain first, then show only the parts of the product that solve it."},
+
+  // ONBOARDING
+  {cat:3,customer:{name:'Chris Park',initials:'CP',color:'#0f2d3a',title:'Head of Product',company:'HealthTech Co — Day 14'},situation:'Low Adoption · Week 2',
+   speech:"We've been set up 2 weeks now but only 3 of our 20 users have actually logged in. My team is just too busy. I'm not sure how to get them to use it.",
+   question:"Only 15% of Chris's team has activated. You're on a call with him right now. Respond.",
+   tip:"Find 2–3 internal champions and focus entirely on them first. Peer influence beats training emails."},
+
+  {cat:3,customer:{name:'Fatima Al-Rashid',initials:'FA',color:'#1a0f3a',title:'Learning & Development Lead',company:'EduTech Platform — Day 3'},situation:'Overwhelmed New User',
+   speech:"I just logged in for the first time and I'm completely overwhelmed. There's so much here. I don't even know where to start. Maybe we made a mistake buying this.",
+   question:"Fatima is overwhelmed on day 3 and questioning the purchase. Respond right now.",
+   tip:"Give her ONE outcome and THREE steps. In week 1, less is dramatically more."},
+
+  {cat:3,customer:{name:'Mohammed Al-Farsi',initials:'MA',color:'#0a1f3a',title:'Digital Transformation Lead',company:'Logistics Corp — 300 users'},situation:'Technical Delay',
+   speech:"Our IT team says the full rollout will take 4 months due to security reviews. The business team is losing interest and the enthusiasm from the purchase is fading fast.",
+   question:"A 4-month IT delay is killing momentum. How do you preserve activation energy right now?",
+   tip:"Create a fast-lane pilot with 20 eager users who don't need IT approval. Internal advocacy beats executive pressure."},
+
+  // PROBLEM SOLVING
+  {cat:4,customer:{name:'Ana Costa',initials:'AC',color:'#3a0a0a',title:'CFO',company:'FinTech Global — CRITICAL'},situation:'Revenue-Impacting Bug',
+   speech:"Our payment integration has been broken for 3 hours. We've lost $40,000 in transactions. My CEO is literally in the room right now. I need this fixed NOW.",
+   question:"This is a live critical incident. Ana's CEO is in the room. Respond as her CSM — right now.",
+   tip:"Stay completely calm. Give a specific update time. Never leave her waiting alone."},
+
+  {cat:4,customer:{name:'Ben Wright',initials:'BW',color:'#1a2d0a',title:'Head of RevOps',company:'MarTech Solutions'},situation:'Product Gap',
+   speech:"We need to export reports in a custom format for our BI tool and your product doesn't support it. This is something we use daily. It's a dealbreaker for us.",
+   question:"Ben needs a feature you don't have. It's causing real daily pain. Respond and own this.",
+   tip:"Explore API and workaround options immediately. Never say 'submit a feature request and wait'."},
+
+  {cat:4,customer:{name:'Zara Ahmed',initials:'ZA',color:'#1a0a2d',title:'Operations Director',company:'Healthcare SaaS'},situation:'Repeated Failures',
+   speech:"I've raised this issue 4 times with your support team. Every time I have to explain it from scratch. I'm going to your leadership team directly. This is not good enough.",
+   question:"Your support team has failed Zara 4 times. She's escalating to leadership. Respond and own it.",
+   tip:"Take personal ownership. Become her single point of contact. Don't pass — own."},
+
+  // STRATEGY
+  {cat:5,customer:{name:'CEO — Rohan Bhatia',initials:'RB',color:'#2d1a0a',title:'CEO',company:'ScaleX · $500k ARR · QBR'},situation:'Executive QBR',
+   speech:"I'm going to be direct. I need to know what your product has actually done for our business this quarter. My board is questioning all our SaaS spend.",
+   question:"You're in a QBR with the CEO. He wants business impact, not product metrics. Respond.",
+   tip:"Never present usage statistics to a CEO. Speak in revenue influenced, costs reduced, time saved."},
+
+  {cat:5,customer:{name:'Marcus Lee',initials:'ML',color:'#0a1a2d',title:'VP of Operations',company:'GrowthOS · Series B'},situation:'Competitive Threat',
+   speech:"We've been approached by your competitor offering the same functionality at 40% less. We have a strategic review in 2 weeks. What would you tell us?",
+   question:"You have 2 weeks before their strategic review. A competitor is undercutting your price. Respond.",
+   tip:"Make the cost of switching — not the cost of staying — the central conversation."},
+
+  {cat:5,customer:{name:'Sarah Kim',initials:'SK',color:'#1a2d1a',title:'VP of Revenue',company:'EnterpriseOne · $1.2M ARR'},situation:'Multi-Stakeholder Block',
+   speech:"I want to expand the contract but my Head of IT is blocking it on security grounds and my finance team wants a 3-year prepay discount. I'm stuck in the middle.",
+   question:"Sarah wants to expand but has blockers on both IT and finance sides. Respond with your strategy.",
+   tip:"Engage each stakeholder directly with their specific concern. Don't leave your champion to fight alone."},
+];
+
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+let name='',role='',exp='';
+let qIdx=0;
+let phase='watch'; // watch | record | done
+let isRecording=false;
+let recInterval=null;
+let timerInterval=null;
+let recSeconds=0;
+let watchSeconds=10;
+let micGranted=false;
+let mediaRecorder=null;
+let audioChunks=[];
+let responses=[]; // stores {duration, transcript_sim, scores}
+let catScores=[0,0,0,0,0,0];
+
+const MAX_REC=90;
+const WATCH_TIME=10;
+
+/* ══════════════════════════════════════
+   SCREEN CONTROL
+══════════════════════════════════════ */
+function show(id){
+  ['s-intro','s-roleplay','s-reviewing','s-results'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden',s!==id);
+  });
+  window.scrollTo(0,0);
+}
+
+/* ══════════════════════════════════════
+   MIC TEST
+══════════════════════════════════════ */
+async function testMic(){
+  try{
+    await navigator.mediaDevices.getUserMedia({audio:true});
+    micGranted=true;
+    document.getElementById('micStatus').textContent='✓ Connected';
+    document.getElementById('micStatus').className='mic-status mic-ok';
+  }catch(e){
+    document.getElementById('micStatus').textContent='Blocked — check browser settings';
+    document.getElementById('micStatus').className='mic-status mic-bad';
+  }
+}
+
+/* ══════════════════════════════════════
+   START SIMULATION
+══════════════════════════════════════ */
+function startSim(){
+  name=document.getElementById('iName').value.trim();
+  const email=document.getElementById('iEmail').value.trim();
+  role=document.getElementById('iRole').value.trim()||'CS Professional';
+  exp=document.getElementById('iExp').value||'';
+  if(!name||!email){alert('Please enter your name and email.');return;}
+
+  qIdx=0; catScores=[0,0,0,0,0,0]; responses=[];
+  setupSidebar();
+  buildScoringPanel();
+  buildScenarioDots();
+  loadScenario();
+  document.getElementById('navCenter').classList.remove('hidden');
+  show('s-roleplay');
+}
+
+/* ══════════════════════════════════════
+   SIDEBAR SETUP
+══════════════════════════════════════ */
+function setupSidebar(){
+  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('cpAv').textContent=initials;
+  document.getElementById('cpName').textContent=name;
+  document.getElementById('cpRole').textContent=role+(exp?' · '+exp:'');
+}
+
+function buildScoringPanel(){
+  const wrap=document.getElementById('scoringCats');
+  wrap.innerHTML='';
+  CATS.forEach((c,i)=>{
+    const div=document.createElement('div');
+    div.className='score-cat-row';
+    div.innerHTML=`
+      <div class="scat-icon" style="background:${c.bg}">${c.icon}</div>
+      <div class="scat-info">
+        <div class="scat-name">${c.name}</div>
+        <div class="scat-bar"><div class="scat-fill" id="sf${i}" style="background:${c.color}"></div></div>
+      </div>
+      <div class="scat-pct" style="color:${c.color}" id="sp${i}">—</div>`;
+    wrap.appendChild(div);
+  });
+}
+
+function buildScenarioDots(){
+  const wrap=document.getElementById('cpScenarios');
+  wrap.innerHTML='';
+  for(let i=0;i<18;i++){
+    const d=document.createElement('div');
+    d.className='cp-sc'+(i===0?' current':'');
+    d.id='dot'+i;
+    d.textContent=i+1;
+    wrap.appendChild(d);
+  }
+}
+
+/* ══════════════════════════════════════
+   LOAD SCENARIO
+══════════════════════════════════════ */
+function loadScenario(){
+  clearAllTimers();
+  isRecording=false;
+  phase='watch';
+  recSeconds=0;
+  audioChunks=[];
+
+  const s=SCENARIOS[qIdx];
+  const cat=CATS[s.cat];
+
+  // Nav
+  const pct=((qIdx)/18*100);
+  document.getElementById('navFill').style.width=pct+'%';
+  document.getElementById('navQLabel').textContent=qIdx+' / 18';
+
+  // Banner
+  document.getElementById('sbIcon').style.background=cat.bg;
+  document.getElementById('sbIcon').textContent=cat.icon;
+  document.getElementById('sbCatName').textContent=cat.name;
+  document.getElementById('sbCatName').style.color=cat.color;
+  document.getElementById('sbScenario').textContent=s.situation;
+  document.getElementById('sbNum').textContent=qIdx+1;
+
+  // Customer
+  document.getElementById('customerAv').textContent=s.customer.initials;
+  document.getElementById('customerAv').style.background=s.customer.color;
+  document.getElementById('cName').textContent=s.customer.name;
+  document.getElementById('cTitle').textContent=s.customer.title;
+  document.getElementById('cCompany').textContent=s.customer.company;
+  document.getElementById('situationTag').textContent=s.situation;
+  document.getElementById('situationTag').style.color=cat.color;
+  document.getElementById('speechText').textContent=s.customer.speech;
+
+  // Tips
+  document.getElementById('tipText').textContent=s.tip;
+
+  // Phase indicators
+  setPhase('watch');
+
+  // Timer ring color
+  document.getElementById('timerCircle').style.stroke=cat.color;
+
+  // Dots
+  for(let i=0;i<18;i++){
+    const d=document.getElementById('dot'+i);
+    if(i<qIdx)d.className='cp-sc done';
+    else if(i===qIdx)d.className='cp-sc current';
+    else d.className='cp-sc';
+  }
+
+  // Recording controls reset
+  document.getElementById('recDot').className='rec-status-dot';
+  document.getElementById('recStatus').textContent='Watch the customer — then record your response';
+  document.getElementById('recBtn').className='rec-btn idle';
+  document.getElementById('recBtn').disabled=true;
+  document.getElementById('recBtn').style.opacity='.4';
+  document.getElementById('submitBtn').className='submit-btn';
+  setWaveActive(false);
+
+  // Speaking animation on customer (auto-plays)
+  document.getElementById('customerRing').classList.add('speaking');
+
+  // Watch timer — after WATCH_TIME secs, enable recording
+  let wt=WATCH_TIME;
+  updateTimerDisplay(wt,WATCH_TIME,cat.color);
+  watchSeconds=wt;
+  timerInterval=setInterval(()=>{
+    wt--;
+    watchSeconds=wt;
+    updateTimerDisplay(wt,WATCH_TIME,cat.color);
+    if(wt<=0){
+      clearInterval(timerInterval);
+      enableRecording(cat.color);
+    }
+  },1000);
+}
+
+/* ══════════════════════════════════════
+   TIMER DISPLAY
+══════════════════════════════════════ */
+function updateTimerDisplay(val,max,color){
+  const circumference=163;
+  const offset=circumference-(val/max*circumference);
+  document.getElementById('timerCircle').style.strokeDashoffset=offset;
+  document.getElementById('timerCircle').style.stroke=val<=10?'#ef4444':color;
+  document.getElementById('timerNum').textContent=val;
+  document.getElementById('timerNum').style.color=val<=10?'#ef4444':'#fff';
+}
+
+/* ══════════════════════════════════════
+   PHASES
+══════════════════════════════════════ */
+function setPhase(p){
+  phase=p;
+  const phases=['ph1','ph2','ph3','ph4'];
+  const labels=['watch','think','record','submit'];
+  phases.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    const idx=labels.indexOf(p);
+    if(i<idx)el.className='phase-item done';
+    else if(i===idx)el.className='phase-item active';
+    else el.className='phase-item';
+  });
+}
+
+function enableRecording(color){
+  setPhase('think');
+  document.getElementById('customerRing').classList.remove('speaking');
+  document.getElementById('recBtn').disabled=false;
+  document.getElementById('recBtn').style.opacity='1';
+  document.getElementById('recStatus').textContent=`Ready — press 🎙️ to record your response (max ${MAX_REC}s)`;
+  document.getElementById('recDot').className='rec-status-dot ready';
+
+  // Rec countdown timer
+  let rt=MAX_REC;
+  updateTimerDisplay(rt,MAX_REC,color);
+  document.getElementById('recTimer').textContent=formatTime(rt);
+  timerInterval=setInterval(()=>{
+    if(isRecording){
+      rt--;
+      recSeconds++;
+      updateTimerDisplay(rt,MAX_REC,color);
+      document.getElementById('recTimer').textContent=formatTime(rt);
+      document.getElementById('recTimer').className='rec-timer'+(rt<=30?' warning':'')+(rt<=10?' danger':'');
+      if(rt<=0){stopRecording();autoSubmit();}
+    }
+  },1000);
+}
+
+/* ══════════════════════════════════════
+   RECORDING
+══════════════════════════════════════ */
+async function toggleRecording(){
+  if(!isRecording){
+    await startRecording();
+  } else {
+    stopRecording();
+  }
+}
+
+async function startRecording(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    micGranted=true;
+    mediaRecorder=new MediaRecorder(stream);
+    audioChunks=[];
+    mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
+    mediaRecorder.start();
+  }catch(e){
+    // Fallback — simulate recording for demo purposes
+    console.log('Mic not available — simulating recording');
+  }
+
+  isRecording=true;
+  setPhase('record');
+  document.getElementById('recBtn').className='rec-btn recording';
+  document.getElementById('recBtn').textContent='⏹';
+  document.getElementById('recDot').className='rec-status-dot recording';
+  document.getElementById('recStatus').textContent='Recording… speak your response clearly';
+  setWaveActive(true);
+
+  // Start rec timer
+  recInterval=setInterval(()=>{recSeconds++;},1000);
+}
+
+function stopRecording(){
+  if(!isRecording)return;
+  isRecording=false;
+  clearInterval(recInterval);
+
+  if(mediaRecorder&&mediaRecorder.state!=='inactive'){
+    mediaRecorder.stop();
+    mediaRecorder.stream.getTracks().forEach(t=>t.stop());
+  }
+
+  document.getElementById('recBtn').className='rec-btn done';
+  document.getElementById('recBtn').textContent='✓';
+  document.getElementById('recDot').className='rec-status-dot ready';
+  document.getElementById('recStatus').textContent=`Response recorded (${formatTime(recSeconds)}) — submit when ready`;
+  setWaveActive(false);
+  setPhase('submit');
+  document.getElementById('submitBtn').classList.add('ready');
+}
+
+function setWaveActive(active){
+  document.querySelectorAll('.wave-bar').forEach(b=>b.classList.toggle('active',active));
+}
+
+function autoSubmit(){
+  stopRecording();
+  setTimeout(submitResponse,500);
+}
+
+/* ══════════════════════════════════════
+   SUBMIT RESPONSE
+══════════════════════════════════════ */
+function submitResponse(){
+  clearAllTimers();
+
+  // Generate simulated scores for this response
+  const s=SCENARIOS[qIdx];
+  const duration=recSeconds||Math.floor(Math.random()*60+20);
+  const baseScore=simulateScore(s.cat,duration);
+
+  catScores[s.cat]+=baseScore;
+
+  // Store response
+  responses.push({
+    scenario:s,
+    duration,
+    score:baseScore,
+    maxScore:10,
+    metrics:generateMetrics(s.cat,baseScore),
+    transcript:generateTranscriptSim(s,baseScore),
+    feedback:generateFeedback(s.cat,baseScore)
+  });
+
+  // Update sidebar scores
+  updateLiveSidebar();
+
+  qIdx++;
+  if(qIdx>=SCENARIOS.length){
+    showReviewing();
+  } else {
+    loadScenario();
+    recSeconds=0;
+  }
+}
+
+/* ══════════════════════════════════════
+   SIMULATED SCORING ENGINE
+══════════════════════════════════════ */
+function simulateScore(catIdx,duration){
+  // Score 4-10, influenced by recording duration
+  const base=duration>=30?Math.floor(Math.random()*4+6):Math.floor(Math.random()*4+4);
+  return Math.min(10,base);
+}
+
+function generateMetrics(catIdx,score){
+  const pct=score/10;
+  const variance=(v)=>Math.max(0,Math.min(100,Math.round((pct+Math.random()*.2-.1)*100)));
+  if(catIdx===0)return[{n:'Empathy',v:variance()},{n:'Listening',v:variance()},{n:'Clarity',v:variance()}];
+  if(catIdx===1)return[{n:'Risk Detection',v:variance()},{n:'Value Reframe',v:variance()},{n:'Urgency',v:variance()}];
+  if(catIdx===2)return[{n:'Signal Reading',v:variance()},{n:'Consultative',v:variance()},{n:'Commercial',v:variance()}];
+  if(catIdx===3)return[{n:'Activation Plan',v:variance()},{n:'Champion ID',v:variance()},{n:'Speed to Value',v:variance()}];
+  if(catIdx===4)return[{n:'Calm Under Pressure',v:variance()},{n:'Ownership',v:variance()},{n:'Resolution Speed',v:variance()}];
+  return[{n:'Business Acumen',v:variance()},{n:'Stakeholder Mgmt',v:variance()},{n:'Strategic Depth',v:variance()}];
+}
+
+function generateTranscriptSim(s,score){
+  const good=["I completely understand how frustrating this must be, and I want to make sure we solve this together.","Thank you for being so open with me about this. Let's figure out a path forward right now.","I hear you, and I want to be completely transparent with you about where we are."];
+  const avg=["I understand your concern and I'll look into this right away for you.","Let me check on that and get back to you as soon as possible.","I can see why this would be frustrating — let me see what I can do."];
+  const pool=score>=7?good:avg;
+  return pool[Math.floor(Math.random()*pool.length)]+' ['+formatTime(s.cat*10+score)+' recorded response]';
+}
+
+function generateFeedback(catIdx,score){
+  const insights={
+    0:score>=7?"Strong empathetic opening. You validated before problem-solving — exactly right.":"Try leading with emotion acknowledgment before jumping to solutions.",
+    1:score>=7?"Good diagnosis approach. You focused on understanding before pitching retention.":"Remember: rediscover value before discussing the contract.",
+    2:score>=7?"Excellent — you asked questions to understand the need before going commercial.":"Always uncover the specific gap before presenting expansion options.",
+    3:score>=7?"Good activation instincts. Focus on fast wins, not comprehensive training.":"In onboarding, less is more. One goal, one path, one early win.",
+    4:score>=7?"Strong ownership mentality. You stayed calm and committed to a specific next step.":"Own the problem personally. Never say 'I'll look into it' and disappear.",
+    5:score>=7?"Excellent business framing. You spoke the language of the executive, not the product.":"Always translate product value into business outcomes: revenue, cost, risk.",
+  };
+  return insights[catIdx]||"Good effort on this scenario.";
+}
+
+/* ══════════════════════════════════════
+   LIVE SIDEBAR UPDATE
+══════════════════════════════════════ */
+function updateLiveSidebar(){
+  const completedPerCat=[0,0,0,0,0,0];
+  responses.forEach(r=>completedPerCat[r.scenario.cat]++);
+
+  CATS.forEach((c,i)=>{
+    const maxForCompleted=completedPerCat[i]*10;
+    const pct=maxForCompleted>0?Math.round(catScores[i]/maxForCompleted*100):0;
+    const fillEl=document.getElementById('sf'+i);
+    const pctEl=document.getElementById('sp'+i);
+    if(fillEl)fillEl.style.width=pct+'%';
+    if(pctEl)pctEl.textContent=completedPerCat[i]>0?pct+'%':'—';
+  });
+
+  const total=responses.reduce((a,r)=>a+r.score,0);
+  const max=responses.length*10;
+  if(max>0){
+    const pct=Math.round(total/max*100);
+    document.getElementById('overallNum').textContent=pct+'%';
+    document.getElementById('overallSub').textContent=`After ${responses.length} of 18 scenarios`;
+  }
+}
+
+/* ══════════════════════════════════════
+   REVIEWING SCREEN
+══════════════════════════════════════ */
+function showReviewing(){
+  show('s-reviewing');
+  clearAllTimers();
+  const steps=['rs1','rs2','rs3','rs4'];
+  steps.forEach((id,i)=>{
+    setTimeout(()=>{document.getElementById(id).classList.add('done');},i*1800+600);
+  });
+  setTimeout(()=>buildResults(),steps.length*1800+1200);
+}
+
+/* ══════════════════════════════════════
+   RESULTS
+══════════════════════════════════════ */
+function buildResults(){
+  const total=responses.reduce((a,r)=>a+r.score,0);
+  const max=responses.length*10||180;
+  const pct=Math.round(total/max*100);
+  const {grade,label,color}=getGrade(pct);
+
+  document.getElementById('rtTitle').textContent=name+"'s CS Skills Report";
+  document.getElementById('navFill').style.width='100%';
+  document.getElementById('navQLabel').textContent='18 / 18';
+
+  // DONUT
+  const circumference=415;
+  const offset=circumference-(pct/100*circumference);
+  setTimeout(()=>{
+    document.getElementById('donutCircle').style.strokeDashoffset=offset;
+    document.getElementById('donutCircle').style.stroke=color;
+    let c=0;
+    const iv=setInterval(()=>{c=Math.min(c+2,pct);document.getElementById('donutPct').textContent=c+'%';if(c>=pct)clearInterval(iv);},18);
+  },300);
+  document.getElementById('donutGrade').textContent=grade;
+  document.getElementById('donutGrade').style.color=color;
+  document.getElementById('donutGradeLabel').textContent=label;
+
+  // COMP CARDS
+  const cc=document.getElementById('compCards');
+  cc.innerHTML='';
+  CATS.forEach((cat,i)=>{
+    const completedInCat=responses.filter(r=>r.scenario.cat===i).length;
+    const catTotal=responses.filter(r=>r.scenario.cat===i).reduce((a,r)=>a+r.score,0);
+    const catMax=completedInCat*10||30;
+    const catPct=Math.round(catTotal/catMax*100);
+    const lvl=catPct>=80?'Expert':catPct>=60?'Proficient':catPct>=40?'Developing':'Needs Work';
+    const div=document.createElement('div');
+    div.className='comp-result-card';
+    div.innerHTML=`
+      <div class="crc-top">
+        <div class="crc-left">
+          <div class="crc-icon" style="background:${cat.bg}">${cat.icon}</div>
+          <div class="crc-name">${cat.name.split('&')[0].trim()}</div>
+        </div>
+        <div class="crc-pct" style="color:${cat.color}">${catPct}%</div>
+      </div>
+      <div class="crc-bar"><div class="crc-fill" style="background:${cat.color};width:0%" id="crf${i}"></div></div>
+      <div class="crc-level" style="color:${cat.color}">${lvl}</div>`;
+    cc.appendChild(div);
+    setTimeout(()=>{document.getElementById('crf'+i).style.width=catPct+'%';},400+i*100);
+  });
+
+  // RESPONSE TABS & CARDS
+  buildResponseReview();
+
+  // HIRING SIGNAL
+  buildHiringSignal(pct);
+
+  show('s-results');
+}
+
+/* ══════════════════════════════════════
+   RESPONSE REVIEW
+══════════════════════════════════════ */
+function buildResponseReview(){
+  // Tab buttons by category
+  const tabsWrap=document.getElementById('rrTabs');
+  tabsWrap.innerHTML='';
+  CATS.forEach((c,i)=>{
+    const btn=document.createElement('button');
+    btn.className='rr-tab'+(i===0?' active':'');
+    btn.textContent=c.icon+' '+c.name.split('&')[0].trim();
+    btn.onclick=()=>{
+      document.querySelectorAll('.rr-tab').forEach(t=>t.classList.remove('active'));
+      btn.classList.add('active');
+      renderRRCards(i);
+    };
+    tabsWrap.appendChild(btn);
+  });
+  renderRRCards(0);
+}
+
+function renderRRCards(catIdx){
+  const wrap=document.getElementById('rrCards');
+  wrap.innerHTML='';
+  const cat=CATS[catIdx];
+  const catResponses=responses.filter(r=>r.scenario.cat===catIdx);
+  if(!catResponses.length){wrap.innerHTML='<div style="padding:24px;color:var(--cream2);font-size:14px">No responses for this category.</div>';return;}
+  catResponses.forEach((r,i)=>{
+    const div=document.createElement('div');
+    div.className='rr-card';
+    const pct=Math.round(r.score/r.maxScore*100);
+    div.innerHTML=`
+      <div class="rr-card-header">
+        <div class="rrc-scenario">${r.scenario.situation}</div>
+        <div class="rrc-cat" style="background:${cat.bg};color:${cat.color}">${cat.icon} ${cat.id}</div>
+        <div class="rrc-score" style="color:${cat.color}">${r.score}/${r.maxScore}</div>
+      </div>
+      <div class="rr-card-body">
+        <div class="rr-response-area">
+          <div class="rr-sub-label">Your Response (${formatTime(r.duration)} recorded)</div>
+          <div class="rr-response-text">"${r.transcript}"</div>
+        </div>
+        <div class="rr-metrics">
+          <div class="rr-sub-label">Scoring Breakdown</div>
+          ${r.metrics.map(m=>`
+            <div class="metric-row">
+              <div class="metric-name">${m.n}</div>
+              <div class="metric-bar"><div class="metric-fill" style="width:${m.v}%;background:${cat.color}"></div></div>
+              <div class="metric-val" style="color:${cat.color}">${m.v}%</div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="rr-feedback">${r.feedback}</div>`;
+    wrap.appendChild(div);
+  });
+}
+
+/* ══════════════════════════════════════
+   HIRING SIGNAL
+══════════════════════════════════════ */
+function buildHiringSignal(pct){
+  const signals=[
+    {min:80,title:'Exceptional CS Professional — Recommended for Senior Roles',desc:'This candidate demonstrates elite CS instincts across all 6 competencies. Their live role-play responses show strong empathy, strategic thinking, and business acumen.',badge:'✅ Strongly Recommended',bg:'rgba(16,185,129,.15)',color:'#10b981',note:'Top 15% of all candidates'},
+    {min:65,title:'Strong CS Candidate — Recommended for Mid-Senior Roles',desc:'This candidate shows strong CS fundamentals with room for growth in specific areas. Recommended to advance to final interview stage.',badge:'👍 Recommended',bg:'rgba(59,130,246,.15)',color:'#3b82f6',note:'Strong candidate for CSM roles'},
+    {min:50,title:'Solid CS Candidate — Consider for Junior-Mid Roles',desc:'This candidate demonstrates foundational CS skills. Suitable for junior to mid-level CS positions with structured onboarding.',badge:'📋 Consider',bg:'rgba(245,158,11,.15)',color:'#f59e0b',note:'Good coaching potential'},
+    {min:0,title:'Early Stage — Mentorship Recommended Before Placement',desc:'This candidate is building their CS skills. We recommend CS fundamentals training before advancing to an interview stage.',badge:'📚 Training First',bg:'rgba(239,68,68,.15)',color:'#ef4444',note:'Mentorship programme fit'},
+  ];
+  const s=signals.find(x=>pct>=x.min)||signals[signals.length-1];
+  document.getElementById('hcTitle').textContent=s.title;
+  document.getElementById('hcDesc').textContent=s.desc;
+  const badge=document.getElementById('hcBadge');
+  badge.textContent=s.badge;
+  badge.style.background=s.bg;
+  badge.style.color=s.color;
+  document.getElementById('hcNote').textContent=s.note;
+}
+
+/* ══════════════════════════════════════
+   GRADE SYSTEM
+══════════════════════════════════════ */
+function getGrade(pct){
+  if(pct>=88)return{grade:'S Tier',label:'Exceptional · Elite CS Professional',color:'#10b981'};
+  if(pct>=76)return{grade:'A Grade',label:'Strong · Senior CS Level',color:'#3b82f6'};
+  if(pct>=62)return{grade:'B Grade',label:'Proficient · Mid-Senior CS',color:'#8b5cf6'};
+  if(pct>=48)return{grade:'C Grade',label:'Developing · Junior-Mid CS',color:'#f59e0b'};
+  return{grade:'D Grade',label:'Beginner · Training Recommended',color:'#ef4444'};
+}
+
+/* ══════════════════════════════════════
+   UTILITY
+══════════════════════════════════════ */
+function formatTime(s){
+  const m=Math.floor(s/60);
+  return m>0?m+':'+(s%60<10?'0':'')+(s%60):s+'s';
+}
+
+function clearAllTimers(){
+  clearInterval(timerInterval);
+  clearInterval(recInterval);
+  timerInterval=null; recInterval=null;
+}
+
+function shareResults(){
+  navigator.clipboard?.writeText(window.location.href).catch(()=>{});
+  alert('Share link copied! In production, this generates a unique URL with the full scorecard for your hiring manager.');
+}
+
+function downloadReport(){
+  alert('PDF download starting… In production, this generates a branded PDF with your full CS skills report and hiring recommendation.');
+}
+
+function restart(){
+  clearAllTimers();
+  qIdx=0; catScores=[0,0,0,0,0,0]; responses=[]; recSeconds=0;
+  document.getElementById('navCenter').classList.add('hidden');
+  show('s-intro');
+}
+
+// Init mic check attempt silently
+navigator.mediaDevices?.getUserMedia({audio:true}).then(()=>{
+  micGranted=true;
+  document.getElementById('micStatus').textContent='✓ Connected';
+  document.getElementById('micStatus').className='mic-status mic-ok';
+}).catch(()=>{});
+</script>
+
+</body>
+</html>

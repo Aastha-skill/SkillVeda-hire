@@ -1,0 +1,177 @@
+Build a complete modern website for “SkillVeda”—a Work-Integrated Learning Platform.
+Follow these instructions exactly:
+
+🎨 VISUAL STYLE (USE THROUGHOUT THE WEBSITE)
+
+Clean, premium, modern EdTech look.
+
+Color palette:
+
+Primary gradient: #8B3CFF → #4B66FF
+
+Purple: #7A3CFF
+
+Blue: #4A5CFF
+
+Light backgrounds: #F7F8FB, white
+
+Pastels for cards:
+
+Blue: #E8F0FF, Green: #E9F9F0, Peach: #FFF3E6, Lavender: #EFE9FF, Pink: #FFF0F6
+
+Text Dark: #1D1D1F, Muted: #6B6B75
+
+Round all cards and buttons (14–18px).
+
+Use Poppins for headings, Inter for body text.
+
+Use subtle shadows: 0 8px 20px rgba(0,0,0,0.05).
+
+Big CTAs: pill-shaped, gradient, strong hover effect.
+
+🧭 HEADER (STICKY):
+
+Logo left, menu center/right: Home, Programs, Jobs, For Companies, About.
+CTA button: Sign Up (gradient).
+
+🏆 HERO SECTION (VERY IMPORTANT — RECREATE EXACT STYLE SHOWN):
+
+Left side text, right side manifesto card.
+
+Left side content:
+
+Badge: “Transform Your Career Today”
+
+Big headline with dual-color words:
+
+Degrees with Dignity.
+Skills with Substance.
+
+Highlight “Dignity” in purple, “Substance” with gradient.
+
+Short paragraph:
+“Transforming India with purpose through work-integrated learning. Learn on the job, gain real experience, graduate with 2–3 years of industry exposure.”
+
+Bullets:
+
+Earn your degree within your CTC
+
+World-class education with real industry experience
+
+Graduate with 2–3 years of work experience
+
+Buttons:
+
+Primary: Explore Opportunities
+
+Secondary: Get Job Alerts
+
+Right side:
+A rounded manifesto card with pastel sections:
+
+“We believe education should liberate, not burden.”
+
+“We believe students deserve more than classrooms.”
+
+“We believe skills are the new currency.”
+
+“We believe in rebuilding the Indian dream.”
+At bottom add two chips: “Earn While You Learn” & “Build India’s Future”.
+
+📌 WHY SKILLVEDA WORKS SECTION:
+
+Title + subtitle.
+Include 4 cards with icons:
+
+Accessible Education
+
+Skills Over Marks
+
+Industry Partnership
+
+Guaranteed Success
+Use pastel backgrounds for each icon.
+
+📊 STATS SECTION:
+
+4 stat cards horizontally:
+
+500+ Students Placed
+
+50+ Partner Companies
+
+95% Placement Rate
+
+4.8★ Student Rating
+
+💼 JOBS PREVIEW SECTION:
+
+Create 3–6 sample job cards.
+Each card shows: role, company, location, stipend, “Apply Now”.
+Use pastel backgrounds + clean card UI.
+
+⭐ TESTIMONIALS SECTION (CAROUSEL):
+
+Include:
+
+Name: Priyanjali
+
+Role: Customer Success Associate
+
+Quote:
+“What SkillVeda is doing is transformative. Learning while gaining real industry experience helped me grow confident and career-ready.”
+
+Carousel dots should be larger and active dot in purple gradient.
+
+🤝 PARTNER LOGOS SECTION:
+
+Add generic grey logos (placeholder companies).
+
+🚀 CTA BANNER (FULL WIDTH):
+
+Gradient background (#8B3CFF → #4B66FF).
+Text: “Ready to Transform Your Future?”
+Button: “Find Your Dream Job”.
+
+🧱 FOOTER:
+
+Dark background.
+Columns: About, Programs, Jobs, For Companies, Contact, LinkedIn link.
+Copyright line:
+“© 2025 SkillVeda. All rights reserved.”
+
+🔧 FUNCTIONAL REQUIREMENTS:
+
+Make site responsive for mobile and desktop.
+
+Use smooth animations (fade-in, hover lift, button gradient animation).
+
+Include clean spacing and readable typography.
+
+Keep layout similar to screenshots, but improved visually as described.
+
+📄 PAGES TO GENERATE:
+
+Home Page (all sections above)
+
+Jobs Page (list of job cards + filters)
+
+Programs Page (grid of programs with learn/earn info)
+
+About Page (SkillVeda mission + manifesto)
+
+END OF PROMPT
+
+👍 This is the exact optimized prompt Bolt Free Plan needs.
+
+It is:
+
+Short enough
+
+Single-shot
+
+Clear
+
+Contains every design requirement
+
+Describes visual tone + layout

@@ -1,0 +1,105 @@
+Add a hero carousel to the homepage. The existing hero 
+banner must stay exactly as it is — do not modify, 
+delete, or rewrite it. It becomes Slide 2.
+
+════════════════════════════════════
+STEP 1 — WRAP EXISTING HERO IN CAROUSEL
+════════════════════════════════════
+- Find the current hero/banner section on the homepage
+- Wrap it inside a new HeroCarousel component
+- The existing hero becomes Slide 2 — no changes to it
+- Do not touch any existing styles, content, or code
+
+════════════════════════════════════
+STEP 2 — ADD SLIDE 1 (WEBINAR BANNER)
+════════════════════════════════════
+Design: Dark background matching the existing hero style.
+Three column layout on desktop, stacked on mobile.
+
+BACKGROUND:
+- Very dark purple/black base: #0D0117
+- Subtle grid mesh lines in dark purple
+- Left side soft purple glow, right side soft green glow
+
+LEFT SPEAKER:
+- Photo: Himanshu Choudhary (from project assets folder)
+- Circular photo frame with purple glowing border
+- Name: "Himanshu Choudhary" in white bold
+- Role: "Leading Sales at Rippling" in light grey
+- Purple pill badge: "SPEAKER"
+
+CENTER CONTENT:
+- Top label: "LIVE WEBINAR" in gold, letter-spaced, 
+  with subtle pulse animation
+- Headline line 1: "How to Break Into" in white bold
+- Headline line 2: "Customer Success" in purple to 
+  green gradient
+- Headline line 3: "of AI & SaaS Companies" in white bold
+- Date box with dark border:
+  "21st March, 2025" in gold bold
+  "12:00 PM – 1:00 PM" in white smaller
+- Divider text: "— FREE & LIVE SESSION —" muted white
+- CTA Button: "REGISTER NOW →" white text, purple 
+  background, rounded pill, full width of date box
+- Button links to the existing webinar registration page
+
+RIGHT SPEAKER:
+- Photo: Prerit Choudhary (from project assets folder)
+- Circular photo frame with green glowing border
+- Name: "Prerit Choudhary" in white bold, right aligned
+- Role: "CEO at Skill Veda" in light grey, right aligned
+- Green pill badge: "SPEAKER"
+
+FOOTER OF SLIDE:
+- "SKILL VEDA • CAREER GROWTH • AI · SAAS • SKILLVEDA.COM"
+- Small muted centered text at bottom of slide
+
+════════════════════════════════════
+STEP 3 — CAROUSEL BEHAVIOR
+════════════════════════════════════
+- Slide 1 = Webinar banner (loads first on page open)
+- Slide 2 = Original existing hero banner
+- Auto slides every 5 seconds
+- Smooth fade or slide transition
+- Dot indicators at bottom center
+  (active dot = white, inactive = grey/transparent)
+- Left and right arrow navigation
+  (arrows have semi-transparent dark background)
+- Pause auto-slide on hover
+- Swipe support on mobile
+- Loop infinitely
+
+════════════════════════════════════
+STEP 4 — FIX LAYOUT (CRITICAL)
+════════════════════════════════════
+- Set a FIXED height on the carousel container
+- Both slides must use the exact same fixed height
+- Slide 2 content must be vertically centered inside 
+  the fixed height so no empty gap appears below it
+- Remove any padding-top, margin-top, or negative 
+  margins on the stats section below the carousel
+- Stats section must start immediately after the 
+  carousel ends with zero visible gap
+- Carousel must have a clean bottom boundary so 
+  nothing below it overlaps or bleeds into it
+
+════════════════════════════════════
+STEP 5 — MOBILE RESPONSIVE
+════════════════════════════════════
+- On mobile: speaker cards stack above and below 
+  center content vertically
+- Arrows hidden on mobile
+- Dots visible on mobile
+- Touch and swipe works on mobile
+- Center content text scales down appropriately
+
+════════════════════════════════════
+RULES — DO NOT BREAK THESE
+════════════════════════════════════
+- Do NOT delete or rewrite the existing hero component
+- Do NOT change any existing routes or imports
+- Do NOT modify stats section content or colors
+- Do NOT change anything below the carousel section
+- Only ADD new code, never overwrite existing code
+- Test that both slides transition cleanly
+- Test that stats section sits flush below carousel

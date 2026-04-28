@@ -1,0 +1,61 @@
+Build a full-stack blog platform for SkillVeda.
+
+## STACK (keep it simple)
+- React + Vite frontend, built to /dist, served by Express
+- Node.js + Express backend (single process, single repo)
+- SQLite via better-sqlite3 at /data/blog.db
+- JWT auth (localStorage), Multer for uploads to /data/uploads
+- React Quill for rich text editing
+- Tailwind CSS for styling
+
+## START COMMAND
+One command only: "npm start" runs node server.js
+Dev: "npm run dev" uses concurrently for vite + nodemon
+
+## PUBLIC BLOG PAGE (/blog)
+Styled like customersuccesscollective.com/content-hub:
+- Header: "SkillVeda Insights"
+- Filter tabs: All | Career Tips | AI & SaaS | Mentorship | Industry Insights
+- Live search bar
+- 3-col responsive card grid (cover image, category, title, 
+  excerpt, author, date, read time)
+- Click → /blog/:slug (full article with rich HTML body + related posts)
+Brand: primary #6C2BD9, font Inter, bg #F9F9FB
+
+## ADMIN PAGE (/admin)
+- Password login → JWT (7 day expiry)
+- Post table with edit/delete
+- Post form: title (auto-slug), category, cover image upload, 
+  author name + avatar, excerpt, Quill editor, draft/published toggle
+- Read time auto-calculated from word count
+
+## DATABASE
+SQLite table "posts": id, title, slug, category, excerpt, body, 
+cover_image, author_name, author_avatar, status, read_time, 
+created_at, updated_at
+Auto-create on server start.
+
+## API
+GET  /api/posts           public published posts
+GET  /api/posts/:slug     single post
+POST /api/login           returns JWT
+GET/POST/PUT/DELETE /api/admin/posts  (JWT protected)
+POST /api/admin/upload    image upload
+
+## REPLIT SECRETS
+ADMIN_PASSWORD=skillveda2024
+JWT_SECRET=skillveda_jwt_2024
+PORT=3000
+
+## SEED (if DB empty)
+3 published posts with picsum.photos cover images:
+- "How to Break Into SaaS Sales" — Career Tips
+- "12 Years in Operations: What I Learned" — Mentorship
+- "AI Skills Every Professional Needs in 2025" — AI & SaaS
+
+## CONSTRAINTS
+- /data/ folder for all persistent storage
+- 2MB upload limit
+- Compress responses
+- Lazy load images
+- Max 12 posts per page

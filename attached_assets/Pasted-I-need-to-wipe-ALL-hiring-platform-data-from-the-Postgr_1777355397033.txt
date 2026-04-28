@@ -1,0 +1,49 @@
+I need to wipe ALL hiring platform data from the PostgreSQL database for a 
+fresh start. Please do the following:
+
+1. First, run this safety check and SHOW ME the output before deleting anything:
+
+   SELECT 
+     (SELECT COUNT(*) FROM hiring_companies) AS companies,
+     (SELECT COUNT(*) FROM hiring_search_history) AS searches,
+     (SELECT COUNT(*) FROM hiring_saved_candidates) AS saved,
+     (SELECT COUNT(*) FROM hiring_credit_transactions) AS transactions,
+     (SELECT COUNT(*) FROM unlocked_contacts) AS unlocks,
+     (SELECT COUNT(*) FROM hiring_email_settings) AS email_settings,
+     (SELECT COUNT(*) FROM hiring_email_logs) AS email_logs;
+
+2. After I confirm the counts look right, run this transaction to wipe 
+   everything in foreign-key-safe order and reset auto-increment IDs:
+
+   BEGIN;
+   
+   DELETE FROM hiring_email_logs;
+   DELETE FROM hiring_email_settings;
+   DELETE FROM hiring_search_history;
+   DELETE FROM hiring_saved_candidates;
+   DELETE FROM hiring_credit_transactions;
+   DELETE FROM unlocked_contacts;
+   DELETE FROM hiring_companies;
+   
+   ALTER SEQUENCE hiring_companies_id_seq RESTART WITH 1;
+   ALTER SEQUENCE hiring_search_history_id_seq RESTART WITH 1;
+   ALTER SEQUENCE hiring_saved_candidates_id_seq RESTART WITH 1;
+   ALTER SEQUENCE hiring_credit_transactions_id_seq RESTART WITH 1;
+   ALTER SEQUENCE unlocked_contacts_id_seq RESTART WITH 1;
+   ALTER SEQUENCE hiring_email_settings_id_seq RESTART WITH 1;
+   ALTER SEQUENCE hiring_email_logs_id_seq RESTART WITH 1;
+   
+   COMMIT;
+
+3. Then run the safety check from step 1 again. All counts should be 0.
+
+4. DO NOT touch any other tables. Specifically, leave alone: 
+   users, jobs, applications, candidates, leads, blog_posts, partner_registrations, 
+   student_profiles, program_applications, curriculum_leads, webinar_registrations, 
+   email_templates, email_campaigns, email_campaign_recipients, blog_categories, 
+   ai_interviews, job_alerts, questions, test_sessions, test_responses.
+
+5. Use psql or the Replit database SQL console. Do NOT modify any code files. 
+   This is purely a database operation.
+
+Show me the output of each step before moving to the next.

@@ -1,0 +1,118 @@
+Paste this ready-to-use prompt into Replit Agent 👇
+
+⸻
+
+🚀 PROMPT — FRONT PAGE COMPANY RIBBON (TRUST BAR)
+
+Create a horizontal company logo ribbon on the SkillVeda homepage similar to the reference design.
+
+The ribbon must showcase hiring/partner companies using existing logo assets from the project.
+
+⚠️ Goal: Build strong trust and credibility above the fold.
+
+⸻
+
+📍 Placement
+
+Add this section on the homepage, positioned:
+	•	Below the hero section
+OR
+	•	Below the main headline (as per best visual fit)
+
+It must be visible without much scrolling on desktop and mobile.
+
+⸻
+
+🧱 Section Structure
+
+Heading (centered)
+
+Text:
+
+Unlock roles in the top 1% of the industry
+
+Style:
+	•	Bold
+	•	Large font
+	•	Center aligned
+	•	SkillVeda typography
+
+⸻
+
+🏢 Logo Ribbon (Main Component)
+
+Create a horizontal scrolling ribbon of company logos.
+
+Use existing logos from the codebase/assets (do NOT use placeholders if real logos exist).
+
+⸻
+
+🎨 Design Requirements
+
+Layout
+	•	Single horizontal row
+	•	Logos evenly spaced
+	•	Clean white/light background
+	•	Soft premium feel
+	•	No heavy borders
+	•	Proper padding top & bottom
+
+⸻
+
+Logo Styling
+
+Each logo should:
+	•	Maintain original aspect ratio
+	•	Have equal visual height
+	•	Be slightly muted (optional: grayscale with hover color)
+	•	Not look stretched
+	•	Have consistent spacing
+
+⸻
+
+🔁 Motion Behavior (Important)
+
+Implement auto-scrolling infinite marquee effect.
+
+Requirements:
+	•	Smooth continuous scroll (left direction)
+	•	Infinite loop
+	•	No visible jump
+	•	Pause on hover (desktop)
+	•	Touch-friendly on mobile
+	•	Performance optimized (no jank)
+
+⸻
+
+📱 Responsiveness
+
+Desktop:
+	•	Show full ribbon
+	•	Comfortable spacing
+
+Tablet:
+	•	Slightly smaller logos
+
+Mobile:
+	•	Smaller logo height
+	•	Smooth swipe feel
+	•	No overflow breaking
+
+⸻
+
+⚙️ Technical Requirements
+	•	Build reusable component: CompanyRibbon
+	•	Use CSS animation or lightweight JS
+	•	Lazy load images
+	•	Avoid layout shift
+	•	SEO friendly
+	•	No console errors
+	•	High performance
+
+⸻
+
+🎯 Data Source
+
+Use existing logo assets from project.
+
+If dynamic structure exists, support:

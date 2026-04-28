@@ -1,0 +1,171 @@
+When a candidate submits the Apply Now form,
+send a confirmation email to the candidate.
+Use existing Brevo setup. Do not change 
+anything else.
+
+════════════════════════════════════
+EMAIL DETAILS
+════════════════════════════════════
+Trigger: after successful POST /api/applications
+To: candidate email
+From: existing Brevo sender
+
+Subject:
+"ok so your application just landed 🛬"
+
+HTML Body:
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;
+background:#ffffff;
+font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0"
+cellspacing="0" border="0">
+<tr><td align="center" 
+style="padding:40px 20px;">
+<table width="560" cellpadding="0"
+cellspacing="0" border="0"
+style="max-width:560px;width:100%;">
+
+<!-- Logo -->
+<tr><td style="padding-bottom:32px;">
+<span style="font-size:18px;
+font-weight:700;color:#0A0A0F;">
+Skill Veda
+</span>
+</td></tr>
+
+<!-- Opener -->
+<tr><td style="padding-bottom:20px;">
+<p style="font-size:22px;
+font-weight:700;color:#0A0A0F;
+margin:0;line-height:1.4;">
+ngl, this might be the best thing 
+you did today. ✅
+</p>
+</td></tr>
+
+<!-- Greeting -->
+<tr><td style="padding-bottom:20px;">
+<p style="font-size:15px;color:#3D3D4E;
+margin:0;line-height:1.8;">
+Hey [FIRST_NAME], your application 
+for <strong style="color:#0A0A0F;">
+[JOB_TITLE]</strong> at 
+<strong style="color:#0A0A0F;">
+[COMPANY_NAME]</strong> just hit 
+our inbox. We see you. 👀
+</p>
+</td></tr>
+
+<!-- What happens next box -->
+<tr><td style="padding-bottom:28px;">
+<div style="background:#F4F4F6;
+border-radius:12px;padding:24px;">
+<p style="font-size:12px;
+font-weight:600;color:#8888A0;
+letter-spacing:1.5px;
+text-transform:uppercase;
+margin:0 0 14px 0;">
+what happens next
+</p>
+<p style="font-size:14px;color:#3D3D4E;
+margin:0 0 10px 0;line-height:1.7;">
+📋 Our team reviews your profile
+</p>
+<p style="font-size:14px;color:#3D3D4E;
+margin:0 0 10px 0;line-height:1.7;">
+📩 We'll send you an assessment link
+</p>
+<p style="font-size:14px;color:#3D3D4E;
+margin:0;line-height:1.7;">
+🚀 Top scorers get fast-tracked 
+to partner companies
+</p>
+</div>
+</td></tr>
+
+<!-- Community section -->
+<tr><td style="padding-bottom:28px;">
+<div style="background:#F0FDF4;
+border:1px solid #A7F3D0;
+border-radius:12px;padding:24px;">
+<p style="font-size:15px;
+font-weight:600;color:#0A0A0F;
+margin:0 0 8px 0;">
+while you wait — join the gang 🤝
+</p>
+<p style="font-size:14px;color:#3D3D4E;
+margin:0 0 16px 0;line-height:1.7;">
+Real CS folks. Real talk. Free webinars, 
+job drops, and zero LinkedIn corporate 
+energy. Just people actually trying 
+to grow in Customer Success.
+</p>
+<a href="https://chat.whatsapp.com/B74yk0TlvFi3FeC9UZckdx?mode=gi_t"
+target="_blank"
+style="display:inline-block;
+background:#25D366;color:#ffffff;
+padding:12px 24px;border-radius:8px;
+font-size:14px;font-weight:600;
+text-decoration:none;">
+💬 Join Customer Success Community
+</a>
+</div>
+</td></tr>
+
+<!-- Closing -->
+<tr><td style="padding-bottom:28px;">
+<p style="font-size:14px;color:#3D3D4E;
+margin:0;line-height:1.8;">
+got questions? just reply to this email. 
+we're real people, we promise. 😄
+</p>
+</td></tr>
+
+<!-- Divider -->
+<tr><td style="padding-bottom:24px;">
+<hr style="border:none;
+border-top:1px solid rgba(0,0,0,0.08);
+margin:0;"/>
+</td></tr>
+
+<!-- Signature -->
+<tr><td>
+<p style="font-size:14px;
+font-weight:600;color:#0A0A0F;
+margin:0 0 4px 0;">
+Prerit Choudhary
+</p>
+<p style="font-size:13px;
+color:#8888A0;margin:0 0 2px 0;">
+Skill Veda
+</p>
+<p style="font-size:13px;
+color:#8888A0;margin:0;">
+skillveda.ai
+</p>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>
+
+Replacements:
+[FIRST_NAME] = first word of fullName
+[JOB_TITLE] = job title from application
+[COMPANY_NAME] = company from application
+
+════════════════════════════════════
+RULES
+════════════════════════════════════
+- Send immediately after application saved
+- Use existing Brevo email helper
+- Do not change any other emails
+- Do not touch any other feature
+- Test: apply for job → confirm email 
+  arrives with correct name, job title,
+  and WhatsApp button

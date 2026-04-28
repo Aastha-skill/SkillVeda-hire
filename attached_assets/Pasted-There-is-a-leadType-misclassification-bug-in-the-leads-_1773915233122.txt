@@ -1,0 +1,80 @@
+There is a leadType misclassification bug in the leads 
+system. Leads coming from the Jobs page are being saved 
+with leadType: "PROGRAM" instead of leadType: "JOB".
+
+This is why the Program tab shows leads with 
+"jobs-page-lead" in the program column — they are 
+job leads incorrectly tagged as program leads.
+
+════════════════════════════════════
+FIX 1 — Fix the Jobs page form submission
+════════════════════════════════════
+Find the form or lead capture on the Jobs page that 
+is currently submitting with leadType: "PROGRAM".
+
+Change it to submit with leadType: "JOB" instead.
+
+Also update the metadata to pass job details:
+metadata: { 
+  jobTitle: the job title the user clicked on,
+  jobId: the job ID,
+  sourcePage: "jobs-page"
+}
+
+Do NOT pass a program name for job leads.
+
+════════════════════════════════════
+FIX 2 — Fix existing misclassified leads in database
+════════════════════════════════════
+IMPORTANT: Do not delete any existing leads.
+
+Find all leads in the leads table where:
+- leadType is "PROGRAM" 
+- AND the program field or metadata contains 
+  "jobs-page-lead" or any jobs page reference
+
+Update ONLY those leads:
+- Change their leadType from "PROGRAM" to "JOB"
+- Keep all other fields exactly the same
+- Do not touch any other leads
+
+This will move them from the Program tab to 
+the Job tab where they belong.
+
+════════════════════════════════════
+FIX 3 — Prevent this from happening again
+════════════════════════════════════
+Add a clear rule in the lead submission logic:
+
+- If form is on /jobs or any job detail page 
+  → always use leadType: "JOB"
+- If form is on /programs or any program page 
+  → always use leadType: "PROGRAM"  
+- If form is on /webinar page 
+  → always use leadType: "WEBINAR"
+- If form is on /contact page 
+  → always use leadType: "CONTACT"
+
+Use the sourcePage or the page URL to automatically 
+determine the correct leadType — never hardcode 
+"PROGRAM" for all forms.
+
+════════════════════════════════════
+FIX 4 — Verify admin tabs are correct
+════════════════════════════════════
+After fixing:
+- Job tab should show all leadType: "JOB" leads
+- Program tab should show all leadType: "PROGRAM" leads
+- No jobs-page leads should appear in Program tab
+- Job (0) count should now show the correct number
+- Program count should decrease accordingly
+
+════════════════════════════════════
+RULES
+════════════════════════════════════
+- Do NOT delete any leads — only UPDATE leadType field
+- Do NOT touch webinar leads or any other lead types
+- Do NOT break any existing forms
+- Test both Job and Program tabs after the fix
+- Confirm "jobs-page-lead" entries no longer appear 
+  in the Program tab

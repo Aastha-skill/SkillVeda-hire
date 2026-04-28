@@ -1,0 +1,49 @@
+I want you to integrate an AI-driven Candidate Test & Evaluator into my existing Node.js + Express project (this repo). The project already has candidate application flow, resume upload (Multer), PostgreSQL, and an admin dashboard. Implement the following end-to-end feature:
+
+1) Database migrations (Postgres): create tables `tests`, `test_questions`, `test_attempts`, `test_responses` (schema below). Add columns for LLM outputs on `test_attempts`: llm_overall_score int, llm_breakdown jsonb, llm_feedback text, llm_confidence numeric, llm_flags text[], manual_review_needed boolean default false. Provide a SQL migration file `migrations/2025XXXX_add_tests.sql`.
+
+2) Seed a Customer Support / Customer Success test (`cs-support-ai`) with 6 tasks (role-play, triage checklist, upsell plan, etc.). Use JSONB fields for `choices` and `keywords` where needed.
+
+3) Backend routes (use existing Express app & pg client):
+   - POST `/apply` (reuse existing logic; after candidate row created, create a `test_attempt` with `token` and `test_id` and redirect to `/test/:token`).
+   - GET `/test/:token` serve a static HTML/React test page (create `public/test.html` if no React).
+   - GET `/api/tests/token/:token/questions` — validate token, mark attempt started (started_at), return test metadata (duration_seconds) and questions **without** answers (strip answer fields).
+   - POST `/api/tests/token/:token/submit` — accept JSON answers, store raw answers in `test_responses`, call the server-side evaluator (LLM) to score, store LLM outputs in `test_attempts`, set `manual_review_needed` if `confidence < 0.6` or flags present, and respond with JSON `{ overall_score, breakdown, feedback, flags, manual_review_needed }`.
+   - GET `/admin/test-attempts` — return paginated attempts with candidate info and LLM results.
+
+4) Implement evaluator module `lib/evaluator.js`:
+   - Expose `evaluateAnswerBatch(attemptId, testMeta, answers)` which sends a single LLM request that includes all tasks and the full rubric and returns the JSON evaluation.
+   - Use environment variables `OPENAI_API_KEY` and `EVAL_MODEL` (default `gpt-4o-mini`).
+   - Use temperature 0.0, max tokens adequate for JSON. Retry once if response is non-JSON; if still invalid, mark `manual_review_needed = true`.
+
+5) Put exact evaluator prompt strings into the code (system and user prompts). The user prompt must demand strict JSON with this schema:
+{
+ "overall_score": Int,
+ "breakdown": { "empathy": Int, "clarity": Int, "technical": Int, "ownership": Int, "communication": Int },
+ "feedback": String,
+ "confidence": Float,
+ "flags": [String],
+ "notes": String|null
+}
+
+6) Frontend test page `public/test.html`:
+   - Fetch questions from `/api/tests/token/:token/questions`.
+   - Display 3 open-text tasks, enforce a 25-minute timer, disallow multiple submits, show word count for each text box, and POST answers to `/api/tests/token/:token/submit`.
+   - On success, show the returned overall score and feedback summary and "next steps".
+
+7) Admin changes:
+   - Add a basic manual review queue endpoint `GET /admin/manual-review` returning attempts with `manual_review_needed = true`.
+   - Add an endpoint to mark `manual_review_done` and update `llm_feedback`/`llm_overall_score` if reviewer adjusts.
+
+8) Security & logging:
+   - Validate tokens and time limits server-side.
+   - Log attempt start/end timestamps, IP, user-agent to `test_attempts` or a `test_logs` table.
+   - Ensure PII not sent to LLM (redact emails/account ids from candidate answers before sending; include a note explaining this).
+
+9) Tests & README:
+   - Add `README/tests.md` with instructions how to run migrations, set env vars, and test the flow locally.
+   - Provide a simple local test script `tools/test_flow.sh` that simulates creating an applicant, getting token, fetching questions, submitting sample answers, and printing results.
+
+Files to create: migrations SQL, `lib/evaluator.js`, updates to existing route file (or new `routes/tests.js`), `public/test.html`, `tools/test_flow.sh`, README addition. Use `node-postgres` (`pg`) for DB. Keep code clean, well-commented, and use async/await. If any piece cannot be added because of repo structure, tell me precisely which files you changed and why.
+
+Start now and commit changes. After finishing, print a short summary of created files and how to run locally.

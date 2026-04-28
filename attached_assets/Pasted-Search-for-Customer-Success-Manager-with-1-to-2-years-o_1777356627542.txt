@@ -1,0 +1,49 @@
+Search for "Customer Success Manager with 1 to 2 years of experience in 
+Bangalore" returned candidates with way more than 2 years. I need to find 
+where the experience filter is being lost or ignored.
+
+Please run these diagnostic steps and report back EVERYTHING:
+
+STEP 1: Check what the parser extracts.
+Run this curl from the Replit shell. Replace YOUR_TOKEN with a real JWT 
+(get it by logging in via /hire/login and copying from localStorage 
+'hiring_token'):
+
+curl -s -X POST http://localhost:5000/api/hiring/parse-requirement \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"paragraph":"Customer Success Manager with 1 to 2 years of experience in Bangalore"}' \
+  | python3 -m json.tool
+
+I need to see the FULL response. Specifically look for filters.minExp 
+and filters.maxExp values.
+
+STEP 2: Check the most recent search row in the database to see what 
+filters actually got saved:
+
+psql $DATABASE_URL -c "SELECT id, search_title, search_filters, results_count FROM hiring_search_history ORDER BY id DESC LIMIT 1;"
+
+Show me the search_filters JSON value. I want to know if minExp/maxExp 
+are present.
+
+STEP 3: Check what PDL actually received. Find the most recent 
+"[search-filters]" log lines. Add temporary logging to show the PDL 
+request body. Add this line in server/hiring-routes.tsx right BEFORE 
+the line "const pdlResponse = await pdlPersonSearch(pdlBody);":
+
+console.log("[PDL REQUEST]", JSON.stringify(pdlBody, null, 2));
+
+Then restart the server and run a fresh search through the UI for 
+"1 to 2 years experience". Show me the [PDL REQUEST] log output.
+
+STEP 4: Check PDL's response. Right after getting pdlResponse, add:
+
+console.log("[PDL FIRST 3 RESULTS]", (pdlResponse.data || []).slice(0, 3).map(p => ({
+  name: p.full_name,
+  inferred_years: p.inferred_years_experience,
+  job_title: p.job_title,
+})));
+
+Restart and run another search. Show me the output.
+
+Report back ALL outputs from all 4 steps. Don't try to fix anything yet.

@@ -1,0 +1,53 @@
+Remove the "Quick Search" mode from the SkillVeda Hire dashboard. Only 
+the Smart Search wizard should remain.
+
+Changes needed in client/src/SourcingCopilot.tsx:
+
+1. Remove the searchMode state variable and its useState declaration. 
+   It's set to "smart" by default; smart is now the only mode.
+
+2. Remove the toggle pill UI ("Smart Search" / "Quick Search" buttons 
+   at the top of the search view). Find the block with text "✨ Smart 
+   Search" and "Quick Search" and delete the entire toggle div.
+
+3. Remove the entire `searchMode === "quick"` JSX block. This is the 
+   centered card with the textarea + "Source From 11 Crore Indian 
+   Profiles" headline + "Search · 1 credit" button. Delete it.
+
+4. Remove the `searchMode === "smart"` conditional wrapper around 
+   <RequirementWizard>. The wizard always renders now, so just leave 
+   <RequirementWizard ... /> directly.
+
+5. Remove the `handleSearch` function (the one that calls 
+   /api/hiring/search). It's no longer reachable.
+
+6. Remove the `query`, `focused`, and `setQuery`/`setFocused` state 
+   variables — they were only used by Quick Search.
+
+7. Remove any references to `setSearchMode` elsewhere in the file 
+   (search for "setSearchMode" — anywhere it's called as a side 
+   effect, just delete that line).
+
+In server/hiring-routes.tsx:
+
+8. Remove the entire `app.post("/api/hiring/search", ...)` endpoint 
+   (the legacy Coresignal one). Search for "// ── LEGACY SEARCH 
+   (Coresignal, JD-based)" — that comment marks the start. Delete 
+   from that comment through the closing `});` of the route handler.
+
+9. Remove the `findCandidates`, `collectFullProfile`, `mapFullProfile` 
+   imports from "./coresignal" at the top of the file — they were 
+   only used by the removed endpoint.
+
+10. Remove the `scoreAllCandidates` import from "./cs-scoring-engine" — 
+    same reason.
+
+After all changes, run TypeScript check:
+   npx tsc --noEmit
+
+Report any errors. Then run the dev server and confirm:
+- The search view shows only the wizard (no Smart/Quick toggle)
+- Running a search through the wizard works and properly filters by 
+  experience (1-2 years should return only candidates with 1-2 years)
+
+Show me the diff summary (lines removed) before declaring done.

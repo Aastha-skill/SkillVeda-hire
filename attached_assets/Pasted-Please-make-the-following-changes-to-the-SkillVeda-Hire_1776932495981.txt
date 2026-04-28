@@ -1,0 +1,263 @@
+Please make the following changes to the 
+SkillVeda Hire authentication system:
+
+─────────────────────────────────────────
+PART 1 — SIMPLIFY SIGNUP
+─────────────────────────────────────────
+
+In client/src/pages/hire-login.tsx
+
+Signup form should only have these fields:
+1. Company name (required)
+2. Your name (required)  
+3. Work email (required)
+4. Password (required, min 6 chars)
+5. Confirm password (required)
+
+Remove phone field from signup form completely.
+
+On signup success:
+→ navigate("/hire/dashboard") directly
+   No setup page, no onboarding steps
+
+On login success:
+→ navigate("/hire/dashboard") directly
+
+─────────────────────────────────────────
+PART 2 — FIX AUTH REDIRECTS
+─────────────────────────────────────────
+
+In client/src/SourcingCopilot.tsx
+
+Find all instances of:
+navigate("/hire")
+
+Replace with:
+navigate("/hire/login")
+
+─────────────────────────────────────────
+PART 3 — ADD ROUTES
+─────────────────────────────────────────
+
+In client/src/App.tsx
+
+Make sure these routes exist:
+<Route path="/hire/login" component={HireLogin} />
+<Route path="/hire/dashboard" component={SourcingCopilot} />
+
+Remove this route if it exists:
+<Route path="/hire/setup" component={HireSetup} />
+
+Delete file client/src/pages/hire-setup.tsx
+
+─────────────────────────────────────────
+PART 4 — FORGOT PASSWORD PAGE
+─────────────────────────────────────────
+
+Create client/src/pages/hire-forgot-password.tsx
+
+Step 1 — Email entry:
+- Single email input
+- Submit button
+- POST /api/hiring/forgot-password
+- On success → show step 2
+
+Step 2 — Reset code entry:
+- 6-digit code input
+- New password input
+- Confirm new password input
+- Submit button
+- POST /api/hiring/reset-password
+- On success → navigate("/hire/login")
+  with success message "Password updated. Sign in."
+
+Add route in App.tsx:
+<Route path="/hire/forgot-password" 
+  component={HireForgotPassword} />
+
+─────────────────────────────────────────
+PART 5 — BACKEND FORGOT PASSWORD
+─────────────────────────────────────────
+
+In shared/schema.ts add columns to 
+hiring_companies table:
+- resetCode text (nullable)
+- resetCodeExpiry timestamp (nullable)
+
+Run: npm run db:push
+
+In server/hiring-routes.ts add:
+
+POST /api/hiring/forgot-password
+Body: { email }
+- Find company by email
+- If not found return 200 anyway 
+  (don't reveal if email exists)
+- Generate random 6-digit code
+- Store code + expiry (now + 15 minutes) in DB
+- Send email via Brevo:
+  Subject: "Reset your SkillVeda Hire password"
+  Body: "Your reset code is: [CODE]
+         This code expires in 15 minutes."
+- Return { success: true }
+
+POST /api/hiring/reset-password
+Body: { email, code, newPassword }
+- Find company by email
+- Check resetCode matches
+- Check resetCodeExpiry > now
+- If invalid → return 400 "Invalid or expired code"
+- Hash newPassword with bcrypt
+- Update password in DB
+- Clear resetCode and resetCodeExpiry
+- Return { success: true }
+
+─────────────────────────────────────────
+PART 6 — GOOGLE OAUTH
+─────────────────────────────────────────
+
+In server/hiring-routes.ts add:
+
+GET /api/hiring/auth/google
+- Build Google OAuth URL with these params:
+  client_id: process.env.GOOGLE_CLIENT_ID
+  redirect_uri: process.env.GOOGLE_REDIRECT_URI
+  response_type: code
+  scope: email profile
+  access_type: offline
+- Redirect to Google OAuth URL
+
+GET /api/hiring/auth/google/callback
+- Get code from query params
+- Exchange code for tokens via:
+  POST https://oauth2.googleapis.com/token
+  with client_id, client_secret, 
+  redirect_uri, code, grant_type
+- Get user info from:
+  GET https://www.googleapis.com/oauth2/v2/userinfo
+  with access_token
+- Check if company exists with this email
+- If exists → update googleId, generate JWT
+- If not exists → create new company:
+  companyName: Google profile name + " (Google)"
+  contactName: Google profile name
+  email: Google email
+  credits: 20
+  googleId: Google sub/id
+- Generate JWT token (30 days)
+- Redirect to:
+  /hire/dashboard?token=[JWT]&company=[JSON]
+
+In client/src/pages/hire-login.tsx
+Add this useEffect to handle Google callback:
+
+useEffect(() => {
+  const params = new URLSearchParams(
+    window.location.search
+  );
+  const token = params.get("token");
+  const companyParam = params.get("company");
+  if (token && companyParam) {
+    localStorage.setItem("hiring_token", token);
+    localStorage.setItem(
+      "hiring_company", 
+      decodeURIComponent(companyParam)
+    );
+    navigate("/hire/dashboard");
+  }
+}, []);
+
+BUT redirect should go to /hire/dashboard
+not /hire/login, so update callback to:
+/hire/dashboard?token=[JWT]&company=[JSON]
+
+And add the useEffect to SourcingCopilot.tsx
+instead since that's where they land:
+
+In SourcingCopilot.tsx useEffect add at start:
+const params = new URLSearchParams(
+  window.location.search
+);
+const googleToken = params.get("token");
+const googleCompany = params.get("company");
+if (googleToken) {
+  localStorage.setItem("hiring_token", googleToken);
+  if (googleCompany) {
+    localStorage.setItem(
+      "hiring_company",
+      decodeURIComponent(googleCompany)
+    );
+  }
+  window.history.replaceState(
+    {}, "", "/hire/dashboard"
+  );
+}
+
+─────────────────────────────────────────
+PART 7 — ADMIN PANEL
+─────────────────────────────────────────
+
+Create client/src/pages/hire-admin.tsx
+
+Simple page protected by password prompt:
+- Password input on first load
+- If wrong → show error
+- If correct → show admin panel
+
+Admin panel shows table of all companies:
+Columns: Company, Email, Name, Credits, 
+         Plan, Joined, Actions
+
+Actions per row:
+- [+10 Credits] button
+- [-10 Credits] button  
+- [Set Credits] button → prompts for number
+- [View] button → shows company details
+
+Search box at top to filter by company or email
+
+Add route in App.tsx:
+<Route path="/hire/admin" component={HireAdmin} />
+
+In server/hiring-routes.ts add:
+
+GET /api/hiring/admin/companies
+Header: x-admin-key: [value from env ADMIN_SECRET]
+- Return all companies:
+  id, companyName, contactName, email, 
+  credits, plan, createdAt
+
+POST /api/hiring/admin/credits
+Header: x-admin-key: [value from env ADMIN_SECRET]
+Body: { companyId, amount, action }
+action: "add" | "subtract" | "set"
+- Add: credits = credits + amount
+- Subtract: credits = max(0, credits - amount)
+- Set: credits = amount
+- Return updated company
+
+─────────────────────────────────────────
+PART 8 — ADD SECRETS TO REPLIT
+─────────────────────────────────────────
+
+Add these to Replit Secrets:
+GOOGLE_CLIENT_ID = (get from Google Console)
+GOOGLE_CLIENT_SECRET = (get from Google Console)
+GOOGLE_REDIRECT_URI = https://[your-replit-url]/api/hiring/auth/google/callback
+ADMIN_SECRET = skillveda-admin-2024
+
+─────────────────────────────────────────
+PART 9 — TEST CHECKLIST
+─────────────────────────────────────────
+
+After all changes run: npm run build
+
+Test in this order:
+1. Sign up with email → lands on dashboard
+2. Logout → back to login
+3. Login with same credentials → dashboard
+4. Forgot password → enter email → get code
+5. Reset password → login with new password
+6. Sign up with Google → dashboard
+7. /hire/admin → enter password → see companies
+8. Add 100 credits to test company → verify

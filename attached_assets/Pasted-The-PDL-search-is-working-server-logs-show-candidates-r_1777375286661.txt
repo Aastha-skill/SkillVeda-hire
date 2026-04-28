@@ -1,0 +1,48 @@
+The PDL search is working — server logs show candidates returned successfully (e.g. [search-filters] DONE — searchId=X, candidates=N), but the dashboard UI shows zero candidates after the search completes. The backend response is reaching the frontend but candidates aren't rendering.
+Please debug this by checking:
+
+Find the search results component — likely in client/src/SourcingCopilot.tsx or a similar file under client/src/. Identify how it consumes the response from POST /api/hiring/search-filters.
+Trace the response shape mismatch — the backend returns:
+
+json{
+  "candidates": [...],
+  "total": N,
+  "searchId": X,
+  "searchTitle": "...",
+  "paragraph": "...",
+  "filters": {...},
+  "criteria": null,
+  "cached": false,
+  "cachedAt": "...",
+  "cachedUntil": "...",
+  "creditsRemaining": N,
+  "warnings": []
+}
+Verify the frontend is reading candidates (or whatever array key it expects) from this exact shape. Look for any destructuring like const { results } = data instead of const { candidates } = data.
+
+Check for filter logic that's hiding candidates — search the dashboard component for any filter(), find(), or conditional rendering that could exclude all returned candidates. Specifically look for:
+
+isPreviewOnly filter (every candidate has isPreviewOnly: true)
+tier filtering (every candidate has tier: 1|2|3)
+matchScore filtering ("High" / "Medium" / "Low")
+Any aiScore > X filter
+"Hide T3" or "show T1 only" toggles that may default to on
+
+
+Check React state update — the component may be receiving the response but not calling setCandidates(data.candidates) correctly. Look for the response handler.
+Check for runtime errors — open browser DevTools console (F12 → Console tab) when triggering the search. Any red errors crash the render before candidates display. Common culprits:
+
+breakdown.X.score access fails if breakdown is {} or undefined
+metrics.csYears.toFixed() fails if csYears is null
+Missing fields in the candidate object that the UI assumes exist
+
+
+
+Please:
+
+Show me the exact response handler code in the dashboard component
+Identify any filtering/conditional that could hide all candidates
+Add a console.log("Response received:", data) and console.log("Candidates set:", data.candidates) to verify the data flow
+Report back what you find without making changes yet
+
+Don't refactor or change anything until we identify the root cause.

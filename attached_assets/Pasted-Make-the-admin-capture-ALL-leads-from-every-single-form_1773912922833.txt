@@ -1,0 +1,162 @@
+Make the admin capture ALL leads from every single 
+form on the entire website into the unified leads 
+table. Currently leads are scattered across multiple 
+tables. Fix this completely.
+
+════════════════════════════════════
+STEP 1 — AUDIT ALL FORMS ON WEBSITE
+════════════════════════════════════
+Find every form on the website that collects user 
+data. This includes:
+
+- Webinar registration form
+- Program enrollment / Apply Now forms
+- Job application forms
+- Contact us form
+- Newsletter / email signup
+- Job alert subscription form
+- Curriculum download form
+- Any other form that takes name/email/phone
+
+List all of them before making changes.
+
+════════════════════════════════════
+STEP 2 — UNIFIED LEADS TABLE STRUCTURE
+════════════════════════════════════
+Use the existing leads table but make sure it can 
+handle all lead types properly.
+
+The leads table should capture:
+- id (auto)
+- fullName
+- email
+- phone
+- leadType: one of these values:
+  WEBINAR / PROGRAM / JOB / CONTACT / 
+  NEWSLETTER / JOB_ALERT / CURRICULUM
+- sourcePage (which page the form was on)
+- status: NEW → CONTACTED → CONVERTED → NOT_INTERESTED
+- metadata (JSON) to store extra fields per lead type:
+
+  For WEBINAR leads metadata:
+  { webinarTitle, webinarDate, college, 
+    graduationYear, interest, linkedinProfile }
+
+  For PROGRAM leads metadata:
+  { programName, programSlug }
+
+  For JOB leads metadata:
+  { jobTitle, jobId, resumeUrl, coverLetter }
+
+  For CONTACT leads metadata:
+  { subject, message }
+
+  For JOB_ALERT leads metadata:
+  { alertKeywords, location, jobType }
+
+  For CURRICULUM leads metadata:
+  { programSlug, interest }
+
+- createdAt (timestamp)
+
+════════════════════════════════════
+STEP 3 — UPDATE EVERY FORM SUBMISSION
+════════════════════════════════════
+For EVERY form found in Step 1, update the 
+submission handler to:
+
+1. Save to the unified leads table with correct 
+   leadType and metadata
+2. Also keep saving to original table if it exists 
+   (do not remove old saves — keep both)
+3. This ensures zero data loss during transition
+
+Specific forms to update:
+
+WEBINAR REGISTRATION FORM:
+- Currently saves to webinar_registrations only
+- Also save to leads table with leadType: "WEBINAR"
+- Pass all webinar fields into metadata
+
+PROGRAM / APPLY NOW FORMS:
+- Save to leads table with leadType: "PROGRAM"
+- Pass program name and slug into metadata
+- Add to ALL program pages, not just PGDM page
+- Reuse existing LeadCaptureModal component
+
+JOB APPLICATION FORMS:
+- Save to leads table with leadType: "JOB"
+- Pass job title, job ID into metadata
+- Keep existing application table save as well
+
+CONTACT FORM:
+- Save to leads with leadType: "CONTACT"
+- Pass subject and message into metadata
+
+JOB ALERT SUBSCRIPTION:
+- Save to leads with leadType: "JOB_ALERT"
+- Pass alert preferences into metadata
+
+CURRICULUM DOWNLOAD:
+- Save to curriculum_leads as before
+- Also save to leads with leadType: "CURRICULUM"
+
+NEWSLETTER SIGNUP (if exists):
+- Save to leads with leadType: "NEWSLETTER"
+
+════════════════════════════════════
+STEP 4 — UPDATE ADMIN LEADS PANEL
+════════════════════════════════════
+Make sure the admin leads panel correctly shows 
+all lead types from the unified table:
+
+- WEBINAR tab → shows all leadType: WEBINAR
+- PROGRAM tab → shows all leadType: PROGRAM
+- JOB tab → shows all leadType: JOB
+- CONTACT tab → shows all leadType: CONTACT
+- ALL tab → shows every lead from all types
+
+For each lead in the table show:
+- Name, Email, Phone
+- Lead Type badge (color coded)
+- Source Page
+- Extra info from metadata:
+  → WEBINAR: show webinar date
+  → PROGRAM: show program name
+  → JOB: show job title applied for
+  → CONTACT: show message subject
+- Status badge
+- Date received
+- Actions: Update status, View details, Delete
+
+════════════════════════════════════
+STEP 5 — LEAD DETAIL VIEW
+════════════════════════════════════
+Clicking any lead opens a detail panel showing:
+- All lead fields
+- Full metadata in readable format
+- Status update dropdown
+- Notes field for admin to add comments
+- History of status changes with timestamps
+
+════════════════════════════════════
+STEP 6 — DASHBOARD STATS UPDATE
+════════════════════════════════════
+Update the admin dashboard stats cards to show:
+- Total leads (all types combined)
+- New leads today
+- New leads this week
+- Leads by type breakdown:
+  Webinar: X | Program: X | Job: X | Contact: X
+- Conversion rate (CONVERTED / total × 100)
+
+════════════════════════════════════
+RULES
+════════════════════════════════════
+- Do NOT delete any existing tables or form handlers
+- Do NOT break any existing forms on the website
+- Keep all existing saves — only ADD new saves
+- Every form must continue working exactly as before
+- Only add the unified leads table save alongside
+- Test every form after changes to confirm it works
+- Make sure admin can see 100% of all leads in one place

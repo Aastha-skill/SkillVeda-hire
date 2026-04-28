@@ -1,0 +1,254 @@
+Build a premium Jobs page for Skillveda.
+Do not break any existing features.
+
+════════════════════════════════════
+FONTS — Add to index.html head
+════════════════════════════════════
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+════════════════════════════════════
+CSS VARIABLES — Add globally
+════════════════════════════════════
+--ink: #0A0A0F
+--muted: #8888A0
+--border: rgba(0,0,0,0.08)
+--border-mid: rgba(0,0,0,0.12)
+--purple: #7C3AED
+--surface: #F4F4F6
+--off-white: #FAFAF9
+
+════════════════════════════════════
+STEP 1 — TWO NEW API ENDPOINTS
+Add both to server/routes.ts
+════════════════════════════════════
+
+POST /api/candidate/register
+Body: { fullName, email, phone }
+- If email not in student_profiles: INSERT
+- INSERT into leads: 
+  { fullName, email, phone, 
+    leadType:"JOB", sourcePage:"jobs-page" }
+- Return jwt.sign({email, name:fullName}, 
+  JWT_SECRET, {expiresIn:"30d"})
+  as { token, candidate:{name,email,phone} }
+
+GET /api/candidate/verify-token  
+Header: Authorization: Bearer <token>
+- Verify JWT → return {valid:true, candidate}
+  or {valid:false}
+
+════════════════════════════════════
+STEP 2 — REPLACE JOBS PAGE
+client/src/pages/jobs.tsx
+Keep all existing job fetch logic.
+════════════════════════════════════
+
+A) WELCOME BAR (above nav, only when logged in):
+- Black bg, 40px height
+- "Welcome back, [Name] — your profile is active"
+- Right side: "Sign out" button
+- On sign out: clear localStorage, reload
+
+B) HERO SECTION:
+Padding 140px 48px 80px, white bg, centered
+
+Eyebrow: "Work-Integrated Program" 
+(11px, uppercase, letter-spacing 1.5px, 
+#8888A0, small purple dot before)
+
+Headline (Instrument Serif, 72px, weight 400,
+letter-spacing -2px):
+Line 1: "Get Hired. Earn a Salary."
+Line 2 italic purple: "Earn Your PGDM."
+
+Subtext (17px, #8888A0, max-width 460px):
+"Apply to a Customer Success role at a top 
+SaaS company. Get assessed. Get placed. 
+Your degree runs alongside — all in 12 months."
+
+4 Steps (horizontal row, max-width 900px):
+1. Apply — "Browse and apply to open roles"
+2. Assessment — "Complete an AI evaluation"
+3. Review — "Our team reviews your profile"
+4. Placement — "We match you to a company"
+Step 1 circle filled black, rest white with border
+Connect with thin horizontal line
+
+Two CTAs:
+Primary button (black, 13px 28px padding):
+Text: "Join our Customer Success Community"
+href: https://chat.whatsapp.com/B74yk0TlvFi3FeC9UZckdx?mode=gi_t
+target: _blank
+
+Secondary (no border, muted):
+Text: "Learn how it works ↓"
+Scrolls to jobs section
+
+C) STATS STRIP:
+Background #FAFAF9, border top+bottom
+5 stats separated by vertical lines:
+10+ Hiring partners | 85% Placement rate | 
+₹8 LPA Average salary | 12 mo Duration | 
+Day 1 Employment
+Numbers: Instrument Serif 36px
+Labels: DM Sans 12px #8888A0
+
+D) JOBS LISTING:
+Padding 80px 48px, max-width 1100px centered
+
+Header: left = "Open Roles" label + 
+"X opportunities" (Instrument Serif 38px)
+Right = filter pills: All, Bangalore, 
+Delhi, Ahmedabad, Remote
+
+Grid: 2 columns, gap 1px, 
+background rgba(0,0,0,0.08),
+border 1px solid rgba(0,0,0,0.08),
+border-radius 16px, overflow hidden
+
+Each job card (white bg, pad 32px):
+- Hover: background #FAFAF9
+- Top row: company icon (40×40 rounded, border)
+  + company name (12px muted) 
+  + job title (Instrument Serif 20px)
+  + green dot top right
+- Tags: location, type, salary (salary = gold bg)
+- "Apply Now →" full-width button
+  Border 1px, white bg, ink color
+  Hover: black bg, white text
+  On click:
+  → If no token in localStorage: 
+    show registration modal, 
+    after success open apply modal for this job
+  → If token exists: 
+    verify then open apply modal directly
+
+════════════════════════════════════
+STEP 3 — REGISTRATION MODAL
+════════════════════════════════════
+Auto-trigger 600ms after page load
+IF localStorage "sv_candidate_token" missing
+or token verification fails.
+
+Overlay: rgba(10,10,15,0.5), blur(12px)
+Modal: 460px wide, border-radius 20px,
+slide-up + fade-in animation 0.3s
+
+Header:
+Eyebrow: "Free · One-time registration"
+Title (Instrument Serif 28px): 
+"Join our Customer Success Community"
+Subtitle: "Create your profile once. Get 
+access to all open roles, job updates, 
+and free CS resources — forever."
+
+Form fields:
+- Full name (required)
+- Email (required)
+- Phone (required)
+- Resume upload optional 
+  (dashed border area, "PDF or DOC · 2MB max")
+
+Submit: "Join Community & View Open Roles →"
+(full width, black button)
+
+On submit:
+- POST /api/candidate/register
+- localStorage.setItem("sv_candidate_token", token)
+- localStorage.setItem("sv_candidate_info", 
+  JSON.stringify(candidate))
+- Close modal, show welcome bar
+
+Terms: "By continuing you agree to our Terms"
+(11px centered muted)
+
+════════════════════════════════════
+STEP 4 — APPLY NOW MODAL
+════════════════════════════════════
+Modal header (with border-bottom):
+Company icon + job title + company name
+
+Form (pre-filled from localStorage):
+- Full name (pre-filled)
+- Email (pre-filled)
+- Phone (pre-filled)
+- Resume upload
+- Small note: "Details pre-filled from profile"
+
+Submit: "Submit application →" (black button)
+
+On submit:
+- POST existing /api/applications endpoint
+- POST /api/leads { leadType:"JOB", 
+  sourcePage:"jobs-page", fullName, email, phone }
+- Send Brevo confirmation email:
+  To: candidate email
+  Subject: "Application Received — [Job Title]"
+  Body: "Hi [Name], we received your application 
+  for [Job Title] at [Company]. Our team will 
+  reach out within 48 hours. — Team Skillveda"
+- Show SUCCESS STATE in same modal:
+
+SUCCESS STATE:
+Large green checkmark
+"Application Submitted!" (Instrument Serif 22px)
+"We'll review your profile and reach out 
+within 48 hours." (14px muted)
+
+WhatsApp card below (margin-top 20px):
+Background: #F0FDF4
+Border: 1px solid #A7F3D0
+Border-radius: 12px, padding 16px 20px
+Title: "Stay ahead in Customer Success" (14px bold)
+Text: "Get free webinars, CS job updates and 
+career resources — join our WhatsApp community."
+(12px muted)
+Green button full width:
+"Join Customer Success Community →"
+Background: #25D366, white text
+href: https://chat.whatsapp.com/B74yk0TlvFi3FeC9UZckdx?mode=gi_t
+target: _blank
+
+"Maybe later" link below (closes modal)
+
+════════════════════════════════════
+STEP 5 — ADMIN JOB POSTING CHANGE
+In admin-complete.tsx job create/edit form
+════════════════════════════════════
+KEEP: Title, Company, Location, Salary, 
+Job Type, Domain, Icon, isActive
+
+REMOVE: responsibilities, requirements, 
+skills, benefits array fields
+
+REPLACE with one textarea:
+Label: "Job Description"
+Min-height: 280px, resize vertical, full width
+Placeholder:
+"Paste your complete job description here.
+
+Include:
+• About the company
+• Role overview
+• Key responsibilities  
+• Requirements & qualifications
+• Skills needed
+• Benefits"
+
+Save to existing description field in jobs table.
+Display on frontend with white-space: pre-wrap.
+
+════════════════════════════════════
+RULES
+════════════════════════════════════
+- Do not delete existing job or application data
+- Do not touch any other pages
+- Keep existing job fetch and filter logic
+- Mobile: 1 column grid, full screen modals
+- All transitions: 0.15s ease
+- Test: register → see jobs → apply → 
+  success + WhatsApp card shows
+- Test: return visit → skip modal → 
+  see jobs directly with welcome bar
+- Test: admin pastes JD → saves → 
+  shows on jobs page correctly
