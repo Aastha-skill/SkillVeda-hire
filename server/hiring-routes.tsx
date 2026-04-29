@@ -30,7 +30,7 @@ const CACHE_LIFETIME_MS = 7 * 24 * 60 * 60 * 1000;
 
 // New companies get 5 free searches. Each fresh PDL search burns 1.
 // Cache hits are free.
-const SIGNUP_FREE_SEARCHES = 5;
+const SIGNUP_FREE_SEARCHES = 2;
 
 // ─── Middleware ───────────────────────────────────────────────
 export function authenticateCompany(req: any, res: any, next: any) {
