@@ -717,7 +717,7 @@ export function registerHiringRoutes(app: Express) {
       // v8.2: paragraph passed through so technical exclusions can be
       // dynamically dropped when user asks for technical/engineering roles.
       const { body: pdlBody, warnings, diagnostics } = buildPdlRequest(filterState, {
-        size: Math.min(Math.max(Number(size) || 20, 1), 100),
+        size: 10,
         paragraph: paragraphText || undefined,
       });
 
