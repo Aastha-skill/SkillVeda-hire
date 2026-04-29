@@ -31,6 +31,8 @@ import krishnaImg from "@assets/WhatsApp_Image_2026-04-13_at_1.19.17_PM_17760773
 import patriciaImg from "@assets/WhatsApp_Image_2026-04-13_at_12.34.47_PM_1776077374835.jpeg";
 import saurabhSImg from "@assets/WhatsApp_Image_2026-04-23_at_2.54.40_PM_1776936399712.jpeg";
 import shwetaImg from "@assets/WhatsApp_Image_2026-04-23_at_2.54.40_PM-2_1776936399712.jpeg";
+import utsavImg from "@assets/1754969776035_1777447922735.png";
+import dhirajImg from "@assets/1762240135415_1777447922735.jpeg";
 import shubhamImg from "@assets/63ed68f5-a6f4-47a2-8c88-90a17a58f9bd_1772887369377.jpeg";
 import yashoImg from "@assets/cd4939ef-96ea-4525-889a-2c0ba73f03c9_1772887709524.jpeg";
 import logoFlexiple from "@assets/681d7392-00f3-4c88-9b4c-6ce975f29fdc_1772888365785.jpeg";
@@ -144,7 +146,7 @@ export default function Home() {
       {/* Hero Carousel */}
       <HeroCarousel>
         {/* Slide 1 — Webinar Banner */}
-        <WebinarSlide himanshuImg={saurabhSImg} preritImg={shwetaImg} onRegister={openWebinarModal} />
+        <WebinarSlide himanshuImg={utsavImg} preritImg={dhirajImg} onRegister={openWebinarModal} />
 
         {/* Slide 2 — Original Hero */}
         <section className="relative overflow-hidden flex items-center" style={{ background: "linear-gradient(135deg, #0f0a2e 0%, #1a1145 30%, #0d1b3e 60%, #0a0f2e 100%)", minHeight: "100%" }}>
@@ -192,7 +194,7 @@ export default function Home() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                   <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-full" style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
-                    <span className="text-white/90 text-sm">📅 Friday, 25th April, 2026 · 12:00 PM – 1:00 PM IST</span>
+                    <span className="text-white/90 text-sm">📅 Saturday, 2nd May, 2026 · 12:00 PM – 1:00 PM IST</span>
                   </div>
                 </div>
               </div>
@@ -381,7 +383,7 @@ export default function Home() {
 
               <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3 text-center">
                 <p className="text-sm font-bold text-amber-900">
-                  🔔 Don't miss it! Save the date — <span className="text-orange-600">Friday, 25th April, 2026 · 12:00 PM IST</span>
+                  🔔 Don't miss it! Save the date — <span className="text-orange-600">Saturday, 2nd May, 2026 · 12:00 PM IST</span>
                 </p>
                 <p className="text-xs font-semibold text-amber-700 mt-1">
                   Add it to your calendar so you don't forget!
@@ -394,7 +396,7 @@ export default function Home() {
                   <span className="text-lg">📅</span>
                   <div>
                     <p className="text-sm font-medium text-gray-800">Date</p>
-                    <p className="text-sm text-gray-600">Saturday, 11th April, 2026</p>
+                    <p className="text-sm text-gray-600">Saturday, 2nd May, 2026</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">

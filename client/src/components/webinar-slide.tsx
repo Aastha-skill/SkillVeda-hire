@@ -314,12 +314,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
         <div className="ws2-speaker-card">
           <div className="ws2-photo-wrap">
             <span className="ws2-speaker-badge ws2-badge-purple">Speaker</span>
-            <img src={himanshuImg} alt="Saurabh S" />
+            <img src={himanshuImg} alt="Utsav Tiwari" />
             <div className="ws2-photo-overlay" />
           </div>
           <div className="ws2-speaker-info">
-            <div className="ws2-speaker-name">Saurabh S</div>
-            <div className="ws2-speaker-role">CX Global Operations · Groupon</div>
+            <div className="ws2-speaker-name">Utsav Tiwari</div>
+            <div className="ws2-speaker-role">Senior CSM & CS Ops</div>
           </div>
         </div>
 
@@ -329,12 +329,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
             Live Webinar
           </div>
           <div className="ws2-headline">
-            How to Break Into<br />
-            <span className="ws2-gradient">Customer Success</span><br />
-            of AI & SaaS Companies
+            Customer Success<br />
+            <span className="ws2-gradient">in the Age of AI</span><br />
+            What Will Change in the Next 3 Years
           </div>
           <div className="ws2-date-box">
-            <div className="ws2-date-text">25th April, 2026</div>
+            <div className="ws2-date-text">2nd May, 2026</div>
             <div className="ws2-time-text">12:00 PM – 1:00 PM IST</div>
           </div>
           <div className="ws2-free-label">— Free & Live Session —</div>
@@ -346,12 +346,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
         <div className="ws2-speaker-card">
           <div className="ws2-photo-wrap">
             <span className="ws2-speaker-badge ws2-badge-teal">Speaker</span>
-            <img src={preritImg} alt="Shweta Kathuria" />
+            <img src={preritImg} alt="Dhiraj Patel" />
             <div className="ws2-photo-overlay" />
           </div>
           <div className="ws2-speaker-info">
-            <div className="ws2-speaker-name">Shweta Kathuria</div>
-            <div className="ws2-speaker-role">Sr. Customer Success Specialist</div>
+            <div className="ws2-speaker-name">Dhiraj Patel</div>
+            <div className="ws2-speaker-role">Founder & CEO · RetainSure</div>
           </div>
         </div>
       </div>

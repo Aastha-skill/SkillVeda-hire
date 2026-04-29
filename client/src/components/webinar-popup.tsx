@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { X, Calendar, Clock, Monitor } from "lucide-react";
 
-const WEBINAR_DATE = "April 25, 2026";
+const WEBINAR_DATE = "May 2, 2026";
 const WEBINAR_TIME = "12:00 PM – 1:00 PM IST";
 
 interface FormData {
