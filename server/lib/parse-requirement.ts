@@ -18,7 +18,8 @@ export interface ExtractedRequirement {
     noticePeriodDays?: number;
     trajectoryDirection?: "up" | "lateral_or_up" | "any";
     culturalNotes?: string;
-    relevantSkills?: string[];        // NEW: skills are scoring signals not filters
+    relevantSkills?: string[];
+    hiringCompanyName?: string;       // NEW: who is doing the hiring
   };
   confidence: Record<string, "high" | "medium" | "low">;
   missingFields: string[];
@@ -34,6 +35,8 @@ export interface ExtractedRequirement {
 //   3. Company size mapped to PDL canonical buckets
 //   4. Education/language NOT extracted as filters by default
 //   5. Funding stage NOT extracted as filter
+//   6. NEW: hiring company vs target candidate companies are distinct.
+//      Hiring company NEVER goes in `companies` filter.
 // ═══════════════════════════════════════════════════════════════════════
 
 const SYSTEM_PROMPT = `You are a hiring requirements parser for a Customer Success recruitment platform serving Indian B2B companies.
@@ -48,7 +51,7 @@ CRITICAL ARCHITECTURE — what goes where:
 
   scoringContext (used by AI scoring engine to RANK candidates):
     compensationRangeLPA, noticePeriodDays, relevantSkills,
-    trajectoryDirection, culturalNotes
+    trajectoryDirection, culturalNotes, hiringCompanyName
 
   preferences (soft signals for scorer):
     accountScope, hiringArchetype, companyStage, responsibilityFocus
@@ -138,6 +141,62 @@ CRITICAL RULES:
 
 14. Empty arrays/null fields are FINE — recruiters provide partial info.
 
+15. ★★★ HIRING COMPANY vs TARGET CANDIDATE COMPANIES — this matters ★★★
+
+    The "companies" filter is for TARGET CANDIDATE companies — companies the
+    candidate currently works at OR has worked at in the past. It restricts
+    the search to candidates with that company in their work history.
+
+    The HIRING COMPANY (the company that wrote this JD, the company doing
+    the hiring) is NEVER a candidate filter. Putting the hiring company in
+    "companies" returns zero results because the candidate pool doesn't
+    include people already working at the hiring company (and even if it
+    did, that's not what the user wants).
+
+    Detect the hiring company from phrases like:
+      - "X is hiring..."
+      - "X is looking for..."
+      - "We at X are seeking..."
+      - "X seeks a..."
+      - "Join X as a..."
+      - "X needs a..."
+      - "Position at X..."
+      - "Hiring for X..."
+
+    When you detect a hiring company:
+      - Save the company name to scoringContext.hiringCompanyName
+      - DO NOT add it to filters.companies
+
+    Only add a company to filters.companies if it is described as a
+    candidate's work history. Trigger phrases for target companies:
+      - "candidates from X"
+      - "experience at X"
+      - "currently or previously at X"
+      - "worked at X"
+      - "ex-X" or "ex X"
+      - "people from X, Y, or Z"
+      - "must have worked at X"
+
+    Examples:
+      INPUT: "ChQMe Commerce Private Limited is hiring a CSM"
+      OUTPUT: filters.companies=[], scoringContext.hiringCompanyName="ChQMe Commerce Private Limited"
+
+      INPUT: "We're hiring a CSM, candidates from Sprinklr or BrowserStack preferred"
+      OUTPUT: filters.companies=["Sprinklr", "BrowserStack"], scoringContext.hiringCompanyName=null
+
+      INPUT: "Acme is hiring a CSM, looking for candidates with experience at Freshworks or Zoho"
+      OUTPUT: filters.companies=["Freshworks", "Zoho"], scoringContext.hiringCompanyName="Acme"
+
+      INPUT: "Hiring CSM at our Bangalore office, preferred from MoEngage or CleverTap"
+      OUTPUT: filters.companies=["MoEngage", "CleverTap"], scoringContext.hiringCompanyName=null
+        (no specific hiring company name mentioned; just "our office")
+
+      INPUT: "Senior CSM, 5-8 years, B2B SaaS, must currently be at Sprinklr, BrowserStack, or CleverTap"
+      OUTPUT: filters.companies=["Sprinklr", "BrowserStack", "CleverTap"], scoringContext.hiringCompanyName=null
+
+    When in doubt, leave filters.companies empty. False company filters
+    return zero candidates and frustrate users; missing them is recoverable.
+
 Always return strict JSON via the extract_requirement tool.`;
 
 const EXTRACT_TOOL = {
@@ -158,7 +217,11 @@ const EXTRACT_TOOL = {
           industries: { type: "array", items: { type: "string" }, description: "PDL canonical industry strings" },
           companySize: { type: ["string", "null"], description: "Startup, Growth, Mid-market, Enterprise, or Any" },
           excludedCompanies: { type: "array", items: { type: "string" } },
-          companies: { type: "array", items: { type: "string" } },
+          companies: {
+            type: "array",
+            items: { type: "string" },
+            description: "TARGET candidate companies (their work history). NEVER the hiring company."
+          },
         },
       },
       preferences: {
@@ -189,6 +252,10 @@ const EXTRACT_TOOL = {
             type: "array",
             items: { type: "string" },
             description: "Hard CS skills only (Salesforce, Gainsight, etc.). NOT soft skills."
+          },
+          hiringCompanyName: {
+            type: ["string", "null"],
+            description: "The company doing the hiring (NOT a candidate filter). Used by scorer for context only."
           },
         },
       },
@@ -277,6 +344,7 @@ export async function parseRequirement(paragraph: string): Promise<ExtractedRequ
       trajectoryDirection: extracted.scoringContext?.trajectoryDirection || undefined,
       culturalNotes: extracted.scoringContext?.culturalNotes || undefined,
       relevantSkills: cleanArray(extracted.scoringContext?.relevantSkills),
+      hiringCompanyName: extracted.scoringContext?.hiringCompanyName || undefined,
     },
     confidence: extracted.confidence || {},
     missingFields: cleanArray(extracted.missingFields),
