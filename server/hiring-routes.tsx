@@ -16,6 +16,7 @@ import { z } from "zod";
 import { createHash } from "crypto";
 import { parseRequirement } from "./lib/parse-requirement";
 import { buildPdlRequest, type SearchFilterState } from "./lib/pdl-query-builder";
+import { scoreAllCandidates } from "./cs-scoring-engine";
 
 const HIRING_JWT_SECRET =
   process.env.JWT_SECRET || "skilveda-hire-secret-2024";
@@ -738,7 +739,7 @@ export function registerHiringRoutes(app: Express) {
         industry: p.job_company_industry,
       })));
 
-      const candidates = data.map(mapPdlToCandidate);
+      let candidates = data.map(mapPdlToCandidate);
 
       // ── ZERO-RESULT EARLY RETURN ──────────────────────────
       if (candidates.length === 0) {
@@ -774,6 +775,38 @@ export function registerHiringRoutes(app: Express) {
             "No candidates matched these filters. Try broadening location, experience, or skills. (No credit charged.)",
           ],
         });
+      }
+
+      // ── AI SCORING ────────────────────────────────────────
+      // Replace the fallback tier-3/score-45 with real rubric-based scoring.
+      // If scoring fails, log and continue with unscored candidates so the
+      // user still gets results.
+      const scoringApiKey = process.env.ANTHROPIC_API_KEY;
+      if (scoringApiKey && paragraphText && paragraphText.trim().length > 0) {
+        const scoringStart = Date.now();
+        try {
+          candidates = await scoreAllCandidates(
+            candidates,
+            paragraphText,
+            {
+              companyName: company.companyName,
+              industry: filterState.industries?.[0] || "B2B SaaS",
+            },
+            scoringApiKey,
+          );
+          console.log(
+            `[search-filters] SCORING DONE — ${candidates.length} candidates scored in ${Date.now() - scoringStart}ms`,
+          );
+        } catch (err) {
+          console.error(
+            `[search-filters] SCORING FAILED after ${Date.now() - scoringStart}ms — continuing with unscored candidates:`,
+            err,
+          );
+        }
+      } else {
+        console.log(
+          `[search-filters] SCORING SKIPPED — apiKey=${!!scoringApiKey}, paragraph=${!!paragraphText}`,
+        );
       }
 
       // ── DEDUCT CREDIT ─────────────────────────────────────
