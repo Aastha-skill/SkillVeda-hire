@@ -317,12 +317,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
         <div className="ws2-speaker-card">
           <div className="ws2-photo-wrap">
             <span className="ws2-speaker-badge ws2-badge-purple">Speaker</span>
-            <img src={himanshuImg} alt="Dhiraj Patel" />
+            <img src={himanshuImg} alt="Utsav Tiwari" />
             <div className="ws2-photo-overlay" />
           </div>
           <div className="ws2-speaker-info">
-            <div className="ws2-speaker-name">Dhiraj Patel</div>
-            <div className="ws2-speaker-role">Founder & CEO · RetainSure</div>
+            <div className="ws2-speaker-name">Utsav Tiwari</div>
+            <div className="ws2-speaker-role">Senior CSM & CS Ops</div>
           </div>
         </div>
 
@@ -349,12 +349,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
         <div className="ws2-speaker-card">
           <div className="ws2-photo-wrap">
             <span className="ws2-speaker-badge ws2-badge-teal">Speaker</span>
-            <img src={preritImg} alt="Utsav Tiwari" />
+            <img src={preritImg} alt="Dhiraj Patel" />
             <div className="ws2-photo-overlay" />
           </div>
           <div className="ws2-speaker-info">
-            <div className="ws2-speaker-name">Utsav Tiwari</div>
-            <div className="ws2-speaker-role">Senior CSM & CS Ops</div>
+            <div className="ws2-speaker-name">Dhiraj Patel</div>
+            <div className="ws2-speaker-role">Founder & CEO · RetainSure</div>
           </div>
         </div>
       </div>
