@@ -1364,7 +1364,8 @@ export function registerHiringRoutes(app: Express) {
   app.get("/api/hiring/admin/companies", async (req, res) => {
     try {
       const key = req.headers["x-admin-key"];
-      const expected = process.env.ADMIN_SECRET || "skillveda-admin-2024";
+      const expected = process.env.ADMIN_SECRET;
+      if (!expected) return res.status(500).json({ error: "ADMIN_SECRET not configured" });
       if (key !== expected) return res.status(401).json({ error: "Unauthorized" });
 
       const rows = await db
@@ -1392,7 +1393,8 @@ export function registerHiringRoutes(app: Express) {
   app.post("/api/hiring/admin/credits", async (req, res) => {
     try {
       const key = req.headers["x-admin-key"];
-      const expected = process.env.ADMIN_SECRET || "skillveda-admin-2024";
+      const expected = process.env.ADMIN_SECRET;
+      if (!expected) return res.status(500).json({ error: "ADMIN_SECRET not configured" });
       if (key !== expected) return res.status(401).json({ error: "Unauthorized" });
 
       const { companyId, amount, action } = req.body;
