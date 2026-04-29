@@ -146,7 +146,7 @@ export default function Home() {
       {/* Hero Carousel */}
       <HeroCarousel>
         {/* Slide 1 — Webinar Banner */}
-        <WebinarSlide himanshuImg={utsavImg} preritImg={dhirajImg} onRegister={openWebinarModal} />
+        <WebinarSlide himanshuImg={dhirajImg} preritImg={utsavImg} onRegister={openWebinarModal} />
 
         {/* Slide 2 — Original Hero */}
         <section className="relative overflow-hidden flex items-center" style={{ background: "linear-gradient(135deg, #0f0a2e 0%, #1a1145 30%, #0d1b3e 60%, #0a0f2e 100%)", minHeight: "100%" }}>

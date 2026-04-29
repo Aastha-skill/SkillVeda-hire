@@ -97,13 +97,16 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
           object-fit: cover;
           display: block;
         }
+        .ws2-photo-wrap {
+          background: #06061a;
+        }
         .ws2-photo-overlay {
           position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 100px;
-          background: linear-gradient(to top, rgba(6,6,26,0.95), transparent);
+          inset: 0;
+          background:
+            linear-gradient(to bottom, rgba(6,6,26,0.6) 0%, transparent 30%, transparent 58%, rgba(6,6,26,0.97) 100%),
+            linear-gradient(to right, rgba(6,6,26,0.65) 0%, transparent 25%, transparent 75%, rgba(6,6,26,0.65) 100%),
+            radial-gradient(ellipse at 50% 0%, rgba(6,6,26,0.55) 0%, transparent 60%);
           pointer-events: none;
         }
         .ws2-speaker-info {
@@ -314,12 +317,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
         <div className="ws2-speaker-card">
           <div className="ws2-photo-wrap">
             <span className="ws2-speaker-badge ws2-badge-purple">Speaker</span>
-            <img src={himanshuImg} alt="Utsav Tiwari" />
+            <img src={himanshuImg} alt="Dhiraj Patel" />
             <div className="ws2-photo-overlay" />
           </div>
           <div className="ws2-speaker-info">
-            <div className="ws2-speaker-name">Utsav Tiwari</div>
-            <div className="ws2-speaker-role">Senior CSM & CS Ops</div>
+            <div className="ws2-speaker-name">Dhiraj Patel</div>
+            <div className="ws2-speaker-role">Founder & CEO · RetainSure</div>
           </div>
         </div>
 
@@ -346,12 +349,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
         <div className="ws2-speaker-card">
           <div className="ws2-photo-wrap">
             <span className="ws2-speaker-badge ws2-badge-teal">Speaker</span>
-            <img src={preritImg} alt="Dhiraj Patel" />
+            <img src={preritImg} alt="Utsav Tiwari" />
             <div className="ws2-photo-overlay" />
           </div>
           <div className="ws2-speaker-info">
-            <div className="ws2-speaker-name">Dhiraj Patel</div>
-            <div className="ws2-speaker-role">Founder & CEO · RetainSure</div>
+            <div className="ws2-speaker-name">Utsav Tiwari</div>
+            <div className="ws2-speaker-role">Senior CSM & CS Ops</div>
           </div>
         </div>
       </div>
