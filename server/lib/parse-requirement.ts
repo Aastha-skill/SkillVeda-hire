@@ -17,9 +17,9 @@ export interface ExtractedRequirement {
     compensationRangeLPA?: [number | null, number | null];
     noticePeriodDays?: number;
     trajectoryDirection?: "up" | "lateral_or_up" | "any";
-    culturalNotes?: string;
     relevantSkills?: string[];
-    hiringCompanyName?: string;       // NEW: who is doing the hiring
+    hiringCompanyName?: string;
+    // culturalNotes intentionally removed — not on LinkedIn profiles, creates false negatives
   };
   confidence: Record<string, "high" | "medium" | "low">;
   missingFields: string[];
@@ -27,16 +27,16 @@ export interface ExtractedRequirement {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// SYSTEM PROMPT — calibrated for PDL filter strengths
+// SYSTEM PROMPT — built from research on real Indian CS job postings.
+// Sources: Salesforce India JDs, Indeed Bengaluru postings, BPO industry
+// resume keyword studies (Concentrix, TTEC, naukri.com), Zendesk India,
+// Atomicwork/Richpanel/Postman SaaS CSM postings.
 //
-// Key changes vs. previous prompt:
-//   1. Skills now extracted as scoringContext.relevantSkills (not filters)
-//   2. Industries map to canonical PDL industries (not user labels)
-//   3. Company size mapped to PDL canonical buckets
-//   4. Education/language NOT extracted as filters by default
-//   5. Funding stage NOT extracted as filter
-//   6. NEW: hiring company vs target candidate companies are distinct.
-//      Hiring company NEVER goes in `companies` filter.
+// Three CS streams covered:
+//   A) BPO/Voice/Support roles
+//   B) SaaS Customer Success (CSM/AM/TAM)
+//   C) Customer-facing/Sales-adjacent (demos, pre-sales)
+// Plus: D) Senior/Leadership skills layered on top
 // ═══════════════════════════════════════════════════════════════════════
 
 const SYSTEM_PROMPT = `You are a hiring requirements parser for a Customer Success recruitment platform serving Indian B2B companies.
@@ -51,7 +51,7 @@ CRITICAL ARCHITECTURE — what goes where:
 
   scoringContext (used by AI scoring engine to RANK candidates):
     compensationRangeLPA, noticePeriodDays, relevantSkills,
-    trajectoryDirection, culturalNotes, hiringCompanyName
+    trajectoryDirection, hiringCompanyName
 
   preferences (soft signals for scorer):
     accountScope, hiringArchetype, companyStage, responsibilityFocus
@@ -69,7 +69,7 @@ CRITICAL RULES:
 5. ROLE MAPPING — map informal terms to canonical UI labels:
    - "CSM", "customer success manager" → "Customer Success"
    - "support exec", "customer support" → "Customer Support"
-   - "customer service rep" → "Customer Service"
+   - "customer service rep", "CSR" → "Customer Service"
    - "CX manager", "customer experience" → "Customer Experience"
    - "customer engagement" → "Customer Engagement"
    - "retention specialist" → "Customer Retention"
@@ -92,8 +92,7 @@ CRITICAL RULES:
 
 7. NEVER include "Technical CSM" — platform excludes those by default.
 
-8. INDUSTRIES — emit PDL CANONICAL industry strings, NOT user labels.
-   Map common shorthand to canonicals:
+8. INDUSTRIES — emit PDL CANONICAL industry strings, NOT user labels:
    - "SaaS", "software", "tech" → ["computer software", "internet", "information technology and services"]
    - "fintech" → ["financial services", "banking", "internet"]
    - "edtech" → ["e-learning", "education management", "internet"]
@@ -112,6 +111,7 @@ CRITICAL RULES:
    - "insurance" → ["insurance"]
    - "biotech", "pharma" → ["biotechnology", "pharmaceuticals"]
    - "consumer goods", "FMCG" → ["consumer goods", "food & beverages"]
+   - "BPO", "call center", "outsourcing" → ["outsourcing/offshoring", "information technology and services"]
 
    Do NOT emit: "SaaS", "Tech", "B2B", "B2C", "Startup" — these are not
    PDL canonicals and will return 0 results. ALWAYS emit canonicals.
@@ -125,12 +125,112 @@ CRITICAL RULES:
    If no size mentioned, leave as null.
 
 10. SKILLS go in scoringContext.relevantSkills, NOT in filters.
-    Extract HARD CS skills only:
-    - Tools: "Salesforce", "Gainsight", "ChurnZero", "Totango", "Intercom",
-      "Zendesk", "HubSpot", "Freshdesk", "Mixpanel", "Looker", "Tableau"
-    - Methodologies: "QBR", "EBR", "renewals", "churn analysis"
-    Do NOT extract soft skills: "communication", "leadership", "teamwork",
-    "problem solving", "stakeholder management" — these are useless filters.
+
+    The Indian CS market has THREE distinct streams, each with its own
+    vocabulary. Extract any concrete skill, tool, methodology, or activity
+    from these vocabularies that the paragraph mentions. Do not be limited
+    to a fixed list — if a paragraph mentions a clearly concrete CS skill
+    not in the examples below, capture it anyway.
+
+    --- STREAM A: BPO / Voice / Customer Support ---
+
+    Activities:
+      voice support, chat support, email support, ticket handling,
+      query resolution, complaint handling, escalation handling,
+      first call resolution (FCR), customer outreach, follow-up calls,
+      surveys, collections, inbound calls, outbound calls,
+      issue resolution, troubleshooting, customer documentation,
+      ticket documentation, knowledge base management, live chat
+
+    Methodologies / Metrics:
+      CSAT, AHT (average handle time), FCR (first call resolution),
+      quality score, SLA management, escalation matrix,
+      neutral accent, voice modulation, active listening
+
+    Tools commonly seen on LinkedIn:
+      Salesforce CRM, Zendesk, Freshdesk, ServiceNow, ServiceCloud,
+      Avaya, Genesys, Cisco, Five9, Talkdesk, NICE inContact,
+      Microsoft Office, MS Teams, Slack, Outlook
+
+    Languages (often listed on Indian profiles):
+      English, Hindi, Tamil, Telugu, Bengali, Marathi, Kannada,
+      Malayalam, Gujarati, Punjabi (extract as scoringContext.relevantSkills
+      if specifically mentioned as a job requirement)
+
+    --- STREAM B: SaaS Customer Success (CSM / AM / TAM) ---
+
+    Activities:
+      customer onboarding, user onboarding, product adoption,
+      account management, account expansion, upsell, cross-sell,
+      renewals, contract renewals, churn prevention, retention,
+      customer health monitoring, success planning, business reviews,
+      strategic account planning, customer advocacy, voice of customer,
+      executive engagement, escalation management
+
+    Methodologies / Metrics:
+      QBR (quarterly business review), EBR (executive business review),
+      MBR (monthly business review), NPS, CSAT, CES (customer effort score),
+      health scores, churn analysis, retention strategy,
+      NRR (net revenue retention), GRR (gross revenue retention),
+      logo retention, expansion revenue, time-to-value (TTV),
+      product adoption metrics, feature adoption, DAU/MAU tracking,
+      success plays, playbooks, customer journey mapping,
+      success criteria definition, kickoff calls
+
+    Tools commonly seen on LinkedIn:
+      Gainsight, ChurnZero, Totango, Catalyst, Vitally, ClientSuccess,
+      Salesforce, HubSpot, Pendo, Amplitude, Mixpanel,
+      Heap, Looker, Tableau, Power BI, Mode,
+      Slack, Loom, Calendly, Zoom, Microsoft Teams, Notion, Confluence,
+      Outreach, Salesloft, Apollo (for CS-Sales hybrid roles)
+
+    --- STREAM C: Customer-Facing / Sales-Adjacent / Pre-Sales ---
+
+    Activities:
+      live demos, product demos, product walkthroughs,
+      sales support, pre-sales support, demo scheduling,
+      lead qualification, lead nurturing, customer engagement,
+      proof of concept (POC), trial management, conversion support,
+      customer education, training delivery, webinar facilitation,
+      customer outreach, cold outreach, warm calls
+
+    Methodologies:
+      MEDDIC, BANT, SPIN selling (when relevant to demo/pre-sales),
+      consultative selling, solution selling, value selling
+
+    Tools commonly seen on LinkedIn:
+      HubSpot, Salesforce, Outreach, Salesloft, Apollo,
+      Calendly, Zoom, Loom, Demodesk, Demostack,
+      LinkedIn Sales Navigator, Lusha, ZoomInfo
+
+    --- STREAM D: Senior / Leadership ---
+
+    Activities:
+      team leadership, hiring, performance management, coaching,
+      CS strategy, CS operations, scaling CS, segmentation strategy,
+      tech-touch / digital CS, customer marketing, customer programs,
+      executive sponsorship, board reporting, P&L responsibility
+
+    --- WHAT NOT TO EXTRACT AS SKILLS ---
+
+    Do NOT extract pure soft skills as relevantSkills — they appear on
+    every profile and are useless as scoring signals:
+      "communication skills", "leadership", "teamwork", "team player",
+      "problem solving", "good attitude", "fast learner", "self-driven",
+      "proactive", "collaborative", "stakeholder management" (unless
+      explicitly named as a hard requirement, e.g., "must manage
+      C-level stakeholders at Fortune 500 accounts").
+
+    Do NOT extract operational/cultural notes as skills:
+      "rotational shifts", "night shifts", "willing to travel",
+      "flexible with hours", "remote working preferred"
+    These do NOT appear on LinkedIn profiles and would create false
+    negatives. They are sorted out in screening calls, not via search.
+
+    BE EXTRACTIVE: if a concrete CS activity, tool, methodology, or
+    metric appears in the paragraph and isn't a soft skill, capture it.
+    Don't over-restrict to the example lists above — those are guides,
+    not exhaustive whitelists.
 
 11. compensationRangeLPA: "10-15 LPA" → [10, 15]. "under 20 LPA" → [null, 20].
     "above 8 LPA" → [8, null]. Goes in scoringContext.
@@ -141,58 +241,40 @@ CRITICAL RULES:
 
 14. Empty arrays/null fields are FINE — recruiters provide partial info.
 
-15. ★★★ HIRING COMPANY vs TARGET CANDIDATE COMPANIES — this matters ★★★
+15. ★★★ HIRING COMPANY vs TARGET CANDIDATE COMPANIES ★★★
 
-    The "companies" filter is for TARGET CANDIDATE companies — companies the
-    candidate currently works at OR has worked at in the past. It restricts
-    the search to candidates with that company in their work history.
+    The "companies" filter is for TARGET CANDIDATE companies — companies
+    the candidate currently works at OR has worked at in the past.
 
-    The HIRING COMPANY (the company that wrote this JD, the company doing
-    the hiring) is NEVER a candidate filter. Putting the hiring company in
-    "companies" returns zero results because the candidate pool doesn't
-    include people already working at the hiring company (and even if it
-    did, that's not what the user wants).
+    The HIRING COMPANY (the company doing the hiring) is NEVER a candidate
+    filter. Putting the hiring company in "companies" returns zero results.
 
     Detect the hiring company from phrases like:
-      - "X is hiring..."
-      - "X is looking for..."
-      - "We at X are seeking..."
-      - "X seeks a..."
-      - "Join X as a..."
-      - "X needs a..."
-      - "Position at X..."
-      - "Hiring for X..."
+      "X is hiring...", "X is looking for...", "We at X are seeking...",
+      "X seeks a...", "Join X as a...", "X needs a...",
+      "Position at X...", "Hiring for X..."
 
     When you detect a hiring company:
       - Save the company name to scoringContext.hiringCompanyName
       - DO NOT add it to filters.companies
 
-    Only add a company to filters.companies if it is described as a
-    candidate's work history. Trigger phrases for target companies:
-      - "candidates from X"
-      - "experience at X"
-      - "currently or previously at X"
-      - "worked at X"
-      - "ex-X" or "ex X"
-      - "people from X, Y, or Z"
-      - "must have worked at X"
+    Only add a company to filters.companies if it is described as
+    candidate work history. Trigger phrases:
+      "candidates from X", "experience at X", "currently or previously at X",
+      "worked at X", "ex-X", "people from X, Y, or Z", "must have worked at X"
 
     Examples:
       INPUT: "ChQMe Commerce Private Limited is hiring a CSM"
-      OUTPUT: filters.companies=[], scoringContext.hiringCompanyName="ChQMe Commerce Private Limited"
+      OUTPUT: filters.companies=[],
+              scoringContext.hiringCompanyName="ChQMe Commerce Private Limited"
 
       INPUT: "We're hiring a CSM, candidates from Sprinklr or BrowserStack preferred"
-      OUTPUT: filters.companies=["Sprinklr", "BrowserStack"], scoringContext.hiringCompanyName=null
+      OUTPUT: filters.companies=["Sprinklr", "BrowserStack"],
+              scoringContext.hiringCompanyName=null
 
       INPUT: "Acme is hiring a CSM, looking for candidates with experience at Freshworks or Zoho"
-      OUTPUT: filters.companies=["Freshworks", "Zoho"], scoringContext.hiringCompanyName="Acme"
-
-      INPUT: "Hiring CSM at our Bangalore office, preferred from MoEngage or CleverTap"
-      OUTPUT: filters.companies=["MoEngage", "CleverTap"], scoringContext.hiringCompanyName=null
-        (no specific hiring company name mentioned; just "our office")
-
-      INPUT: "Senior CSM, 5-8 years, B2B SaaS, must currently be at Sprinklr, BrowserStack, or CleverTap"
-      OUTPUT: filters.companies=["Sprinklr", "BrowserStack", "CleverTap"], scoringContext.hiringCompanyName=null
+      OUTPUT: filters.companies=["Freshworks", "Zoho"],
+              scoringContext.hiringCompanyName="Acme"
 
     When in doubt, leave filters.companies empty. False company filters
     return zero candidates and frustrate users; missing them is recoverable.
@@ -247,11 +329,10 @@ const EXTRACT_TOOL = {
           compensationRangeLPA: { type: ["array", "null"], items: { type: ["number", "null"] } },
           noticePeriodDays: { type: ["number", "null"] },
           trajectoryDirection: { type: ["string", "null"] },
-          culturalNotes: { type: ["string", "null"] },
           relevantSkills: {
             type: "array",
             items: { type: "string" },
-            description: "Hard CS skills only (Salesforce, Gainsight, etc.). NOT soft skills."
+            description: "Concrete CS skills/tools/methodologies from BPO, SaaS CSM, or sales-adjacent streams. NOT soft skills, NOT cultural notes."
           },
           hiringCompanyName: {
             type: ["string", "null"],
@@ -282,7 +363,7 @@ export async function parseRequirement(paragraph: string): Promise<ExtractedRequ
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: "claude-sonnet-4-5",
+      model: "claude-haiku-4-5",
       max_tokens: 2048,
       system: SYSTEM_PROMPT,
       tools: [EXTRACT_TOOL],
@@ -315,16 +396,13 @@ export async function parseRequirement(paragraph: string): Promise<ExtractedRequ
     companySize: extracted.filters?.companySize || undefined,
     excludedCompanies: cleanArray(extracted.filters?.excludedCompanies),
     companies: cleanArray(extracted.filters?.companies),
-    // Skills NOT in filters — they go to scoringContext now
     skills: [],
-    // These fields no longer extracted by parser (kept in interface for back-compat)
     languages: [],
     gradYearMin: undefined,
     gradYearMax: undefined,
     degreeReq: undefined,
   };
 
-  // Compensation range — coerce to [number|null, number|null]
   let compRange: [number | null, number | null] | undefined = undefined;
   const rawComp = extracted.scoringContext?.compensationRangeLPA;
   if (Array.isArray(rawComp) && rawComp.length === 2) {
@@ -342,7 +420,6 @@ export async function parseRequirement(paragraph: string): Promise<ExtractedRequ
       compensationRangeLPA: compRange,
       noticePeriodDays: extracted.scoringContext?.noticePeriodDays ?? undefined,
       trajectoryDirection: extracted.scoringContext?.trajectoryDirection || undefined,
-      culturalNotes: extracted.scoringContext?.culturalNotes || undefined,
       relevantSkills: cleanArray(extracted.scoringContext?.relevantSkills),
       hiringCompanyName: extracted.scoringContext?.hiringCompanyName || undefined,
     },

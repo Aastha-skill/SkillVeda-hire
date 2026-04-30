@@ -33,11 +33,11 @@
 // ═══════════════════════════════════════════════════════════════════════
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
-const MODEL = process.env.SCORING_MODEL || "claude-sonnet-4-20250514";
+const MODEL = process.env.SCORING_MODEL || "claude-sonnet-4-5";
 
 // Tunables
-const BATCH_SIZE = 8;             // candidates per Claude call
-const MAX_PARALLEL = 3;           // concurrent batches
+const BATCH_SIZE = 3;             // candidates per Claude call
+const MAX_PARALLEL = 1;           // concurrent batches
 const BATCH_INTERVAL_MS = 200;    // small jitter between dispatches
 const MAX_RETRIES = 2;            // per-call retry budget
 const RETRY_BASE_MS = 800;        // exponential backoff base
