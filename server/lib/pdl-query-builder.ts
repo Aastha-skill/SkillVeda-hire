@@ -159,22 +159,32 @@ const ROLE_MAP: Record<string, RoleMapping> = {
     ],
   },
   "Customer Engagement": {
-    subRoles: [],
+    // PDL has no native customer_engagement sub_role. Fall back to the
+    // overlapping CS sub_roles so we get a real candidate pool. Engagement-
+    // matching candidates rank higher via scoring engine (relevantSkills).
+    subRoles: ["customer_success", "customer_support", "account_management"],
     titlePhrases: [
-      "customer engagement", "client engagement", "engagement manager",
-      "engagement specialist", "engagement lead",
+      "customer engagement", "client engagement", "user engagement",
+      "engagement manager", "engagement specialist", "engagement lead",
+      "engagement executive", "engagement associate",
+      "customer success", "customer support",
     ],
   },
   "Customer Retention": {
-    subRoles: [],
+    subRoles: ["customer_success", "account_management"],
     titlePhrases: [
-      "customer retention", "retention specialist",
-      "retention manager", "retention executive",
+      "customer retention", "retention specialist", "retention manager",
+      "retention executive", "retention analyst",
+      "customer success", "renewals manager", "renewals specialist",
     ],
   },
   "Customer Advocacy": {
-    subRoles: [],
-    titlePhrases: ["customer advocacy", "advocacy manager", "customer marketing"],
+    subRoles: ["customer_success", "marketing"],
+    titlePhrases: [
+      "customer advocacy", "advocacy manager", "customer marketing",
+      "customer marketing manager", "voice of customer",
+      "customer success", "community manager",
+    ],
   },
   "Implementation": {
     subRoles: ["implementation"],
