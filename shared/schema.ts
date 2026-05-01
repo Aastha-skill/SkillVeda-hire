@@ -1,6 +1,11 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal, numeric, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, pgSchema, text, serial, integer, boolean, timestamp, decimal, numeric, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Schemas — separates customer data (B2B) from candidate pool data
+export const customersSchema = pgSchema("customers");
+export const candidatesSchema = pgSchema("candidates");
+
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -256,7 +261,7 @@ export const blogPosts = pgTable("blog_posts", {
 // Note: `credits` is now the SEARCH credit count (was previously a generic
 // pool used for unlocks/emails too). New companies get 5 free searches.
 // Each cache-miss search deducts 1 credit; cache hits are free.
-export const hiringCompanies = pgTable("hiring_companies", {
+export const hiringCompanies = customersSchema.table("companies", {
   id: serial("id").primaryKey(),
   companyName: text("company_name").notNull(),
   email: text("email").notNull().unique(),
@@ -293,7 +298,7 @@ export const unlockedContacts = pgTable("unlocked_contacts", {
   unlockedAt: timestamp("unlocked_at").defaultNow(),
 });
 
-export const hiringCreditTransactions = pgTable("hiring_credit_transactions", {
+export const hiringCreditTransactions = customersSchema.table("credit_transactions", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").notNull(),
   transactionType: text("transaction_type").notNull(),
@@ -302,7 +307,7 @@ export const hiringCreditTransactions = pgTable("hiring_credit_transactions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const hiringSavedCandidates = pgTable("hiring_saved_candidates", {
+export const hiringSavedCandidates = customersSchema.table("saved_candidates", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").notNull(),
   candidateId: text("candidate_id").notNull(),
@@ -313,7 +318,7 @@ export const hiringSavedCandidates = pgTable("hiring_saved_candidates", {
   savedAt: timestamp("saved_at").defaultNow(),
 });
 
-export const hiringSearchHistory = pgTable("hiring_search_history", {
+export const hiringSearchHistory = customersSchema.table("search_history", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").notNull(),
   searchTitle: text("search_title"),
@@ -335,7 +340,7 @@ export const hiringSearchHistory = pgTable("hiring_search_history", {
   cachedUntil: timestamp("cached_until"),
 });
 
-export const hiringEmailSettings = pgTable("hiring_email_settings", {
+export const hiringEmailSettings = customersSchema.table("email_settings", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").notNull(),
   senderEmail: text("sender_email").notNull(),
@@ -350,7 +355,7 @@ export const hiringEmailSettings = pgTable("hiring_email_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const hiringEmailLogs = pgTable("hiring_email_logs", {
+export const hiringEmailLogs = customersSchema.table("email_logs", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").notNull(),
   candidateId: text("candidate_id").notNull(),
