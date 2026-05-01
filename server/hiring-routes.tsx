@@ -8,7 +8,7 @@ import {
   hiringEmailLogs,
 } from "../shared/schema";
 import type { Express } from "express";
-import { db } from "./db";
+import { hireDb as db } from "./db";
 import { eq, and, gt, desc } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
