@@ -26,8 +26,8 @@ const PDL_BASE = process.env.PDL_SANDBOX === "true"
   ? "https://sandbox.api.peopledatalabs.com"
   : "https://api.peopledatalabs.com";
 
-// Cache lifetime — 7 days from search time.
-const CACHE_LIFETIME_MS = 7 * 24 * 60 * 60 * 1000;
+// Cache lifetime — 30 days from search time.
+const CACHE_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000;
 
 // New companies get 5 free searches. Each fresh PDL search burns 1.
 // Cache hits are free.
