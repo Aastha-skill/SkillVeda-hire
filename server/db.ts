@@ -11,6 +11,13 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
+if (!process.env.HIRE_DB_URL) {
+  throw new Error(
+    "HIRE_DB_URL must be set (Supabase connection for Hire dashboard).",
+  );
+}
+
+// Default DB (Neon) — for blog, jobs, applications, candidates, leads, etc.
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   connectionTimeoutMillis: 10000,
@@ -23,3 +30,17 @@ pool.on("error", (err) => {
 });
 
 export const db = drizzle({ client: pool, schema });
+
+// Hire DB (Supabase, Mumbai region) — for Hire dashboard only
+export const hirePool = new Pool({
+  connectionString: process.env.HIRE_DB_URL,
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 20000,
+  max: 5,
+});
+
+hirePool.on("error", (err) => {
+  console.error("[hireDb] pool client error:", err.message);
+});
+
+export const hireDb = drizzle({ client: hirePool, schema });
