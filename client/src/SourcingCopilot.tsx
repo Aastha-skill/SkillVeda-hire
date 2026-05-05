@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import RequirementWizard from "./components/RequirementWizard";
+import SearchForm from "./components/SearchForm";
 
 interface Company {
   id: number;
@@ -959,7 +959,7 @@ export default function SourcingCopilot() {
               </div>
             )}
 
-            <RequirementWizard
+            <SearchForm
               onSearch={(f, ctx) => {
                 setEditingFilters(null);
                 const criteria = ctx?.scoringContext || null;
@@ -1548,7 +1548,7 @@ export default function SourcingCopilot() {
           )}
 
           <div style={{ borderTop: `1px solid ${S.borderLight}`, paddingTop: 14, marginTop: 6 }}>
-            <RequirementWizard
+            <SearchForm
               onSearch={(f, ctx) => {
                 setEditQueryOpen(false);
                 const criteria = ctx?.scoringContext || null;
