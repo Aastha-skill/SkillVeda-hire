@@ -1,0 +1,93 @@
+I need you to make TWO changes to the website. Both are content-only changes — no structural or design changes. Keep all CSS, layout, spacing, fonts, and styling exactly the same.
+
+═══════════════════════════════════════
+
+CHANGE 1: REPLACE TWO MENTORS IN HERO BANNER
+
+═══════════════════════════════════════
+
+Find the hero banner / homepage that displays mentors with their photos. Currently it shows two mentors. Replace BOTH of them with the new mentors below.
+
+NEW MENTOR 1: Prerit Choudhary
+
+- Note: Prerit is already in our system His photo may already exist somewhere in the codebase — s If found, reuse that photo.
+
+NEW MENTOR 2: Vikrant Kumar Singh- Director of CS - Trantor
+
+- Designation: Director of Customer Success
+
+REQUIREMENTS FOR PHOTO HANDLING:
+
+- Use the EXACT same image dimensions/aspect ratio as the current photos
+
+- If the photos I provide are different sizes, use object-fit: cover and proper object-position so faces aren't cropped
+
+- Photos should NOT appear blurred, stretched, or pixelated
+
+- Maintain the same border-radius, shadow, and styling as the existing mentor photos
+
+- If photos are larger than display size, downscale them properly (don't just stretch the small images up)
+
+REQUIREMENTS FOR LAYOUT:
+
+- Same number of mentors (2)
+
+- Same position on the banner
+
+- Same name + designation typography
+
+- Same spacing between mentors
+
+═══════════════════════════════════════
+
+CHANGE 2: UPDATE WEBINAR DATE AND TIME
+
+═══════════════════════════════════════
+
+Find EVERY place on the website where the webinar date and time is mentioned. Search the entire codebase for the current date/time strings. Replace ALL instances with:
+
+- New date: May 9, 2026 (Saturday)
+
+- New time: 6:30 PM IST
+
+Common places to check (but search exhaustively, not just these):
+
+- Hero banner
+
+- Webinar landing page
+
+- Footer or banner CTAs
+
+- Email templates (if any)
+
+- Meta tags / SEO descriptions
+
+- Schema.org structured data
+
+- Any "Register for Webinar" sections
+
+- Any countdown timers
+
+Make sure the date is consistent everywhere — same format, same timezone (IST). If there are countdown timers or "X days remaining" components, make sure they recalculate based on May 9, 2026 6:30 PM IST.
+
+═══════════════════════════════════════
+
+PROCESS
+
+═══════════════════════════════════════
+
+4. Test that the homepage still loads without errors
+
+5. Tell me if any photo issues exist (resolution mismatch, etc.)
+
+DO NOT:
+
+- Change database schema
+
+- Modify auth code
+
+- Update any backend routes
+
+- Add new dependencies
+
+Only touch website / marketing pages and any webinar-related content.

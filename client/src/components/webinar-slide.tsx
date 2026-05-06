@@ -317,12 +317,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
         <div className="ws2-speaker-card">
           <div className="ws2-photo-wrap">
             <span className="ws2-speaker-badge ws2-badge-purple">Speaker</span>
-            <img src={himanshuImg} alt="Utsav Tiwari" />
+            <img src={himanshuImg} alt="Prerit Choudhary" />
             <div className="ws2-photo-overlay" />
           </div>
           <div className="ws2-speaker-info">
-            <div className="ws2-speaker-name">Utsav Tiwari</div>
-            <div className="ws2-speaker-role">Senior CSM & CS Ops</div>
+            <div className="ws2-speaker-name">Prerit Choudhary</div>
+            <div className="ws2-speaker-role">CEO · Skill Veda</div>
           </div>
         </div>
 
@@ -337,8 +337,8 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
             What Will Change in the Next 3 Years
           </div>
           <div className="ws2-date-box">
-            <div className="ws2-date-text">2nd May, 2026</div>
-            <div className="ws2-time-text">12:00 PM – 1:00 PM IST</div>
+            <div className="ws2-date-text">9th May, 2026</div>
+            <div className="ws2-time-text">6:30 PM IST</div>
           </div>
           <div className="ws2-free-label">— Free & Live Session —</div>
           <button className="ws2-cta-btn" onClick={onRegister}>
@@ -349,12 +349,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
         <div className="ws2-speaker-card">
           <div className="ws2-photo-wrap">
             <span className="ws2-speaker-badge ws2-badge-teal">Speaker</span>
-            <img src={preritImg} alt="Dhiraj Patel" />
+            <img src={preritImg} alt="Vikrant Kumar Singh" />
             <div className="ws2-photo-overlay" />
           </div>
           <div className="ws2-speaker-info">
-            <div className="ws2-speaker-name">Dhiraj Patel</div>
-            <div className="ws2-speaker-role">Founder & CEO · RetainSure</div>
+            <div className="ws2-speaker-name">Vikrant Kumar Singh</div>
+            <div className="ws2-speaker-role">Director of Customer Success · Trantor</div>
           </div>
         </div>
       </div>
