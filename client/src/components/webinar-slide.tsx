@@ -337,8 +337,8 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
             What Will Change in the Next 3 Years
           </div>
           <div className="ws2-date-box">
-            <div className="ws2-date-text">9th May, 2026</div>
-            <div className="ws2-time-text">6:30 PM IST</div>
+            <div className="ws2-date-text">16th May, 2026</div>
+            <div className="ws2-time-text">12:00 PM IST</div>
           </div>
           <div className="ws2-free-label">— Free & Live Session —</div>
           <button className="ws2-cta-btn" onClick={onRegister}>
@@ -349,12 +349,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
         <div className="ws2-speaker-card">
           <div className="ws2-photo-wrap">
             <span className="ws2-speaker-badge ws2-badge-teal">Speaker</span>
-            <img src={preritImg} alt="Vikrant Kumar Singh" />
+            <img src={preritImg} alt="Trisha Anand" style={{ objectPosition: "center 15%" }} />
             <div className="ws2-photo-overlay" />
           </div>
           <div className="ws2-speaker-info">
-            <div className="ws2-speaker-name">Vikrant Kumar Singh</div>
-            <div className="ws2-speaker-role">Director of Customer Success · Trantor</div>
+            <div className="ws2-speaker-name">Trisha Anand</div>
+            <div className="ws2-speaker-role">Senior Manager, Customer Success · Wyzard AI</div>
           </div>
         </div>
       </div>
