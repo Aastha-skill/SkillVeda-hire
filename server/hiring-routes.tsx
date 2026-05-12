@@ -6,6 +6,7 @@ import {
   hiringSearchHistory,
   hiringEmailSettings,
   hiringEmailLogs,
+  candidateContacts,
 } from "../shared/schema";
 import type { Express } from "express";
 import { hireDb as db } from "./db";
@@ -17,6 +18,7 @@ import { createHash } from "crypto";
 import { parseRequirement } from "./lib/parse-requirement";
 import { buildPdlRequest, type SearchFilterState } from "./lib/pdl-query-builder";
 import { scoreAllCandidates } from "./cs-scoring-engine";
+import { matchPersonEmail, ApolloError } from "./lib/apollo-client";
 
 const HIRING_JWT_SECRET =
   process.env.JWT_SECRET || "skilveda-hire-secret-2024";
@@ -955,6 +957,163 @@ export function registerHiringRoutes(app: Express) {
     } catch (error: any) {
       console.error("Count error:", error);
       res.status(500).json({ error: "Count failed" });
+    }
+  });
+
+  // ── REVEAL EMAIL via Apollo (1 credit if match, free if miss) ────────
+  app.post("/api/hiring/reveal-email", authenticateCompany, async (req: any, res) => {
+    try {
+      const schema = z.object({
+        pdlId: z.string().min(1),
+        linkedinUrl: z.string().optional().nullable(),
+        firstName: z.string().optional().nullable(),
+        lastName: z.string().optional().nullable(),
+        candidateName: z.string().optional().nullable(),
+        employer: z.string().optional().nullable(),
+      });
+      const parsed = schema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid request body" });
+      }
+      const { pdlId, linkedinUrl, firstName, lastName, candidateName, employer } = parsed.data;
+
+      // Apollo's match quality drops sharply without a LinkedIn URL; require it
+      // to avoid burning Apollo quota on weak matches.
+      if (!linkedinUrl || linkedinUrl.trim().length === 0) {
+        return res.status(400).json({ error: "LinkedIn URL required" });
+      }
+
+      console.log(`[apollo] reveal request: pdlId=${pdlId}, hasLinkedIn=${!!linkedinUrl}`);
+
+      // ── CACHE CHECK ──────────────────────────────────────
+      const [cached] = await db
+        .select()
+        .from(candidateContacts)
+        .where(and(
+          eq(candidateContacts.companyId, req.companyId),
+          eq(candidateContacts.pdlId, pdlId),
+        ))
+        .limit(1);
+
+      if (cached) {
+        console.log(`[apollo] cache HIT for pdlId=${pdlId}`);
+        const [companyRow] = await db
+          .select({ credits: hiringCompanies.credits })
+          .from(hiringCompanies)
+          .where(eq(hiringCompanies.id, req.companyId))
+          .limit(1);
+        return res.json({
+          email: cached.email,
+          emailStatus: cached.emailStatus,
+          emailMatched: cached.emailMatched ?? false,
+          fromCache: true,
+          creditsRemaining: companyRow?.credits ?? 0,
+        });
+      }
+
+      console.log(`[apollo] cache MISS, calling Apollo`);
+
+      // ── CREDIT GATE ──────────────────────────────────────
+      const [company] = await db
+        .select()
+        .from(hiringCompanies)
+        .where(eq(hiringCompanies.id, req.companyId))
+        .limit(1);
+
+      if (!company) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+      if ((company.credits ?? 0) < 1) {
+        return res.status(402).json({ error: "Insufficient credits" });
+      }
+
+      console.log(`[apollo] credits before=${company.credits ?? 0}`);
+
+      // ── CALL APOLLO ──────────────────────────────────────
+      let apolloResult;
+      try {
+        apolloResult = await matchPersonEmail({
+          linkedinUrl,
+          firstName: firstName ?? undefined,
+          lastName: lastName ?? undefined,
+          organizationName: employer ?? undefined,
+        });
+      } catch (err: any) {
+        if (err?.name === "AbortError") {
+          console.error(`[apollo] ERROR: timeout after 15s for pdlId=${pdlId}`);
+          return res.status(503).json({ error: "Apollo timed out, try again shortly" });
+        }
+        if (err instanceof ApolloError) {
+          console.error(`[apollo] ERROR: status=${err.status} body=${err.body.slice(0, 200)}`);
+          if (err.status === 401) return res.status(500).json({ error: "Service config error" });
+          if (err.status === 422) return res.status(400).json({ error: "Invalid candidate data" });
+          if (err.status === 429) return res.status(429).json({ error: "Rate limited, try again shortly" });
+          return res.status(503).json({ error: "Apollo unavailable" });
+        }
+        console.error(`[apollo] ERROR: unexpected`, err);
+        return res.status(500).json({ error: "Reveal failed" });
+      }
+
+      console.log(`[apollo] Apollo response: matched=${apolloResult.matched}, email=${apolloResult.email ? "present" : "missing"}`);
+
+      // ── MISS: cache the "no result" so we don't re-query; no charge ─
+      if (!apolloResult.matched) {
+        await db.insert(candidateContacts).values({
+          companyId: req.companyId,
+          pdlId,
+          linkedinUrl,
+          candidateName: candidateName ?? null,
+          email: null,
+          emailStatus: apolloResult.emailStatus,
+          emailMatched: false,
+          apolloRawResponse: apolloResult.rawResponse,
+        });
+        return res.json({
+          email: null,
+          emailStatus: apolloResult.emailStatus,
+          emailMatched: false,
+          fromCache: false,
+          creditsRemaining: company.credits ?? 0,
+        });
+      }
+
+      // ── HIT: cache, deduct 1 credit, log transaction ────────────
+      await db.insert(candidateContacts).values({
+        companyId: req.companyId,
+        pdlId,
+        linkedinUrl,
+        candidateName: candidateName ?? null,
+        email: apolloResult.email,
+        emailStatus: apolloResult.emailStatus,
+        emailMatched: true,
+        apolloRawResponse: apolloResult.rawResponse,
+      });
+
+      const newCredits = (company.credits ?? 0) - 1;
+      await db
+        .update(hiringCompanies)
+        .set({ credits: newCredits })
+        .where(eq(hiringCompanies.id, req.companyId));
+
+      await db.insert(hiringCreditTransactions).values({
+        companyId: req.companyId,
+        transactionType: "email_reveal",
+        amount: -1,
+        description: `Email reveal: ${candidateName || pdlId}`,
+      });
+
+      console.log(`[apollo] credit deducted, remaining=${newCredits}`);
+
+      return res.json({
+        email: apolloResult.email,
+        emailStatus: apolloResult.emailStatus,
+        emailMatched: true,
+        fromCache: false,
+        creditsRemaining: newCredits,
+      });
+    } catch (error: any) {
+      console.error(`[apollo] ERROR: unexpected outer`, error);
+      res.status(500).json({ error: "Reveal failed" });
     }
   });
 

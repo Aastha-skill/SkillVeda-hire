@@ -1,4 +1,4 @@
-import { pgTable, pgSchema, text, serial, integer, boolean, timestamp, decimal, numeric, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, pgSchema, text, serial, integer, boolean, timestamp, decimal, numeric, jsonb, uniqueIndex } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -340,6 +340,22 @@ export const hiringSearchHistory = customersSchema.table("search_history", {
   cachedUntil: timestamp("cached_until"),
 });
 
+export const candidateContacts = customersSchema.table("candidate_contacts", {
+  id: serial("id").primaryKey(),
+  companyId: integer("company_id").notNull().references(() => hiringCompanies.id),
+  pdlId: text("pdl_id").notNull(),
+  linkedinUrl: text("linkedin_url"),
+  candidateName: text("candidate_name"),
+  email: text("email"),
+  emailStatus: text("email_status"),
+  emailMatched: boolean("email_matched").default(false),
+  apolloRawResponse: jsonb("apollo_raw_response"),
+  fetchedAt: timestamp("fetched_at").defaultNow().notNull(),
+}, (table) => ({
+  uniqCompanyPdl: uniqueIndex("uniq_candidate_contacts_company_pdl")
+    .on(table.companyId, table.pdlId),
+}));
+
 export const hiringEmailSettings = customersSchema.table("email_settings", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").notNull(),
@@ -440,5 +456,7 @@ export type InsertUnlockedContact = typeof unlockedContacts.$inferInsert;
 export type HiringCreditTransaction = typeof hiringCreditTransactions.$inferSelect;
 export type HiringSavedCandidate = typeof hiringSavedCandidates.$inferSelect;
 export type HiringSearchHistory = typeof hiringSearchHistory.$inferSelect;
+export type CandidateContact = typeof candidateContacts.$inferSelect;
+export type InsertCandidateContact = typeof candidateContacts.$inferInsert;
 export type HiringEmailSettings = typeof hiringEmailSettings.$inferSelect;
 export type HiringEmailLog = typeof hiringEmailLogs.$inferSelect;
