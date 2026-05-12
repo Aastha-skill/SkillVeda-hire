@@ -354,6 +354,20 @@ export default function SourcingCopilot() {
   const [searchListOpen, setSearchListOpen] = useState(false);
   const [outOfCreditsModalOpen, setOutOfCreditsModalOpen] = useState(false);
 
+  // Apollo email reveal — keyed by candidate id, scoped to current session.
+  // Backend cache prevents double-charging across sessions; this map is only
+  // for in-session UI state (button → loading → revealed/miss/error).
+  type RevealedEmailState = {
+    loading: boolean;
+    email?: string | null;
+    emailStatus?: string | null;
+    matched?: boolean;
+    error?: string;
+    fromCache?: boolean;
+    copied?: boolean;
+  };
+  const [revealedEmails, setRevealedEmails] = useState<Record<string, RevealedEmailState>>({});
+
   // Are search credits exhausted?
   const credits = company?.credits ?? 0;
   const outOfCredits = credits <= 0;
@@ -393,6 +407,60 @@ export default function SourcingCopilot() {
     const updated = { ...company, credits: newCredits };
     setCompany(updated);
     localStorage.setItem("hiring_company", JSON.stringify(updated));
+  };
+
+  const handleRevealEmail = async (c: Candidate) => {
+    if (!c.linkedinUrl) {
+      setRevealedEmails((prev) => ({ ...prev, [c.id]: { loading: false, error: "LinkedIn URL not available" } }));
+      return;
+    }
+    setRevealedEmails((prev) => ({ ...prev, [c.id]: { loading: true } }));
+    try {
+      const res = await fetch("/api/hiring/reveal-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${tok()}` },
+        body: JSON.stringify({
+          pdlId: c.pdlId,
+          linkedinUrl: c.linkedinUrl,
+          firstName: c.firstName,
+          lastName: c.lastName,
+          candidateName: c.name,
+          employer: c.employer,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRevealedEmails((prev) => ({ ...prev, [c.id]: { loading: false, error: data.error || "Reveal failed" } }));
+        return;
+      }
+      setRevealedEmails((prev) => ({
+        ...prev,
+        [c.id]: {
+          loading: false,
+          email: data.email,
+          emailStatus: data.emailStatus,
+          matched: data.emailMatched,
+          fromCache: data.fromCache,
+        },
+      }));
+      if (data.creditsRemaining != null) syncCredits(data.creditsRemaining);
+    } catch {
+      setRevealedEmails((prev) => ({ ...prev, [c.id]: { loading: false, error: "Network error" } }));
+    }
+  };
+
+  const handleCopyEmail = async (candidateId: string, email: string) => {
+    try {
+      await navigator.clipboard.writeText(email);
+      setRevealedEmails((prev) => ({ ...prev, [candidateId]: { ...prev[candidateId], copied: true } }));
+      setTimeout(() => {
+        setRevealedEmails((prev) => {
+          const cur = prev[candidateId];
+          if (!cur) return prev;
+          return { ...prev, [candidateId]: { ...cur, copied: false } };
+        });
+      }, 1500);
+    } catch {}
   };
 
   const fetchMe = async (t: string) => {
@@ -1279,6 +1347,83 @@ export default function SourcingCopilot() {
                         </div>
                       </div>
                     </div>
+
+                    {(() => {
+                      const rev = revealedEmails[selected.id];
+                      const dot = (color: string) => (
+                        <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: color, marginRight: 6 }} />
+                      );
+                      return (
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14, paddingTop: 12, borderTop: `1px solid ${S.borderLight}`, flexWrap: "wrap" as const }}>
+                          <div style={{ ...T.label, color: S.textMuted }}>Contact</div>
+                          {(!rev || (!rev.loading && !rev.email && !rev.error && rev.matched !== false)) && (
+                            <button
+                              onClick={() => handleRevealEmail(selected)}
+                              disabled={!selected.linkedinUrl}
+                              title={selected.linkedinUrl
+                                ? "Uses Apollo to find verified email. Costs 1 credit if email found."
+                                : "LinkedIn URL not available — cannot reveal email"}
+                              style={{
+                                background: S.bg, border: `1px solid ${S.border}`,
+                                borderRadius: 7, padding: "6px 12px",
+                                fontSize: 12, color: selected.linkedinUrl ? S.text : S.muted,
+                                fontFamily: font, fontWeight: 500,
+                                cursor: selected.linkedinUrl ? "pointer" : "not-allowed",
+                              }}
+                            >
+                              Reveal Email (1 credit)
+                            </button>
+                          )}
+                          {rev?.loading && (
+                            <span style={{ fontSize: 12, color: S.textMuted }}>Revealing…</span>
+                          )}
+                          {rev && !rev.loading && rev.email && (
+                            <>
+                              {rev.emailStatus === "verified" && dot("#10b981")}
+                              {rev.emailStatus === "unverified" && dot("#eab308")}
+                              <span style={{ fontSize: 13, color: S.text, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
+                                {rev.email}
+                              </span>
+                              <button
+                                onClick={() => handleCopyEmail(selected.id, rev.email!)}
+                                style={{
+                                  background: S.bg, border: `1px solid ${S.border}`,
+                                  borderRadius: 6, padding: "3px 9px",
+                                  fontSize: 11, color: S.muted,
+                                  fontFamily: font, cursor: "pointer",
+                                }}
+                              >
+                                {rev.copied ? "Copied" : "Copy"}
+                              </button>
+                            </>
+                          )}
+                          {rev && !rev.loading && rev.matched === false && !rev.email && !rev.error && (
+                            <span
+                              style={{ fontSize: 12, color: S.muted }}
+                              title="We tried, no credit charged"
+                            >
+                              Email not found in Apollo
+                            </span>
+                          )}
+                          {rev && !rev.loading && rev.error && (
+                            <>
+                              <span style={{ fontSize: 12, color: "#dc2626" }}>{rev.error}</span>
+                              <button
+                                onClick={() => handleRevealEmail(selected)}
+                                style={{
+                                  background: S.bg, border: `1px solid ${S.border}`,
+                                  borderRadius: 6, padding: "3px 9px",
+                                  fontSize: 11, color: S.muted,
+                                  fontFamily: font, cursor: "pointer",
+                                }}
+                              >
+                                Retry
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })()}
 
                     {selected.metrics && (
                       <div style={{ display: "flex", gap: 28, marginTop: 16, paddingTop: 14, borderTop: `1px solid ${S.borderLight}` }}>
