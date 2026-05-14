@@ -779,37 +779,15 @@ export function registerHiringRoutes(app: Express) {
         });
       }
 
-      // ── AI SCORING ────────────────────────────────────────
-      // Replace the fallback tier-3/score-45 with real rubric-based scoring.
-      // If scoring fails, log and continue with unscored candidates so the
-      // user still gets results.
-      const scoringApiKey = process.env.ANTHROPIC_API_KEY;
-      if (scoringApiKey && paragraphText && paragraphText.trim().length > 0) {
-        const scoringStart = Date.now();
-        try {
-          candidates = await scoreAllCandidates(
-            candidates,
-            paragraphText,
-            {
-              companyName: company.companyName,
-              industry: filterState.industries?.[0] || "B2B SaaS",
-            },
-            scoringApiKey,
-          );
-          console.log(
-            `[search-filters] SCORING DONE — ${candidates.length} candidates scored in ${Date.now() - scoringStart}ms`,
-          );
-        } catch (err) {
-          console.error(
-            `[search-filters] SCORING FAILED after ${Date.now() - scoringStart}ms — continuing with unscored candidates:`,
-            err,
-          );
-        }
-      } else {
-        console.log(
-          `[search-filters] SCORING SKIPPED — apiKey=${!!scoringApiKey}, paragraph=${!!paragraphText}`,
-        );
-      }
+      // ── AI SCORING (TEMPORARILY DISABLED) ─────────────────
+      // Scoring is bypassed in the live route — 153s on 10 candidates is
+      // too slow. Candidates flow through with the placeholder aiScore /
+      // tier / matchScore from mapPdlToCandidate (preview shape:
+      // isPreviewOnly=true, breakdown={}, etc.). The scoring engine is
+      // kept on disk (`server/cs-scoring-engine.ts`) for future re-enable
+      // once search quality is dialed in. To restore, uncomment the
+      // block and re-add the import.
+      console.log("[search-filters] SCORING SKIPPED — returning raw PDL candidates");
 
       // ── DEDUCT CREDIT ─────────────────────────────────────
       const newCredits = (company.credits ?? 0) - 1;

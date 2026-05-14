@@ -37,7 +37,7 @@ const MODEL = process.env.SCORING_MODEL || "claude-sonnet-4-5";
 
 // Tunables
 const BATCH_SIZE = 3;             // candidates per Claude call
-const MAX_PARALLEL = 1;           // concurrent batches
+const MAX_PARALLEL = 3;           // concurrent batches
 const BATCH_INTERVAL_MS = 200;    // small jitter between dispatches
 const MAX_RETRIES = 2;            // per-call retry budget
 const RETRY_BASE_MS = 800;        // exponential backoff base
@@ -168,6 +168,9 @@ async function callAnthropic(
   body: any,
   attempt = 0
 ): Promise<any> {
+  const ANTHROPIC_TIMEOUT_MS = 60000;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), ANTHROPIC_TIMEOUT_MS);
   try {
     const res = await fetch(ANTHROPIC_API_URL, {
       method: "POST",
@@ -178,6 +181,7 @@ async function callAnthropic(
         "anthropic-beta": "prompt-caching-2024-07-31",
       },
       body: JSON.stringify(body),
+      signal: controller.signal,
     });
 
     // Retry on rate-limit and 5xx
@@ -195,14 +199,20 @@ async function callAnthropic(
 
     return await res.json();
   } catch (err: any) {
-    // Network error — retry
+    // Network error or timeout (AbortError) — retry with backoff
     if (attempt < MAX_RETRIES) {
       const wait = RETRY_BASE_MS * Math.pow(2, attempt);
-      console.warn(`[Scoring] Network error, retrying in ${wait}ms:`, err.message);
+      const isAbort = err?.name === "AbortError";
+      console.warn(
+        `[Scoring] ${isAbort ? `Timeout after ${ANTHROPIC_TIMEOUT_MS}ms` : "Network error"}, retrying in ${wait}ms:`,
+        err.message
+      );
       await new Promise(r => setTimeout(r, wait));
       return callAnthropic(apiKey, body, attempt + 1);
     }
     throw err;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
