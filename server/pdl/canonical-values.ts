@@ -69,6 +69,63 @@ export const FUNDING_STAGES = new Set([
 ]);
 
 /**
+ * Common suffixes Haiku adds to sub_role values by accident (copying recruiter
+ * title text into the canonical slot). Strip these and re-check canonicality.
+ */
+const SUFFIX_PATTERNS = [
+  "_manager",
+  "_executive",
+  "_specialist",
+  "_associate",
+  "_representative",
+  "_rep",
+  "_lead",
+  "_analyst",
+  "_consultant",
+  "_engineer",
+  "_director",
+  "_coordinator",
+  "_officer",
+];
+
+/**
+ * If a value doesn't match a canonical set, try stripping common Haiku-added
+ * suffixes and check again. Returns the cleaned canonical value if found,
+ * else null.
+ */
+function tryCleanSuffix(
+  value: string,
+  validSet: Set<string>
+): string | null {
+  const normalized = value.toLowerCase().trim();
+  for (const suffix of SUFFIX_PATTERNS) {
+    if (normalized.endsWith(suffix)) {
+      const cleaned = normalized.slice(0, -suffix.length);
+      if (validSet.has(cleaned)) {
+        return cleaned;
+      }
+    }
+  }
+  // Also try noun→action swaps: "account_manager" → "account_management",
+  // "sales_developer" → "sales_development", etc.
+  const noun_to_action: Record<string, string> = {
+    "_manager": "_management",
+    "_developer": "_development",
+    "_engineer": "_engineering",
+    "_analyst": "_analytics",
+  };
+  for (const [from, to] of Object.entries(noun_to_action)) {
+    if (normalized.endsWith(from)) {
+      const transformed = normalized.slice(0, -from.length) + to;
+      if (validSet.has(transformed)) {
+        return transformed;
+      }
+    }
+  }
+  return null;
+}
+
+/**
  * Filter an array to only canonical values from the given set.
  * Logs anything that gets dropped so we can audit extractor mistakes.
  */
@@ -83,12 +140,21 @@ export function filterCanonical(
     const normalized = String(v).toLowerCase().trim();
     if (validSet.has(normalized)) {
       out.push(normalized);
-    } else {
+      continue;
+    }
+    const cleaned = tryCleanSuffix(normalized, validSet);
+    if (cleaned) {
       // eslint-disable-next-line no-console
       console.warn(
-        `[pdl] Dropped non-canonical value for ${fieldName}: "${v}"`
+        `[pdl] Auto-corrected non-canonical value for ${fieldName}: "${v}" → "${cleaned}"`
       );
+      out.push(cleaned);
+      continue;
     }
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[pdl] Dropped non-canonical value for ${fieldName}: "${v}"`
+    );
   }
   return out;
 }
@@ -104,6 +170,17 @@ export function validateCanonical(
   if (!value) return null;
   const normalized = String(value).toLowerCase().trim();
   if (validSet.has(normalized)) return normalized;
+
+  // Try to recover from common Haiku suffix mistakes
+  const cleaned = tryCleanSuffix(normalized, validSet);
+  if (cleaned) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[pdl] Auto-corrected non-canonical value for ${fieldName}: "${value}" → "${cleaned}"`
+    );
+    return cleaned;
+  }
+
   // eslint-disable-next-line no-console
   console.warn(
     `[pdl] Dropped non-canonical value for ${fieldName}: "${value}"`
