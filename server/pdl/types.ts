@@ -47,6 +47,18 @@ export interface SearchSpec {
     /** §12 — array of canonical degree strings */
     degrees: string[];
   };
+  /**
+   * Companies the candidate must have worked at — either as current employer
+   * OR as a past employer. Combined with `should` so any match qualifies.
+   * Lowercase, free-form (e.g. ["razorpay", "freshworks", "zoho"]).
+   */
+  target_companies: string[];
+
+  /**
+   * Free-form skills the candidate should have (PDL's `skills` field is
+   * free-text, no canonical enum). Lowercase (e.g. ["salesforce", "gainsight"]).
+   */
+  skills: string[];
 }
 
 /**

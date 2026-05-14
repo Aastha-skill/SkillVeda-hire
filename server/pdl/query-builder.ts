@@ -177,6 +177,34 @@ export function buildPdlQuery(
     filters.push({ terms: { "education.degrees": degrees } });
   }
 
+  // ─── Target companies (must have worked at, current OR past) ─────────
+  // Uses a nested bool with should clauses so either current job OR any
+  // past job matching the company name qualifies.
+  const targetCompanies = (spec.target_companies || [])
+    .map(s => String(s).toLowerCase().trim())
+    .filter(Boolean);
+  if (targetCompanies.length > 0) {
+    filters.push({
+      bool: {
+        should: [
+          { terms: { "job_company_name": targetCompanies } },
+          { terms: { "experience.company.name": targetCompanies } },
+        ],
+        minimum_should_match: 1,
+      },
+    } as EsClause);
+  }
+
+  // ─── Skills (free-form keyword match, no canonical enum) ─────────────
+  const skills = (spec.skills || [])
+    .map(s => String(s).toLowerCase().trim())
+    .filter(Boolean);
+  if (skills.length === 1) {
+    filters.push({ term: { skills: skills[0] } });
+  } else if (skills.length > 1) {
+    filters.push({ terms: { skills: skills } });
+  }
+
   // ─── Assemble final request ──────────────────────────────────────────
   return {
     dataset: options.dataset || "all",

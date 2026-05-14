@@ -223,6 +223,8 @@ function mergeWithDefaults(partial: Partial<SearchSpec>): SearchSpec {
     education: {
       degrees: partial.education?.degrees ?? [],
     },
+    target_companies: partial.target_companies ?? [],
+    skills: partial.skills ?? [],
   };
 }
 

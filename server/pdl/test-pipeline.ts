@@ -74,10 +74,9 @@ async function testExtractorOnly() {
 
   const jd = `
     We're looking for a Senior Customer Success Manager to join our SaaS startup
-    in Bangalore. The ideal candidate has 4-6 years of experience in customer
-    success or account management at a B2B SaaS company. MBA preferred. Has
-    previously worked at companies like Freshworks, Zoho, or Razorpay would
-    be a plus.
+    in Bangalore. 4-6 years of experience in customer success at a B2B SaaS company.
+    Must have worked at companies like Freshworks, Zoho, or Razorpay. MBA preferred.
+    Strong hands-on experience with Salesforce, Gainsight, and Notion required.
   `;
 
   const result = await extractSearchSpec(jd);
@@ -85,6 +84,11 @@ async function testExtractorOnly() {
   console.log(`Tokens: ${JSON.stringify(result.usage)}`);
   console.log("Parsed spec:");
   console.log(JSON.stringify(result.spec, null, 2));
+
+  console.log("\nBuilding query from spec...");
+  const query = buildPdlQuery(result.spec, { size: 25 });
+  console.log("Built query filters:");
+  console.log(JSON.stringify(query.query.bool.filter, null, 2));
 }
 
 async function testFullPipeline() {

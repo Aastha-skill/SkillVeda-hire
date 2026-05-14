@@ -29,6 +29,8 @@ const EMPTY_SPEC: SearchSpec = {
   location: { country: "india", region: null, locality: null },
   years_experience: { min: null, max: null },
   education: { degrees: [] },
+  target_companies: [],
+  skills: [],
 };
 
 export interface ExtractResult {
@@ -187,5 +189,11 @@ function parseExtractorOutput(raw: string): SearchSpec {
         ? parsed.education!.degrees
         : [],
     },
+    target_companies: Array.isArray(parsed.target_companies)
+      ? parsed.target_companies
+      : [],
+    skills: Array.isArray(parsed.skills)
+      ? parsed.skills
+      : [],
   };
 }

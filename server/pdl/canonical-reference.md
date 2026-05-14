@@ -2526,6 +2526,27 @@ RULE 6 — Lowercase everything except revenue ranges like "$10M-$25M" which are
 RULE 7 — Output strict JSON only. No prose, no markdown, no explanations. No code fences.
 
 ────────────────────────────────────────────────────────────────────────────────────
+TARGET COMPANIES and SKILLS extraction
+────────────────────────────────────────────────────────────────────────────────────
+
+TARGET COMPANIES extraction:
+- If JD says "must have worked at X, Y, Z" or "experience at X required" or
+  "from companies like X, Y, Z" — set target_companies to those company names.
+- Always lowercase. Strip suffixes like "Inc.", "Pvt Ltd", "Software", etc.
+  e.g. "Razorpay Software Pvt Ltd" → "razorpay"
+- These will match either current OR past employer.
+- If JD just mentions a company casually (e.g. "we're like Razorpay" or
+  "competitors include X, Y, Z"), don't include — only include companies the
+  CANDIDATE should have worked at.
+
+SKILLS extraction:
+- Extract any specific tools, platforms, or competencies the JD requires.
+- Examples: Salesforce, Gainsight, HubSpot, Notion, Excel, Tableau, Python.
+- Lowercase, lowercase, single tokens or short phrases.
+- Don't extract generic soft skills ("communication", "leadership") —
+  PDL's skills field is for specific tooling/technical skills.
+
+────────────────────────────────────────────────────────────────────────────────────
 THE FALLBACK RULE — for titles NOT explicitly listed in §2's mapping tables
 ────────────────────────────────────────────────────────────────────────────────────
 
@@ -2769,7 +2790,9 @@ OUTPUT SCHEMA — return this exact structure
   },
   "education": {
     "degrees": [<canonical from §12>]
-  }
+  },
+  "target_companies": [<lowercase company names>],
+  "skills": [<lowercase skill names>]
 }
 
 ────────────────────────────────────────────────────────────────────────────────────
