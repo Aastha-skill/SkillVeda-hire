@@ -19,6 +19,7 @@ import { parseRequirement } from "./lib/parse-requirement";
 import { buildPdlRequest, type SearchFilterState } from "./lib/pdl-query-builder";
 import { scoreAllCandidates } from "./cs-scoring-engine";
 import { matchPersonEmail, ApolloError } from "./lib/apollo-client";
+import { runPdlSearch } from "./pdl/search";
 
 const HIRING_JWT_SECRET =
   process.env.JWT_SECRET || "skilveda-hire-secret-2024";
@@ -103,7 +104,7 @@ function normalizeFilterValue(v: any): any {
   return v;
 }
 
-function hashFilters(filters: SearchFilterState): string {
+function hashFilters(filters: SearchFilterState, paragraphText: string = ""): string {
   const normalized: Record<string, any> = {};
   const keys = Object.keys(filters).sort();
   for (const k of keys) {
@@ -113,7 +114,12 @@ function hashFilters(filters: SearchFilterState): string {
   }
   // v8.2: include query version in hash so caches invalidate when
   // query logic changes. Bumped from implicit v6 → v8.2.0.
-  const stable = JSON.stringify({ ...normalized, _qv: "v8.2.0" });
+  // Phase 2: include paragraph text since paragraph is now the source of
+  // truth for the new pipeline; different paragraphs must not collide
+  // even if filter state is identical. Default "" preserves legacy hash
+  // for any caller that omits the arg.
+  const normalizedParagraph = paragraphText.toLowerCase().trim();
+  const stable = JSON.stringify({ ...normalized, _qv: "v8.2.0", _p: normalizedParagraph });
   return createHash("sha1").update(stable).digest("hex");
 }
 
@@ -649,7 +655,7 @@ export function registerHiringRoutes(app: Express) {
           ? rawParagraph
           : null;
 
-      const filterHash = hashFilters(filterState);
+      const filterHash = hashFilters(filterState, paragraphText ?? "");
 
       console.log("[search-filters] filterHash:", filterHash, forceRefresh ? "(force refresh)" : "");
 
@@ -716,29 +722,37 @@ export function registerHiringRoutes(app: Express) {
         });
       }
 
-      // ── CACHE MISS — call PDL ─────────────────────────────
-      // v8.2: paragraph passed through so technical exclusions can be
-      // dynamically dropped when user asks for technical/engineering roles.
-      const { body: pdlBody, warnings, diagnostics } = buildPdlRequest(filterState, {
+      // ── CACHE MISS — call PDL via NEW canonical pipeline ──
+      // Paragraph is the source of truth. Wizard form filters are ignored
+      // for this call; form-trimming will be added in a later change.
+      if (!paragraphText || !paragraphText.trim()) {
+        return res.status(400).json({
+          error: "A job description paragraph is required for search.",
+        });
+      }
+
+      console.log(`[search-filters] CACHE MISS — calling new PDL pipeline (${company.credits} credits before)`);
+
+      const pdlResult = await runPdlSearch({
+        jd_text: paragraphText,
         size: 10,
-        paragraph: paragraphText || undefined,
       });
+      const data = pdlResult.candidates;
+      const total = pdlResult.total;
+      const warnings = pdlResult.trace.warnings || [];
 
-      console.log(`[search-filters] CACHE MISS — calling PDL (${company.credits} credits before)`);
-      console.log("[PDL DIAGNOSTICS]", JSON.stringify(diagnostics, null, 2));
-      console.log("[PDL REQUEST filterState]", JSON.stringify(filterState, null, 2));
-      console.log("[PDL REQUEST]", JSON.stringify(pdlBody, null, 2));
-
-      const pdlResponse = await pdlPersonSearch(pdlBody);
-      const total = pdlResponse.total ?? 0;
-      const data = pdlResponse.data ?? [];
-
+      console.log("[PDL TRACE]", JSON.stringify({
+        extractorLatencyMs: pdlResult.trace.extractorLatencyMs,
+        pdlLatencyMs: pdlResult.trace.pdlLatencyMs,
+        pdlCreditsUsed: pdlResult.trace.pdlCreditsUsed,
+        warnings: pdlResult.trace.warnings,
+      }, null, 2));
       console.log("[PDL FIRST 3 RESULTS]", (data).slice(0, 3).map((p: any) => ({
         name: p.full_name,
         inferred_years: p.inferred_years_experience,
         job_title: p.job_title,
         company: p.job_company_name,
-        industry: p.job_company_industry,
+        industry: p.job_company_industry_v2,
       })));
 
       let candidates = data.map(mapPdlToCandidate);
