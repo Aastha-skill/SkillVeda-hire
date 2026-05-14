@@ -2714,6 +2714,31 @@ OUTPUT: { current_role: { role: "sales", sub_role: "sales_development", levels: 
 
 
 ────────────────────────────────────────────────────────────────────────────────────
+COMMON MISTAKE TO AVOID — sub_role values
+────────────────────────────────────────────────────────────────────────────────────
+
+The 105 canonical sub_role values listed in §2 are SHORT, lowercase, snake_case tokens
+like `customer_success`, `account_management`, `sales_development` — NOT the full
+recruiter-language titles like "Customer Success Manager" or "Account Manager".
+
+WRONG:
+  sub_role: "customer_success_manager"   ← invented value, will be silently dropped
+  sub_role: "account_manager"            ← invented value, will be silently dropped
+  sub_role: "customer_relationship_manager"  ← invented value
+
+RIGHT:
+  sub_role: "customer_success"           ← exact match from §2.1 canonical
+  sub_role: "account_management"         ← exact match from §2.4 canonical
+  sub_role: "customer_support"           ← exact match from §2.2 canonical
+
+The §2 tables list recruiter titles like "Customer Success Manager (CSM)" as TITLE
+VARIANTS that should MAP to a sub_role. The sub_role itself is always the short
+snake_case token in the section header (`customer_success`, `customer_support`, etc.).
+
+The same rule applies to past_experience.sub_roles[] — use canonical tokens, not
+recruiter titles.
+
+────────────────────────────────────────────────────────────────────────────────────
 OUTPUT SCHEMA — return this exact structure
 ────────────────────────────────────────────────────────────────────────────────────
 
