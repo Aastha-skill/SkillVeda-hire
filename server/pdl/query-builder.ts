@@ -272,7 +272,12 @@ export function buildPdlQuery(
   if (isCustomerFacingSearch && !spec.include_technical_support) {
     const mustNot: EsClause[] = [];
     for (const keyword of TECHNICAL_SIGNAL_KEYWORDS) {
-      mustNot.push({ match_phrase: { job_title: keyword } });
+      // job_title is a keyword field in PDL; match_phrase requires the .text
+      // sub-field for tokenized/substring matching. Without .text, "technical
+      // support" only matches if the whole title is literally "technical support",
+      // missing "junior technical support specialist" and similar variants.
+      // Verified via PDL ES mapping doc + live debug query.
+      mustNot.push({ match_phrase: { "job_title.text": keyword } });
       mustNot.push({ match_phrase: { headline: keyword } });
     }
     boolQuery.must_not = mustNot;
