@@ -8,7 +8,7 @@ import type { SearchSpec, PdlSearchRequest, EsClause } from "./types";
 import { resolveLocality } from "./india-locations";
 import {
   ROLES, SUB_ROLES, LEVELS, COMPANY_SIZES, FUNDING_STAGES,
-  filterCanonical, validateCanonical,
+  filterCanonical, validateCanonical, canonicalizeIndustries,
 } from "./canonical-values";
 
 /**
@@ -169,20 +169,19 @@ export function buildPdlQuery(
   // current and past employers (PDL flattens the experience array and
   // treats the current job as the most recent entry). One filter covers
   // both "currently in X" and "ever worked in X" intent.
-  // Merge spec.current_company.industries and spec.past_experience.industries.
-  // No runtime validation (~420 values) — trust the extractor's prompt.
-  const combinedIndustries = Array.from(new Set(
-    [
-      ...(spec.current_company?.industries || []),
-      ...(spec.past_experience?.industries || []),
-    ]
-      .map(s => String(s).toLowerCase().trim())
-      .filter(Boolean)
-  ));
-  if (combinedIndustries.length === 1) {
-    filters.push({ term: { "experience.company.industry_v2": combinedIndustries[0] } });
-  } else if (combinedIndustries.length > 1) {
-    filters.push({ terms: { "experience.company.industry_v2": combinedIndustries } });
+  // Merge spec.current_company.industries and spec.past_experience.industries,
+  // then validate against the 434-value canonical set. Any non-canonical
+  // value Haiku might emit ("healthcare", "tech", "B2B", etc.) is dropped
+  // here with a warning so we don't ship zero-match queries to PDL.
+  const mergedIndustries = [
+    ...(spec.current_company?.industries ?? []),
+    ...(spec.past_experience?.industries ?? []),
+  ];
+  const canonicalIndustries = canonicalizeIndustries(mergedIndustries);
+  if (canonicalIndustries.length > 0) {
+    filters.push({
+      terms: { "experience.company.industry_v2": canonicalIndustries },
+    });
   }
 
   // ─── §9 Current company sizes ─────────────────────────────────────────

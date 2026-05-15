@@ -1328,11 +1328,14 @@ karnataka, tamil nadu, kerala, telangana, andhra pradesh
 
 ---
 
-## §8. `job_company_industry_v2` — ALL 420 values
+## §8. Canonical PDL industries_v2 values (434 total)
 
-PDL's modern industry classification. Every company has exactly one of these tagged. Use with `term` or `terms`.
+Source: https://docs.peopledatalabs.com/docs/industries-v2 (verified May 15, 2026)
+Stored at: server/pdl/data/pdl-industries-v2.txt
 
-**How to use:** for a JD, pick 3-8 industries that match. Pass them as a `terms` array. Example: "B2B SaaS sales" → `["software development", "it services and it consulting", "technology, information and internet"]`.
+These are the ONLY valid values for PDL's `job_company_industry_v2` and
+`experience.company.industry_v2` fields. PDL's industry_v2 is an exact-match
+keyword field — any value not in this list returns zero matches.
 
 ```
 abrasives and nonmetallic minerals manufacturing
@@ -1770,120 +1773,6 @@ wood product manufacturing
 writing and editing
 zoos and botanical gardens
 ```
-
-### Common industry groupings for revenue hiring
-
-**B2B SaaS / Tech:**
-```
-software development
-it services and it consulting
-technology, information and internet
-technology, information and media
-business intelligence platforms
-data infrastructure and analytics
-data security software products
-computer and network security
-embedded software products
-mobile computing software products
-desktop computing software products
-internet marketplace platforms
-internet publishing
-social networking platforms
-```
-
-**Fintech / Financial services:**
-```
-financial services
-banking
-insurance
-capital markets
-investment management
-investment banking
-investment advice
-venture capital and private equity principals
-credit intermediation
-funds and trusts
-insurance agencies and brokerages
-insurance carriers
-```
-
-**E-commerce / Retail:**
-```
-retail
-online and mail order retail
-retail apparel and fashion
-retail luxury goods and jewelry
-retail groceries
-food and beverage retail
-retail health and personal care products
-internet marketplace platforms
-```
-
-**Healthcare / Health-tech:**
-```
-hospitals and health care
-hospitals
-medical practices
-mental health care
-biotechnology research
-pharmaceutical manufacturing
-medical equipment manufacturing
-wellness and fitness services
-home health care services
-```
-
-**EdTech / Education:**
-```
-e-learning providers
-higher education
-education
-primary and secondary education
-professional training and coaching
-technical and vocational training
-```
-
-**Marketing / Media:**
-```
-advertising services
-marketing services
-public relations and communications services
-media production
-online audio and video media
-broadcast media production and distribution
-market research
-```
-
-**Telecom:**
-```
-telecommunications
-telecommunications carriers
-wireless services
-satellite telecommunications
-```
-
-**Logistics / Supply chain:**
-```
-transportation, logistics, supply chain and storage
-freight and package transportation
-truck transportation
-warehousing and storage
-```
-
-**Professional services / Consulting:**
-```
-business consulting and services
-management consulting
-operations consulting
-strategic management services
-human resources services
-staffing and recruiting
-executive search services
-legal services
-law practice
-accounting
-```
-
----
 
 ## §9. `job_company_size` — ALL 8 values
 
@@ -2528,6 +2417,47 @@ RULE 7 — Output strict JSON only. No prose, no markdown, no explanations. No c
 ────────────────────────────────────────────────────────────────────────────────────
 TARGET COMPANIES and SKILLS extraction
 ────────────────────────────────────────────────────────────────────────────────────
+
+INDUSTRY EXTRACTION — RULES:
+
+Industries MUST come from the §8 canonical list above (434 valid values). PDL's
+industry_v2 is an exact-match keyword field — any value not in §8 returns zero
+candidates.
+
+Mapping strategy:
+
+1. Read JD's industry mentions ("healthcare", "fintech", "SaaS", "D2C",
+   "consumer goods", "ecommerce", "edtech", "agritech", "hospitality",
+   "wellness", "B2B", "B2C", etc.).
+
+2. For each JD term, find the BEST match(es) from §8 using semantic judgment.
+   You have the full 434-value list in context. Examples (illustrative, not exhaustive):
+
+     JD says           → Pick from §8
+     "healthcare"      → "hospitals and health care"
+     "consumer goods"  → "retail" (or specific retail sub-types)
+     "D2C" / "DTC"     → "retail" or "online and mail order retail"
+     "ecommerce"       → "online and mail order retail"
+     "SaaS" / "software" → "software development"
+     "fintech"         → "financial services"
+     "edtech"          → "e-learning providers" or "education"
+     "hospitality"     → "hospitality"
+     "wellness"        → "wellness and fitness services"
+     "agritech"        → "farming"
+     "logistics"       → "transportation, logistics, supply chain and storage"
+
+3. Multiple JD terms can map to multiple §8 values. A single JD term can map
+   to multiple §8 values if context warrants (e.g., "consumer goods" can map
+   to BOTH "retail" AND "retail apparel and fashion").
+
+4. If a JD industry mention has NO reasonable §8 match, OMIT it entirely. Do
+   not invent values, do not paraphrase.
+
+5. NEVER emit values not in §8. Examples of wrong output:
+     WRONG: "healthcare"   (§8 has "hospitals and health care")
+     WRONG: "tech"         (§8 has "software development", "internet publishing", etc.)
+     WRONG: "B2B"          (not an industry; it's a business model)
+     WRONG: "saas"         (§8 has "software development")
 
 TARGET COMPANIES extraction:
 - If JD says "must have worked at X, Y, Z" or "experience at X required" or
