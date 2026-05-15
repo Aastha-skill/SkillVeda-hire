@@ -219,16 +219,9 @@ export function buildPdlQuery(
     filters.push({ terms: { "experience.company.name": pastCompanyNames } });
   }
 
-  // ─── §12 Education degrees ────────────────────────────────────────────
-  // No runtime validation (~161 values) — trust the extractor's prompt.
-  const degrees = (spec.education?.degrees || [])
-    .map(s => String(s).toLowerCase().trim())
-    .filter(Boolean);
-  if (degrees.length === 1) {
-    filters.push({ term: { "education.degrees": degrees[0] } });
-  } else if (degrees.length > 1) {
-    filters.push({ terms: { "education.degrees": degrees } });
-  }
+  // Education filter intentionally not applied. PDL's education.degrees
+  // coverage is incomplete and filtering on it over-restricts the pool.
+  // The spec.education.degrees value is preserved for future scoring use.
 
   // ─── Target companies (must have worked at, current OR past) ─────────
   // Uses a nested bool with should clauses so either current job OR any
