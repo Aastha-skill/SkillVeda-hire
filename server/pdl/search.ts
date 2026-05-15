@@ -225,6 +225,7 @@ function mergeWithDefaults(partial: Partial<SearchSpec>): SearchSpec {
     },
     target_companies: partial.target_companies ?? [],
     skills: partial.skills ?? [],
+    include_technical_support: partial.include_technical_support ?? false,
   };
 }
 

@@ -40,11 +40,17 @@ async function testQueryBuilderOnly() {
     },
     years_experience: { min: 1, max: 3 },
     education: { degrees: [] },
+    target_companies: [],
+    skills: [],
+    include_technical_support: false,
   };
 
   const query = buildPdlQuery(spec, { size: 25 });
   console.log("Generated query:");
   console.log(JSON.stringify(query, null, 2));
+  if (query.query.bool.must_not) {
+    console.log(`Must-not clauses: ${query.query.bool.must_not.length}`);
+  }
 }
 
 async function testRegionGroups() {
@@ -57,11 +63,17 @@ async function testRegionGroups() {
     location: { country: "india", region: null, locality: "ncr" },
     years_experience: { min: null, max: null },
     education: { degrees: [] },
+    target_companies: [],
+    skills: [],
+    include_technical_support: false,
   };
 
   const query = buildPdlQuery(ncrSpec);
   console.log("NCR query should expand to 8 cities:");
   console.log(JSON.stringify(query.query.bool.filter, null, 2));
+  if (query.query.bool.must_not) {
+    console.log(`Must-not clauses: ${query.query.bool.must_not.length}`);
+  }
 }
 
 async function testExtractorOnly() {
@@ -89,6 +101,9 @@ async function testExtractorOnly() {
   const query = buildPdlQuery(result.spec, { size: 25 });
   console.log("Built query filters:");
   console.log(JSON.stringify(query.query.bool.filter, null, 2));
+  if (query.query.bool.must_not) {
+    console.log(`Must-not clauses: ${query.query.bool.must_not.length}`);
+  }
 }
 
 async function testFullPipeline() {
@@ -107,6 +122,9 @@ async function testFullPipeline() {
   console.log(`Total time: extractor ${result.trace.extractorLatencyMs}ms + PDL ${result.trace.pdlLatencyMs}ms`);
   console.log(`Found ${result.total} candidates, returning ${result.candidates.length}`);
   console.log(`Credits used: ${result.trace.pdlCreditsUsed}`);
+  if (result.trace.query.query.bool.must_not) {
+    console.log(`Must-not clauses: ${result.trace.query.query.bool.must_not.length}`);
+  }
 
   for (const c of result.candidates.slice(0, 3)) {
     console.log(

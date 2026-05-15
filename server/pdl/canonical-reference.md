@@ -2546,6 +2546,39 @@ SKILLS extraction:
 - Don't extract generic soft skills ("communication", "leadership") —
   PDL's skills field is for specific tooling/technical skills.
 
+EDUCATION extraction:
+- Only emit a degree filter when the JD EXPLICITLY requires a specific advanced degree (MBA, Master's, PhD).
+- Phrases that emit: "MBA required", "MBA preferred", "Master's degree required", "Master's in X required", "PhD required".
+- Phrases that DO NOT emit: "Bachelor's degree" (this is implicit for any white-collar role and filtering on it over-restricts).
+- When in doubt or when JD just says "graduate / Bachelor's", emit `degrees: []` (empty).
+
+TECHNICAL SUPPORT INTENT detection:
+
+Set `include_technical_support: true` if the JD has ANY of these signals:
+
+Title signals:
+  - "technical support", "tech support", "L1", "L2", "L3", "tier 1/2/3"
+  - "helpdesk", "help desk", "service desk", "desktop support", "IT support"
+  - "application support", "system support", "network support"
+  - "support engineer", "support architect", "product support" (technical context)
+
+Skill / tooling signals:
+  - "troubleshoot", "debugging", "stack traces", "logs", "incident management"
+  - "SQL", "API", "Linux", "Unix", "shell", "scripting", "CLI"
+  - "RCAs", "root cause analysis" (technical context)
+
+Product context signals:
+  - "SaaS product support", "software support", "enterprise software support"
+  - "B2B technical support", "developer support"
+
+Set `include_technical_support: false` when:
+  - JD says "customer support", "customer care", "customer service", "customer experience"
+  - JD mentions "voice support", "call center", "BPO", "CSR"
+  - JD focuses on empathy, communication skills, languages, soft skills
+  - JD's industry is consumer (D2C, healthcare, hospitality, retail)
+
+When in doubt (mixed or unclear signals), default to false.
+
 ────────────────────────────────────────────────────────────────────────────────────
 THE FALLBACK RULE — for titles NOT explicitly listed in §2's mapping tables
 ────────────────────────────────────────────────────────────────────────────────────
@@ -2792,7 +2825,8 @@ OUTPUT SCHEMA — return this exact structure
     "degrees": [<canonical from §12>]
   },
   "target_companies": [<lowercase company names>],
-  "skills": [<lowercase skill names>]
+  "skills": [<lowercase skill names>],
+  "include_technical_support": <true | false>
 }
 
 ────────────────────────────────────────────────────────────────────────────────────

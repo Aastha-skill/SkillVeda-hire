@@ -59,6 +59,15 @@ export interface SearchSpec {
    * free-text, no canonical enum). Lowercase (e.g. ["salesforce", "gainsight"]).
    */
   skills: string[];
+
+  /**
+   * Whether the JD signals interest in technical / L1-L2-L3 / product / IT
+   * support roles. When false (default), candidates with technical-signal
+   * keywords in their job_title or headline are excluded from
+   * customer_support and customer_success searches. When true, they're
+   * included. Set by the extractor based on JD content.
+   */
+  include_technical_support: boolean;
 }
 
 /**

@@ -31,6 +31,7 @@ const EMPTY_SPEC: SearchSpec = {
   education: { degrees: [] },
   target_companies: [],
   skills: [],
+  include_technical_support: false,
 };
 
 export interface ExtractResult {
@@ -195,5 +196,8 @@ function parseExtractorOutput(raw: string): SearchSpec {
     skills: Array.isArray(parsed.skills)
       ? parsed.skills
       : [],
+    include_technical_support: typeof parsed.include_technical_support === "boolean"
+      ? parsed.include_technical_support
+      : false,
   };
 }

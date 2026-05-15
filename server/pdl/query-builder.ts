@@ -12,6 +12,63 @@ import {
 } from "./canonical-values";
 
 /**
+ * Keywords that signal a technical role. Matched as match_phrase against
+ * job_title and headline. Substring match — "tech support" hits "Tech
+ * Support Specialist", "Software Tech Support", "Junior Tech Support",
+ * etc.
+ *
+ * Applied only when:
+ *   - spec.current_role.sub_role is "customer_support" or "customer_success"
+ *   - spec.include_technical_support is false
+ *
+ * We exclude technical roles from CS searches by default because PDL's
+ * customer_support / customer_success sub_role tags are loose and catch
+ * product/technical/L2/help-desk support roles. The keyword signal on
+ * job_title and headline is a more reliable filter than relying on
+ * sub_role alone.
+ *
+ * We deliberately do NOT match against summary or job_summary fields —
+ * legitimate customer support people often mention "troubleshoot" in
+ * their summary even though they're customer-facing.
+ */
+const TECHNICAL_SIGNAL_KEYWORDS = [
+  // Support-domain technical
+  "tech support",
+  "technical support",
+  "product support",
+  "application support",
+  "system support",
+  "systems support",
+  "network support",
+  "desktop support",
+  "infrastructure support",
+  "engineering support",
+  "developer support",
+  "support engineer",
+  "support architect",
+  "helpdesk",
+  "help desk",
+  "service desk",
+  // Tier / level
+  "l1 support",
+  "l2 support",
+  "l3 support",
+  "tier 1 support",
+  "tier 2 support",
+  "tier 3 support",
+  // Engineering roles
+  "software engineer",
+  "software developer",
+  "devops engineer",
+  "cloud engineer",
+  "data engineer",
+  "test engineer",
+  "qa engineer",
+  "sre",
+  "site reliability",
+];
+
+/**
  * Options for building a query.
  */
 export interface BuildOptions {
@@ -107,15 +164,25 @@ export function buildPdlQuery(
     filters.push({ range: { inferred_years_experience: range } });
   }
 
-  // ─── §8 Current company industries ────────────────────────────────────
+  // ─── §8 Industries (current OR past) ──────────────────────────────────
+  // Per §13 of canonical doc: experience.company.industry_v2 matches BOTH
+  // current and past employers (PDL flattens the experience array and
+  // treats the current job as the most recent entry). One filter covers
+  // both "currently in X" and "ever worked in X" intent.
+  // Merge spec.current_company.industries and spec.past_experience.industries.
   // No runtime validation (~420 values) — trust the extractor's prompt.
-  const industries = (spec.current_company?.industries || [])
-    .map(s => String(s).toLowerCase().trim())
-    .filter(Boolean);
-  if (industries.length === 1) {
-    filters.push({ term: { job_company_industry_v2: industries[0] } });
-  } else if (industries.length > 1) {
-    filters.push({ terms: { job_company_industry_v2: industries } });
+  const combinedIndustries = Array.from(new Set(
+    [
+      ...(spec.current_company?.industries || []),
+      ...(spec.past_experience?.industries || []),
+    ]
+      .map(s => String(s).toLowerCase().trim())
+      .filter(Boolean)
+  ));
+  if (combinedIndustries.length === 1) {
+    filters.push({ term: { "experience.company.industry_v2": combinedIndustries[0] } });
+  } else if (combinedIndustries.length > 1) {
+    filters.push({ terms: { "experience.company.industry_v2": combinedIndustries } });
   }
 
   // ─── §9 Current company sizes ─────────────────────────────────────────
@@ -138,25 +205,11 @@ export function buildPdlQuery(
     filters.push({ terms: { job_company_funding_stages: fundingStages } });
   }
 
-  // ─── §13 Past experience (only added when explicitly required) ────────
-  const pastSubRoles = filterCanonical(
-    spec.past_experience?.sub_roles, SUB_ROLES, "experience.title.sub_role"
-  );
-  if (pastSubRoles.length === 1) {
-    filters.push({ term: { "experience.title.sub_role": pastSubRoles[0] } });
-  } else if (pastSubRoles.length > 1) {
-    filters.push({ terms: { "experience.title.sub_role": pastSubRoles } });
-  }
-
-  const pastIndustries = (spec.past_experience?.industries || [])
-    .map(s => String(s).toLowerCase().trim())
-    .filter(Boolean);
-  if (pastIndustries.length === 1) {
-    filters.push({ term: { "experience.company.industry_v2": pastIndustries[0] } });
-  } else if (pastIndustries.length > 1) {
-    filters.push({ terms: { "experience.company.industry_v2": pastIndustries } });
-  }
-
+  // ─── §13 Past experience — company names only ─────────────────────────
+  // Past sub_roles intentionally NOT filtered: experience.title.sub_role
+  // is redundant when job_title_sub_role is already gated (per §17 RULE 5)
+  // and over-restrictive for entry-level candidates with only one job.
+  // Past industries are merged into the combined industries filter above.
   const pastCompanyNames = (spec.past_experience?.company_names || [])
     .map(s => String(s).toLowerCase().trim())
     .filter(Boolean);
@@ -205,17 +258,33 @@ export function buildPdlQuery(
     filters.push({ terms: { skills: skills } });
   }
 
+  // ─── Technical-support exclusion (customer-facing searches only) ─────
+  // When the JD doesn't ask for technical support, exclude candidates whose
+  // job_title or headline contains technical-signal keywords. Only applies
+  // to customer_support / customer_success sub_role searches; ignored for
+  // every other sub_role.
+  const boolQuery: { filter: EsClause[]; must_not?: EsClause[] } = { filter: filters };
+
+  const isCustomerFacingSearch =
+    spec.current_role?.sub_role === "customer_support" ||
+    spec.current_role?.sub_role === "customer_success";
+
+  if (isCustomerFacingSearch && !spec.include_technical_support) {
+    const mustNot: EsClause[] = [];
+    for (const keyword of TECHNICAL_SIGNAL_KEYWORDS) {
+      mustNot.push({ match_phrase: { job_title: keyword } });
+      mustNot.push({ match_phrase: { headline: keyword } });
+    }
+    boolQuery.must_not = mustNot;
+  }
+
   // ─── Assemble final request ──────────────────────────────────────────
   return {
     dataset: options.dataset || "all",
     size: options.size || 25,
     ...(options.from != null && { from: options.from }),
     updated_title_roles: true, // required for v28.0+ taxonomy
-    query: {
-      bool: {
-        filter: filters,
-      },
-    },
+    query: { bool: boolQuery },
   };
 }
 
