@@ -34,7 +34,7 @@ function LeadCaptureModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
           phone: formData.phone,
           leadType: 'PROGRAM',
           sourcePage: 'pgdm-customer-success',
-          metadata: JSON.stringify({ program: 'PG Diploma in Customer Success & KAM' }),
+          metadata: JSON.stringify({ program: 'PG Diploma in Customer Success & KAM · 2026 Batch' }),
         }),
       });
       if (!res.ok) throw new Error('Failed to submit');
@@ -49,87 +49,67 @@ function LeadCaptureModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={handleClose}>
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)' }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,10,15,0.45)', backdropFilter: 'blur(8px)' }} />
       <div
-        style={{ position: 'relative', background: '#0f1320', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '20px', maxWidth: '420px', width: '100%', overflow: 'hidden', animation: 'fadeUp 0.3s ease both' }}
+        style={{ position: 'relative', background: '#ffffff', border: '1px solid #ebe8f5', borderRadius: '20px', maxWidth: '440px', width: '100%', overflow: 'hidden', animation: 'fadeUp 0.3s ease both', boxShadow: '0 24px 64px rgba(124,58,237,0.18)' }}
         onClick={e => e.stopPropagation()}
       >
-        <div style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.4), rgba(59,130,246,0.3))', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#e0d7ff' }}>⚡ Apply for PGDM Program</span>
-          <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: '4px' }}><X size={16} /></button>
+        <div style={{ padding: '20px 28px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7c3aed' }}>⚡ PGDM · 2026 Batch</span>
+          <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9b9aab', padding: '4px' }}><X size={18} /></button>
         </div>
 
-        <div style={{ padding: '28px' }}>
+        <div style={{ padding: '18px 28px 28px' }}>
           {submitted ? (
-            <div style={{ textAlign: 'center', padding: '20px 0' }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(34,197,94,0.1)', border: '2px solid rgba(34,197,94,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                <CheckCircle size={30} color="#4ade80" />
+            <div style={{ textAlign: 'center', padding: '24px 0' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#f0fdf4', border: '1.5px solid #86efac', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <CheckCircle size={30} color="#16a34a" />
               </div>
-              <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1.3rem', color: '#f1f5f9', marginBottom: '10px' }}>Application Received!</h3>
-              <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: 1.6, marginBottom: '24px' }}>Our counsellor will reach out to you within <strong style={{ color: '#c4b5fd' }}>24 hours</strong> to discuss next steps.</p>
+              <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.3rem', color: '#0a0a0f', marginBottom: '10px', letterSpacing: '-0.02em' }}>Application Received</h3>
+              <p style={{ fontSize: '0.92rem', color: '#6b6a7a', lineHeight: 1.6, marginBottom: '24px' }}>Our counsellor will reach out within <strong style={{ color: '#7c3aed' }}>24 hours</strong> to discuss next steps for the 2026 Batch.</p>
               <button
                 onClick={handleClose}
-                style={{ background: 'linear-gradient(135deg, #7c3aed, #3b82f6)', color: 'white', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.9rem', padding: '12px 28px', border: 'none', borderRadius: '10px', cursor: 'pointer' }}
+                style={{ background: '#7c3aed', color: 'white', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.92rem', padding: '12px 32px', border: 'none', borderRadius: '10px', cursor: 'pointer' }}
               >
                 Done
               </button>
             </div>
           ) : (
             <>
-              <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1.15rem', color: '#f1f5f9', marginBottom: '6px' }}>Start Your Application</h3>
-              <p style={{ fontSize: '0.82rem', color: '#475569', marginBottom: '22px', lineHeight: 1.5 }}>Fill in your details and our team will get in touch to guide you through the enrollment process.</p>
+              <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.35rem', color: '#0a0a0f', marginBottom: '6px', letterSpacing: '-0.02em' }}>Apply for the 2026 Batch</h3>
+              <p style={{ fontSize: '0.88rem', color: '#6b6a7a', marginBottom: '22px', lineHeight: 1.5 }}>Fill in your details — our team will get in touch within 24 hours.</p>
 
               <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Full Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.fullName}
-                    onChange={e => setFormData(p => ({ ...p, fullName: e.target.value }))}
-                    placeholder="Your full name"
-                    style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: '#e2e8f0', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }}
-                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(124,58,237,0.5)'}
-                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
-                  />
-                </div>
-                <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Email Address *</label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-                    placeholder="you@example.com"
-                    style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: '#e2e8f0', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }}
-                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(124,58,237,0.5)'}
-                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
-                  />
-                </div>
-                <div style={{ marginBottom: '22px' }}>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Phone Number *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
-                    placeholder="+91 98765 43210"
-                    style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: '#e2e8f0', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }}
-                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(124,58,237,0.5)'}
-                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
-                  />
-                </div>
+                {[
+                  { label: 'Full Name', type: 'text', key: 'fullName', placeholder: 'Your full name' },
+                  { label: 'Email Address', type: 'email', key: 'email', placeholder: 'you@example.com' },
+                  { label: 'Phone Number', type: 'tel', key: 'phone', placeholder: '+91 98765 43210' },
+                ].map((f, i) => (
+                  <div key={i} style={{ marginBottom: i < 2 ? '14px' : '22px' }}>
+                    <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 600, color: '#6b6a7a', marginBottom: '6px', letterSpacing: '0.04em' }}>{f.label} *</label>
+                    <input
+                      type={f.type}
+                      required
+                      value={formData[f.key as keyof typeof formData]}
+                      onChange={e => setFormData(p => ({ ...p, [f.key]: e.target.value }))}
+                      placeholder={f.placeholder}
+                      style={{ width: '100%', padding: '12px 14px', background: '#ffffff', border: '1px solid #ebe8f5', borderRadius: '10px', color: '#0a0a0f', fontSize: '0.92rem', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxSizing: 'border-box' }}
+                      onFocus={e => { e.currentTarget.style.borderColor = '#7c3aed'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
+                      onBlur={e => { e.currentTarget.style.borderColor = '#ebe8f5'; e.currentTarget.style.boxShadow = 'none'; }}
+                    />
+                  </div>
+                ))}
 
                 <button
                   type="submit"
                   disabled={submitting}
-                  style={{ width: '100%', background: 'linear-gradient(135deg, #7c3aed, #3b82f6)', color: 'white', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.95rem', padding: '13px', border: 'none', borderRadius: '10px', cursor: submitting ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: submitting ? 0.7 : 1, transition: 'opacity 0.2s' }}
+                  style={{ width: '100%', background: '#7c3aed', color: 'white', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.95rem', padding: '14px', border: 'none', borderRadius: '10px', cursor: submitting ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: submitting ? 0.7 : 1, transition: 'opacity 0.2s' }}
                 >
                   {submitting ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Submitting...</> : <>Submit Application <ArrowRight size={16} /></>}
                 </button>
 
-                <p style={{ textAlign: 'center', fontSize: '0.7rem', color: '#334155', marginTop: '12px', lineHeight: 1.5 }}>
-                  🔒 Your information is secure and will only be used to contact you about the program.
+                <p style={{ textAlign: 'center', fontSize: '0.72rem', color: '#9b9aab', marginTop: '12px', lineHeight: 1.5 }}>
+                  🔒 Your information stays private and is only used to contact you about this programme.
                 </p>
               </form>
             </>
@@ -142,24 +122,28 @@ function LeadCaptureModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
 
 const faqs = [
   {
-    q: "What happens if I'm not placed within 2 months?",
-    a: "If Skilled Veda is unable to place you with a CTC of ₹5 LPA or above within the first 2 months, you have the option to exit the program completely. You will not owe any fees beyond the ₹12,000 already paid.",
+    q: "What is the 6-month paid internship — and is it really guaranteed?",
+    a: "Yes — a paid internship at a partner B2B / SaaS company is built into every enrollment. From month 7 to month 12, you work full-time at the company as a paid intern, applying what you learned in the first 6 months of training. This is real, paid work — not a token project or simulation.",
   },
   {
-    q: "When do I start paying the monthly fees?",
-    a: "Monthly fees of ₹6,660 begin only after you are placed and start the 10-month work-integrated phase. During the first 2 months of training, you only pay ₹12,000 upfront.",
+    q: "How much will I earn during the paid internship?",
+    a: "Internship stipends typically range from ₹15,000–₹25,000 per month, depending on the partner company, your role, and your performance during the first 6 months of training.",
   },
   {
-    q: "Is this a full-time program?",
-    a: "The first 2 months are full-time training at Skilled Veda. After placement, you work full-time at your employer and continue diploma coursework alongside your job.",
+    q: "What's the placement opportunity after 12 months?",
+    a: "After completing the 12-month programme — diploma coursework plus the 6-month paid internship — graduates apply for full-time Customer Success and Key Account Management roles. Our previous cohort placed at an average CTC of ₹6.3 LPA, with the highest offer at ₹10.3 LPA. Placement is opportunity-based: we open doors at our hiring partners, and converting to a full-time offer depends on your internship performance and interview readiness.",
   },
   {
-    q: "What kind of companies will I be placed in?",
-    a: "Placements are in B2B, SaaS, tech-enabled services, and consulting companies with Customer Success, Account Management, or Client Servicing roles.",
+    q: "When does the 2026 Batch start? How do I apply?",
+    a: "Applications for the 2026 Batch are open now, with rolling admissions. Each cohort has limited seats to ensure quality training and internship placement support. Submit your application to receive the exact batch start date and reserve your seat.",
+  },
+  {
+    q: "How do I pay the ₹99,000 programme fee?",
+    a: "The ₹99,000 programme fee is paid upfront at enrollment to secure your seat in the 2026 Batch. In select cases, we can accommodate semester-wise payment splits — talk to our counsellor when you apply and we'll see what works for your situation.",
   },
   {
     q: "Is the diploma recognized / accredited?",
-    a: "This PG Diploma is certified by Medhavi Skills University — a recognized university credential you can proudly showcase on your resume and LinkedIn.",
+    a: "Yes — this PG Diploma is certified by Medhavi Skills University, a UGC-recognised, government-approved university credential. You can confidently showcase it on your resume, LinkedIn, and to prospective employers.",
   },
 ];
 
@@ -181,111 +165,92 @@ export default function PGDMCustomerSuccess() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#080b14', color: '#e8eaf0', fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: '#ffffff', color: '#0a0a0f', fontFamily: "'Inter', sans-serif" }}>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap');
+
         .pgdm-hero-bg {
-          background: #080b14;
+          background: #ffffff;
           position: relative;
           overflow: hidden;
         }
         .pgdm-hero-bg::before {
           content: '';
           position: absolute;
-          top: -200px; left: -200px;
-          width: 700px; height: 700px;
-          background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 65%);
+          top: -300px; right: -200px;
+          width: 800px; height: 800px;
+          background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 65%);
           pointer-events: none;
         }
         .pgdm-hero-bg::after {
           content: '';
           position: absolute;
-          top: -100px; right: -100px;
-          width: 500px; height: 500px;
-          background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 65%);
+          bottom: -200px; left: -200px;
+          width: 600px; height: 600px;
+          background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%);
           pointer-events: none;
         }
-        .pgdm-grid-overlay {
-          position: absolute; inset: 0;
-          background-image: linear-gradient(rgba(124,58,237,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.05) 1px, transparent 1px);
-          background-size: 60px 60px;
-          pointer-events: none;
-        }
-        .pgdm-glow-tag {
-          background: rgba(124,58,237,0.15);
-          border: 1px solid rgba(124,58,237,0.4);
-          color: #a78bfa;
+        .pgdm-eyebrow {
+          background: #f5f3ff;
+          border: 1px solid #ebe8f5;
+          color: #7c3aed;
           font-size: 0.72rem;
-          font-weight: 600;
+          font-weight: 700;
           letter-spacing: 0.1em;
           text-transform: uppercase;
           padding: 6px 14px;
           border-radius: 999px;
           display: inline-flex;
           align-items: center;
-          gap: 7px;
+          gap: 8px;
           margin-bottom: 28px;
         }
         .pgdm-pulse {
           width: 7px; height: 7px;
-          background: #a78bfa;
+          background: #7c3aed;
           border-radius: 50%;
           animation: pgdmPulse 2s infinite;
         }
         @keyframes pgdmPulse {
-          0%, 100% { opacity: 1; box-shadow: 0 0 6px #a78bfa; }
+          0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(124,58,237,0.5); }
           50% { opacity: 0.4; box-shadow: none; }
         }
         .pgdm-gradient-text {
-          background: linear-gradient(135deg, #c4b5fd 0%, #818cf8 50%, #60a5fa 100%);
+          background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 50%, #3b82f6 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
         .pgdm-stat {
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 12px;
+          background: #ffffff;
+          border: 1px solid #ebe8f5;
+          border-radius: 14px;
           padding: 18px 20px;
-          transition: border-color 0.2s;
+          transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
         }
-        .pgdm-stat:hover { border-color: rgba(124,58,237,0.4); }
+        .pgdm-stat:hover {
+          border-color: #c4b5fd;
+          box-shadow: 0 4px 16px rgba(124,58,237,0.08);
+          transform: translateY(-1px);
+        }
         .pgdm-enroll {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(124,58,237,0.3);
+          background: #ffffff;
+          border: 1px solid #ebe8f5;
           border-radius: 20px;
-          padding: 28px;
-          backdrop-filter: blur(12px);
+          padding: 0;
+          overflow: hidden;
           position: sticky;
           top: 80px;
-        }
-        .pgdm-price {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 2.6rem;
-          font-weight: 800;
-          background: linear-gradient(135deg, #fff 0%, #c4b5fd 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        .pgdm-emi {
-          background: rgba(34,197,94,0.12);
-          border: 1px solid rgba(34,197,94,0.3);
-          color: #86efac;
-          font-size: 0.82rem;
-          font-weight: 500;
-          padding: 8px 14px;
-          border-radius: 8px;
-          margin-bottom: 20px;
+          box-shadow: 0 8px 32px rgba(124,58,237,0.08);
         }
         .pgdm-btn {
-          background: linear-gradient(135deg, #7c3aed, #3b82f6);
+          background: #7c3aed;
           color: white;
           font-family: 'Space Grotesk', sans-serif;
           font-weight: 700;
           font-size: 0.95rem;
-          padding: 13px 24px;
+          padding: 14px 24px;
           border: none;
           border-radius: 10px;
           cursor: pointer;
@@ -294,11 +259,16 @@ export default function PGDMCustomerSuccess() {
           align-items: center;
           justify-content: center;
           gap: 8px;
-          transition: opacity 0.2s, transform 0.15s;
+          transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+          box-shadow: 0 2px 8px rgba(124,58,237,0.2);
         }
-        .pgdm-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+        .pgdm-btn:hover {
+          background: #6d28d9;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px rgba(124,58,237,0.3);
+        }
         .pgdm-btn-inline {
-          background: linear-gradient(135deg, #7c3aed, #3b82f6);
+          background: #7c3aed;
           color: white;
           font-family: 'Space Grotesk', sans-serif;
           font-weight: 700;
@@ -310,30 +280,38 @@ export default function PGDMCustomerSuccess() {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          transition: opacity 0.2s, transform 0.15s;
+          transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+          box-shadow: 0 2px 8px rgba(124,58,237,0.2);
         }
-        .pgdm-btn-inline:hover { opacity: 0.85; transform: translateY(-1px); }
+        .pgdm-btn-inline:hover {
+          background: #6d28d9;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px rgba(124,58,237,0.3);
+        }
         .pgdm-btn-outline {
-          background: transparent;
-          color: #c4b5fd;
+          background: #ffffff;
+          color: #5b21b6;
           font-family: 'Space Grotesk', sans-serif;
           font-weight: 600;
           font-size: 0.92rem;
           padding: 13px 28px;
-          border: 1px solid rgba(124,58,237,0.5);
+          border: 1px solid #ebe8f5;
           border-radius: 10px;
           cursor: pointer;
           display: inline-flex;
           align-items: center;
           text-decoration: none;
-          transition: background 0.2s;
+          transition: background 0.2s, border-color 0.2s;
         }
-        .pgdm-btn-outline:hover { background: rgba(124,58,237,0.12); }
+        .pgdm-btn-outline:hover {
+          background: #f5f3ff;
+          border-color: #c4b5fd;
+        }
         .pgdm-top-nav {
           position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-          background: rgba(8,11,20,0.9);
+          background: rgba(255,255,255,0.85);
           backdrop-filter: blur(16px);
-          border-bottom: 1px solid rgba(255,255,255,0.06);
+          border-bottom: 1px solid #ebe8f5;
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -342,71 +320,89 @@ export default function PGDMCustomerSuccess() {
         }
         .pgdm-back {
           display: flex; align-items: center; gap: 6px;
-          color: #64748b; font-size: 0.85rem; font-weight: 500;
+          color: #6b6a7a; font-size: 0.88rem; font-weight: 500;
           background: none; border: none; cursor: pointer;
           text-decoration: none;
           transition: color 0.2s;
         }
-        .pgdm-back:hover { color: #c4b5fd; }
+        .pgdm-back:hover { color: #7c3aed; }
         .pgdm-nav-btn {
-          background: linear-gradient(135deg, #7c3aed, #3b82f6);
+          background: #7c3aed;
           color: white; font-weight: 700; font-size: 0.83rem;
-          padding: 9px 22px; border: none; border-radius: 8px;
-          cursor: pointer; transition: opacity 0.2s;
+          padding: 10px 22px; border: none; border-radius: 8px;
+          cursor: pointer;
+          transition: background 0.2s;
+          box-shadow: 0 2px 6px rgba(124,58,237,0.18);
         }
-        .pgdm-nav-btn:hover { opacity: 0.85; }
+        .pgdm-nav-btn:hover { background: #6d28d9; }
         .pgdm-t-card {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.07);
+          background: #ffffff;
+          border: 1px solid #ebe8f5;
           border-radius: 16px;
-          padding: 22px;
+          padding: 24px;
           flex: 1;
-          transition: border-color 0.2s, background 0.2s;
+          transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .pgdm-t-card:hover { border-color: rgba(124,58,237,0.35); background: rgba(124,58,237,0.05); }
+        .pgdm-t-card:hover {
+          border-color: #c4b5fd;
+          box-shadow: 0 4px 16px rgba(124,58,237,0.08);
+        }
         .pgdm-t-dot {
-          width: 54px; height: 54px; border-radius: 50%;
+          width: 56px; height: 56px; border-radius: 50%;
           display: flex; align-items: center; justify-content: center;
           font-family: 'Space Grotesk', sans-serif;
-          font-weight: 700; font-size: 0.7rem;
+          font-weight: 800; font-size: 0.7rem;
           flex-shrink: 0; position: relative; z-index: 1;
         }
         .pgdm-cur-card {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.06);
+          background: #ffffff;
+          border: 1px solid #ebe8f5;
           border-radius: 14px;
-          padding: 22px;
+          padding: 24px;
           transition: all 0.2s;
         }
         .pgdm-cur-card:hover {
-          border-color: rgba(124,58,237,0.4);
-          background: rgba(124,58,237,0.07);
+          border-color: #c4b5fd;
+          box-shadow: 0 6px 20px rgba(124,58,237,0.1);
           transform: translateY(-2px);
         }
         .pgdm-outcome {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.06);
+          background: #ffffff;
+          border: 1px solid #ebe8f5;
           border-radius: 16px;
-          padding: 28px 20px;
+          padding: 32px 24px;
           text-align: center;
           transition: all 0.2s;
         }
-        .pgdm-outcome:hover { border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.06); }
-        .pgdm-faq {
-          border: 1px solid rgba(255,255,255,0.07);
-          border-radius: 12px;
-          margin-bottom: 8px;
-          overflow: hidden;
-          transition: border-color 0.2s;
+        .pgdm-outcome:hover {
+          border-color: #c4b5fd;
+          box-shadow: 0 6px 20px rgba(124,58,237,0.08);
         }
-        .pgdm-faq.open { border-color: rgba(124,58,237,0.4); }
+        .pgdm-outcome-icon {
+          width: 44px; height: 44px;
+          border-radius: 12px;
+          display: flex; align-items: center; justify-content: center;
+          margin: 0 auto 14px;
+        }
+        .pgdm-faq {
+          border: 1px solid #ebe8f5;
+          border-radius: 12px;
+          margin-bottom: 10px;
+          overflow: hidden;
+          background: #ffffff;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .pgdm-faq.open {
+          border-color: #c4b5fd;
+          box-shadow: 0 4px 16px rgba(124,58,237,0.06);
+        }
         .pgdm-faq-btn {
           width: 100%; display: flex; align-items: center; justify-content: space-between;
-          padding: 18px 20px; background: transparent; border: none;
+          padding: 20px 22px; background: transparent; border: none;
           cursor: pointer; text-align: left; gap: 16px;
-          color: #e2e8f0; font-size: 0.9rem; font-weight: 600;
+          color: #0a0a0f; font-size: 0.95rem; font-weight: 600;
         }
-        .pgdm-faq-btn:hover { background: rgba(255,255,255,0.03); }
+        .pgdm-faq-btn:hover { background: #faf9fc; }
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
@@ -430,144 +426,137 @@ export default function PGDMCustomerSuccess() {
             <ArrowLeft size={15} /> All Programs
           </button>
         </Link>
-        <button className="pgdm-nav-btn" onClick={handleApply}>Apply Now →</button>
+        <button className="pgdm-nav-btn" onClick={handleApply}>Apply for 2026 Batch →</button>
       </div>
 
       {/* HERO */}
-      <div className="pgdm-hero-bg" style={{ paddingTop: '96px', paddingBottom: '72px' }}>
-        <div className="pgdm-grid-overlay" />
+      <div className="pgdm-hero-bg" style={{ paddingTop: '108px', paddingBottom: '88px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 5vw', position: 'relative', zIndex: 1 }}>
-          <div className="pgdm-hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '52px', alignItems: 'start' }}>
+          <div className="pgdm-hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '60px', alignItems: 'start' }}>
 
             <div>
-              <div className="pgdm-glow-tag">
-                <span className="pgdm-pulse" /> Work Integrated Learning · 12 Months
+              <div className="pgdm-eyebrow">
+                <span className="pgdm-pulse" /> 2026 Batch · Applications Open
               </div>
 
-              <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.9rem, 4vw, 3rem)', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '18px', color: '#f1f5f9' }}>
+              <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(2.2rem, 4.6vw, 3.4rem)', lineHeight: 1.05, letterSpacing: '-0.035em', marginBottom: '22px', color: '#0a0a0f' }}>
                 PG Diploma in<br />
                 <span className="pgdm-gradient-text">Customer Success</span><br />
                 & Key Account Management
               </h1>
 
-              <p style={{ fontSize: '1rem', color: '#64748b', maxWidth: '500px', marginBottom: '32px', lineHeight: 1.7 }}>
-                Get placed in a real company within 60 days, drawing a salary from month 3 — or pay nothing more. India's only placement-first PG diploma.
+              <p style={{ fontSize: '1.08rem', color: '#5e5d6e', maxWidth: '520px', marginBottom: '36px', lineHeight: 1.65 }}>
+                Learn for 6 months, earn through a guaranteed 6-month paid internship, then launch into full-time CS roles. India's only work-integrated PG Diploma in Customer Success.
               </p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '32px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '36px' }}>
                 {[
-                  { val: "4–8 LPA", sub: "Starting CTC", col: "#c4b5fd" },
-                  { val: "≤60 Days", sub: "To Placement", col: "#60a5fa" },
-                  { val: "₹0 Risk", sub: "If Not Placed", col: "#86efac" },
+                  { val: "₹6.3 LPA", sub: "Average CTC", col: "#7c3aed" },
+                  { val: "₹10.3 LPA", sub: "Highest CTC", col: "#3b82f6" },
+                  { val: "6 Months", sub: "Paid Internship", col: "#16a34a" },
                 ].map((s, i) => (
                   <div key={i} className="pgdm-stat">
-                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.5rem', color: s.col, letterSpacing: '-0.02em' }}>{s.val}</div>
-                    <div style={{ fontSize: '0.72rem', color: '#475569', marginTop: '2px' }}>{s.sub}</div>
+                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.55rem', color: s.col, letterSpacing: '-0.02em' }}>{s.val}</div>
+                    <div style={{ fontSize: '0.74rem', color: '#9b9aab', marginTop: '3px', fontWeight: 500 }}>{s.sub}</div>
                   </div>
                 ))}
               </div>
 
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                <button className="pgdm-btn-inline" onClick={handleApply}>Apply for This Program <ArrowRight size={16} /></button>
+                <button className="pgdm-btn-inline" onClick={handleApply}>Apply for 2026 Batch <ArrowRight size={16} /></button>
                 <a href="#curriculum" className="pgdm-btn-outline">View Curriculum</a>
               </div>
 
               {/* TRUST BADGE — Medhavi */}
-              <div style={{ marginTop: '28px', display: 'inline-flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px 18px' }}>
-                <div style={{ width: '40px', height: '40px', background: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, padding: '4px' }}>
+              <div style={{ marginTop: '32px', display: 'inline-flex', alignItems: 'center', gap: '14px', background: '#ffffff', border: '1px solid #ebe8f5', borderRadius: '14px', padding: '12px 18px', boxShadow: '0 2px 8px rgba(10,10,15,0.03)' }}>
+                <div style={{ width: '40px', height: '40px', background: '#faf9fc', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, padding: '4px', border: '1px solid #ebe8f5' }}>
                   <img src="https://www.msu.edu.in/logo.svg" alt="Medhavi Skills University" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.68rem', color: '#475569', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '2px' }}>University Certified</div>
-                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.88rem', color: '#c4b5fd' }}>Medhavi Skills University</div>
+                  <div style={{ fontSize: '0.68rem', color: '#9b9aab', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '2px' }}>University Certified</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.92rem', color: '#0a0a0f' }}>Medhavi Skills University</div>
                 </div>
-                <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.07)', margin: '0 4px' }} />
-                <div style={{ fontSize: '0.75rem', color: '#475569', lineHeight: 1.4, maxWidth: '120px' }}>UGC recognised · Govt. approved</div>
+                <div style={{ width: '1px', height: '34px', background: '#ebe8f5', margin: '0 4px' }} />
+                <div style={{ fontSize: '0.78rem', color: '#6b6a7a', lineHeight: 1.4, maxWidth: '120px' }}>UGC recognised · Govt. approved</div>
               </div>
             </div>
 
-            {/* CARD — GTM OPTIMIZED */}
-            <div className="pgdm-enroll" style={{ padding: '0', overflow: 'hidden' }}>
+            {/* CARD — GTM */}
+            <div className="pgdm-enroll">
 
               {/* Top label */}
-              <div style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.5), rgba(59,130,246,0.4))', padding: '10px 20px', textAlign: 'center' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#e0d7ff' }}>⚡ Work Integrated · Placement Guaranteed</span>
+              <div style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', padding: '12px 22px', textAlign: 'center' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#ffffff' }}>⚡ 2026 Batch · Paid Internship Guaranteed</span>
               </div>
 
-              <div style={{ padding: '24px 26px' }}>
+              <div style={{ padding: '26px 26px 24px' }}>
 
-                {/* ROI framing — the key GTM move */}
-                <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '12px', padding: '14px 16px', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#4ade80', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>💡 The Math That Makes Sense</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                {/* ROI framing */}
+                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '16px 18px', marginBottom: '20px' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#15803d', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>💡 The Math That Makes Sense</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div>
-                      <div style={{ fontSize: '0.68rem', color: '#475569', marginBottom: '2px' }}>You invest</div>
-                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#f1f5f9' }}>₹80,000</div>
-                      <div style={{ fontSize: '0.68rem', color: '#475569' }}>over 12 months</div>
+                      <div style={{ fontSize: '0.68rem', color: '#6b6a7a', marginBottom: '3px' }}>You invest</div>
+                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.15rem', color: '#0a0a0f' }}>₹99,000</div>
+                      <div style={{ fontSize: '0.68rem', color: '#9b9aab' }}>upfront programme fee</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.68rem', color: '#475569', marginBottom: '2px' }}>You earn</div>
-                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#4ade80' }}>₹4–8 LPA</div>
-                      <div style={{ fontSize: '0.68rem', color: '#475569' }}>from month 3</div>
+                      <div style={{ fontSize: '0.68rem', color: '#6b6a7a', marginBottom: '3px' }}>You earn</div>
+                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.15rem', color: '#16a34a' }}>₹6.3 – 10.3 LPA</div>
+                      <div style={{ fontSize: '0.68rem', color: '#9b9aab' }}>avg / highest CTC</div>
                     </div>
                   </div>
-                  <div style={{ borderTop: '1px solid rgba(34,197,94,0.15)', marginTop: '10px', paddingTop: '10px', fontSize: '0.78rem', color: '#86efac', fontWeight: 500 }}>
-                    → You recover your entire fee in &lt;3 weeks of salary 🎯
+                  <div style={{ borderTop: '1px solid #bbf7d0', marginTop: '12px', paddingTop: '12px', fontSize: '0.78rem', color: '#15803d', fontWeight: 500 }}>
+                    → Plus a paid stipend during your 6-month internship 🎯
                   </div>
                 </div>
 
-                {/* Payment breakdown — visual */}
-                <div style={{ marginBottom: '20px' }}>
-                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#475569', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>How You Pay</div>
+                {/* 12-month journey */}
+                <div style={{ marginBottom: '22px' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#9b9aab', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '12px' }}>Your 12-Month Journey</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: '10px', padding: '10px 14px' }}>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#c4b5fd' }}>Month 1–2 · Training</div>
-                        <div style={{ fontSize: '0.7rem', color: '#475569', marginTop: '1px' }}>Pay once to start</div>
-                      </div>
-                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1rem', color: '#c4b5fd' }}>₹12,000</div>
+                    <div style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '10px', padding: '12px 14px' }}>
+                      <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#5b21b6' }}>Month 1–6 · Learn</div>
+                      <div style={{ fontSize: '0.72rem', color: '#6b6a7a', marginTop: '2px' }}>Full-time CS + KAM training</div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '10px', padding: '10px 14px' }}>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#86efac' }}>Month 3–12 · After Placement</div>
-                        <div style={{ fontSize: '0.7rem', color: '#475569', marginTop: '1px' }}>Paid from your salary</div>
-                      </div>
-                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1rem', color: '#86efac' }}>₹6,660<span style={{ fontSize: '0.65rem', fontWeight: 500, color: '#475569' }}>/mo</span></div>
+                    <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '12px 14px' }}>
+                      <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#15803d' }}>Month 7–12 · Earn (Paid Internship)</div>
+                      <div style={{ fontSize: '0.72rem', color: '#6b6a7a', marginTop: '2px' }}>Guaranteed paid internship at a partner company</div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)', borderRadius: '10px', padding: '10px 14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px', padding: '12px 14px' }}>
                       <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#fca5a5' }}>If Not Placed at 5+ LPA</div>
-                        <div style={{ fontSize: '0.7rem', color: '#475569', marginTop: '1px' }}>Exit anytime, no questions asked</div>
+                        <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#b45309' }}>Month 12+ · Launch</div>
+                        <div style={{ fontSize: '0.72rem', color: '#6b6a7a', marginTop: '2px' }}>Placement opportunities</div>
                       </div>
-                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1rem', color: '#fca5a5' }}>₹0 more</div>
+                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1rem', color: '#b45309' }}>₹6.3–10.3 <span style={{ fontSize: '0.65rem', fontWeight: 500, color: '#9b9aab' }}>LPA</span></div>
                     </div>
                   </div>
                 </div>
 
-                {/* What's included — compact */}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '16px', marginBottom: '18px' }}>
-                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#475569', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>What's Included</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                {/* What's included */}
+                <div style={{ borderTop: '1px solid #ebe8f5', paddingTop: '18px', marginBottom: '20px' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#9b9aab', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '12px' }}>What's Included</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                     {[
                       "Medhavi University certified",
-                      "Placement at 5+ LPA",
+                      "Guaranteed 6-mo paid internship",
                       "CRM tools training",
                       "Mock interviews",
-                      "10 months work exp",
-                      "Mentor support",
+                      "Industry mentor support",
+                      "Placement opportunities",
                     ].map((f, i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: '#64748b' }}>
-                        <CheckCircle size={12} color="#86efac" style={{ flexShrink: 0 }} /> {f}
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#5e5d6e' }}>
+                        <CheckCircle size={13} color="#16a34a" style={{ flexShrink: 0 }} /> {f}
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <button className="pgdm-btn" onClick={handleApply} style={{ fontSize: '0.95rem', padding: '14px' }}>
-                  Start with ₹12,000 → Apply Now
+                <button className="pgdm-btn" onClick={handleApply} style={{ fontSize: '0.95rem', padding: '15px' }}>
+                  Apply for 2026 Batch →
                 </button>
-                <p style={{ textAlign: 'center', fontSize: '0.68rem', color: '#334155', marginTop: '10px', lineHeight: 1.5 }}>
-                  🔒 Limited seats per cohort · Next batch starting soon
+                <p style={{ textAlign: 'center', fontSize: '0.72rem', color: '#9b9aab', marginTop: '10px', lineHeight: 1.5 }}>
+                  🔒 Limited seats · 2026 Batch enrolling now
                 </p>
               </div>
             </div>
@@ -575,37 +564,73 @@ export default function PGDMCustomerSuccess() {
         </div>
       </div>
 
-      {/* GUARANTEE */}
-      <div style={{ background: 'linear-gradient(90deg, rgba(124,58,237,0.2), rgba(59,130,246,0.15), rgba(124,58,237,0.2))', borderTop: '1px solid rgba(124,58,237,0.25)', borderBottom: '1px solid rgba(124,58,237,0.25)', padding: '14px 5vw', textAlign: 'center', fontSize: '0.88rem', color: '#c4b5fd', fontWeight: 500 }}>
-        <span style={{ color: '#a78bfa', fontWeight: 700 }}>Our Guarantee: </span>
-        Place you at ₹5 LPA+ within 60 days — or you exit and pay nothing more. No fine print.
-      </div>
-
       {/* JOURNEY */}
-      <section style={{ padding: '72px 5vw' }}>
+      <section style={{ padding: '96px 5vw', background: '#faf9fc', borderTop: '1px solid #ebe8f5', borderBottom: '1px solid #ebe8f5' }}>
         <div style={{ maxWidth: '860px', margin: '0 auto' }}>
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#818cf8', marginBottom: '8px' }}>Your Journey</div>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)', color: '#f1f5f9', letterSpacing: '-0.02em', marginBottom: '10px' }}>How Your 12 Months Work</div>
-          <p style={{ color: '#475569', fontSize: '0.92rem', marginBottom: '44px', lineHeight: 1.7 }}>From learner to employed professional — with real income from month 3.</p>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7c3aed', marginBottom: '10px' }}>Your Journey</div>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', color: '#0a0a0f', letterSpacing: '-0.03em', marginBottom: '12px' }}>Learn · Earn · Launch</div>
+          <p style={{ color: '#5e5d6e', fontSize: '1rem', marginBottom: '52px', lineHeight: 1.7, maxWidth: '560px' }}>From learner to employable CS professional — with a guaranteed paid internship in the middle.</p>
 
           <div style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '27px', top: '40px', bottom: '40px', width: '1px', background: 'linear-gradient(to bottom, rgba(124,58,237,0.7), rgba(234,179,8,0.7), rgba(34,197,94,0.7))' }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+            <div style={{ position: 'absolute', left: '28px', top: '48px', bottom: '48px', width: '2px', background: 'linear-gradient(to bottom, #c4b5fd, #86efac, #fcd34d)' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {[
-                { label: "M1–2", phase: "Training Phase", icon: <Brain size={13} color="#a78bfa" />, phaseColor: '#7c3aed', dotBg: 'rgba(124,58,237,0.2)', dotBorder: 'rgba(124,58,237,0.6)', dotCol: '#c4b5fd', title: "Intensive Training & Placement Prep", body: "Full-time training in Customer Success, KAM, CRM tools, and interview readiness. Our team simultaneously works to place you at a partner company.", pill: "₹12,000 upfront — your only cost if not placed", pillBg: 'rgba(124,58,237,0.15)', pillBorder: 'rgba(124,58,237,0.3)', pillCol: '#a78bfa' },
-                { label: "M3", phase: "Decision Point", icon: <Target size={13} color="#fde047" />, phaseColor: '#ca8a04', dotBg: 'rgba(234,179,8,0.15)', dotBorder: 'rgba(234,179,8,0.5)', dotCol: '#fde047', title: "Placement or Exit — Your Choice", body: "We present real job opportunities. Accept an offer at ₹5 LPA or above and continue. If we can't get you there — exit free.", pill: "Zero-risk checkpoint", pillBg: 'rgba(234,179,8,0.12)', pillBorder: 'rgba(234,179,8,0.3)', pillCol: '#fde047' },
-                { label: "M3–12", phase: "Work + Learn", icon: <TrendingUp size={13} color="#86efac" />, phaseColor: '#16a34a', dotBg: 'rgba(34,197,94,0.15)', dotBorder: 'rgba(34,197,94,0.5)', dotCol: '#86efac', title: "Earn While You Learn — 10 Months", body: "Work full-time at your placed company, drawing your salary. Continue diploma coursework alongside — real skills applied to real work daily.", pill: "₹6,660/month — paid from your salary", pillBg: 'rgba(34,197,94,0.12)', pillBorder: 'rgba(34,197,94,0.3)', pillCol: '#86efac' },
+                {
+                  label: "M1–6",
+                  phase: "Learn",
+                  icon: <Brain size={14} color="#5b21b6" />,
+                  phaseColor: '#7c3aed',
+                  dotBg: '#f5f3ff',
+                  dotBorder: '#c4b5fd',
+                  dotCol: '#5b21b6',
+                  title: "Full-Time Learning Phase — 6 Months",
+                  body: "Six months of intensive, structured training in Customer Success, Key Account Management, CRM tools (Salesforce, HubSpot, Gainsight), executive communication, and interview readiness. Learn from industry-active CS leaders and work on real-world case studies.",
+                  pill: "Full-time · Live online sessions",
+                  pillBg: '#f5f3ff',
+                  pillBorder: '#ddd6fe',
+                  pillCol: '#5b21b6'
+                },
+                {
+                  label: "M7–12",
+                  phase: "Earn (Paid Internship)",
+                  icon: <TrendingUp size={14} color="#15803d" />,
+                  phaseColor: '#16a34a',
+                  dotBg: '#f0fdf4',
+                  dotBorder: '#86efac',
+                  dotCol: '#15803d',
+                  title: "Guaranteed Paid Internship — 6 Months",
+                  body: "Work full-time at a partner B2B / SaaS company as a paid intern. Apply your training to real client work, earn a stipend, and continue diploma coursework alongside. Internship placement is built into your enrollment.",
+                  pill: "Paid stipend ₹15-25K/mo · Real client work",
+                  pillBg: '#f0fdf4',
+                  pillBorder: '#bbf7d0',
+                  pillCol: '#15803d'
+                },
+                {
+                  label: "M12+",
+                  phase: "Launch (Placement Opportunities)",
+                  icon: <Target size={14} color="#b45309" />,
+                  phaseColor: '#d97706',
+                  dotBg: '#fffbeb',
+                  dotBorder: '#fcd34d',
+                  dotCol: '#b45309',
+                  title: "Launch — Full-Time Placement Opportunities",
+                  body: "Graduate with a PG Diploma plus 6 months of real CS experience at a hiring partner. Apply for full-time CS, KAM, and Account Management roles. Previous cohort placed at an average CTC of ₹6.3 LPA, with the highest offer at ₹10.3 LPA.",
+                  pill: "Avg ₹6.3 LPA · Highest ₹10.3 LPA",
+                  pillBg: '#fffbeb',
+                  pillBorder: '#fde68a',
+                  pillCol: '#b45309'
+                },
               ].map((step, i) => (
-                <div key={i} style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-                  <div className="pgdm-t-dot" style={{ background: step.dotBg, border: `1.5px solid ${step.dotBorder}`, color: step.dotCol }}>{step.label}</div>
+                <div key={i} style={{ display: 'flex', gap: '22px', alignItems: 'flex-start' }}>
+                  <div className="pgdm-t-dot" style={{ background: step.dotBg, border: `2px solid ${step.dotBorder}`, color: step.dotCol }}>{step.label}</div>
                   <div className="pgdm-t-card">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                       {step.icon}
-                      <span style={{ fontSize: '0.68rem', fontWeight: 700, color: step.phaseColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{step.phase}</span>
+                      <span style={{ fontSize: '0.7rem', fontWeight: 700, color: step.phaseColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{step.phase}</span>
                     </div>
-                    <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#f1f5f9', marginBottom: '7px' }}>{step.title}</h3>
-                    <p style={{ fontSize: '0.85rem', color: '#475569', lineHeight: 1.6 }}>{step.body}</p>
-                    <div style={{ marginTop: '10px', display: 'inline-block', background: step.pillBg, border: `1px solid ${step.pillBorder}`, color: step.pillCol, fontSize: '0.72rem', fontWeight: 600, padding: '4px 12px', borderRadius: '999px' }}>{step.pill}</div>
+                    <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.1rem', color: '#0a0a0f', marginBottom: '8px', letterSpacing: '-0.02em' }}>{step.title}</h3>
+                    <p style={{ fontSize: '0.92rem', color: '#5e5d6e', lineHeight: 1.65 }}>{step.body}</p>
+                    <div style={{ marginTop: '12px', display: 'inline-block', background: step.pillBg, border: `1px solid ${step.pillBorder}`, color: step.pillCol, fontSize: '0.72rem', fontWeight: 700, padding: '5px 13px', borderRadius: '999px' }}>{step.pill}</div>
                   </div>
                 </div>
               ))}
@@ -615,21 +640,21 @@ export default function PGDMCustomerSuccess() {
       </section>
 
       {/* OUTCOMES */}
-      <section style={{ padding: '72px 5vw', background: 'rgba(124,58,237,0.05)', borderTop: '1px solid rgba(124,58,237,0.1)', borderBottom: '1px solid rgba(124,58,237,0.1)' }}>
+      <section style={{ padding: '96px 5vw', background: '#ffffff' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#818cf8', marginBottom: '8px' }}>Outcomes</div>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)', color: '#f1f5f9', letterSpacing: '-0.02em', marginBottom: '40px' }}>What Success Looks Like</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '14px' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7c3aed', marginBottom: '10px' }}>Outcomes</div>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', color: '#0a0a0f', letterSpacing: '-0.03em', marginBottom: '48px' }}>What Success Looks Like</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
             {[
-              { icon: <TrendingUp size={20} color="#c4b5fd" />, val: "4–8 LPA", lbl: "Starting CTC range" },
-              { icon: <Zap size={20} color="#60a5fa" />, val: "≤60 Days", lbl: "To secure placement" },
-              { icon: <Award size={20} color="#86efac" />, val: "12 Months", lbl: "Diploma + real work exp" },
-              { icon: <Shield size={20} color="#fde047" />, val: "₹0 Risk", lbl: "If not placed at 5+ LPA" },
+              { icon: <TrendingUp size={22} color="#7c3aed" />, bg: "#f5f3ff", val: "₹6.3 LPA", lbl: "Average CTC" },
+              { icon: <Award size={22} color="#3b82f6" />, bg: "#eff6ff", val: "₹10.3 LPA", lbl: "Highest CTC" },
+              { icon: <Zap size={22} color="#16a34a" />, bg: "#f0fdf4", val: "6 Months", lbl: "Paid Internship Guaranteed" },
+              { icon: <Shield size={22} color="#b45309" />, bg: "#fffbeb", val: "12 Months", lbl: "Diploma + Real Work Exp" },
             ].map((o, i) => (
               <div key={i} className="pgdm-outcome">
-                <div style={{ marginBottom: '10px' }}>{o.icon}</div>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.8rem', color: '#f1f5f9', letterSpacing: '-0.02em', marginBottom: '4px' }}>{o.val}</div>
-                <div style={{ fontSize: '0.78rem', color: '#475569' }}>{o.lbl}</div>
+                <div className="pgdm-outcome-icon" style={{ background: o.bg }}>{o.icon}</div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.9rem', color: '#0a0a0f', letterSpacing: '-0.02em', marginBottom: '6px' }}>{o.val}</div>
+                <div style={{ fontSize: '0.82rem', color: '#6b6a7a' }}>{o.lbl}</div>
               </div>
             ))}
           </div>
@@ -637,17 +662,17 @@ export default function PGDMCustomerSuccess() {
       </section>
 
       {/* CURRICULUM */}
-      <section id="curriculum" style={{ padding: '72px 5vw' }}>
+      <section id="curriculum" style={{ padding: '96px 5vw', background: '#faf9fc', borderTop: '1px solid #ebe8f5', borderBottom: '1px solid #ebe8f5' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#818cf8', marginBottom: '8px' }}>Curriculum</div>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)', color: '#f1f5f9', letterSpacing: '-0.02em', marginBottom: '10px' }}>What You'll Master</div>
-          <p style={{ color: '#475569', fontSize: '0.92rem', marginBottom: '36px', lineHeight: 1.7 }}>Practical modules built around what top employers actually need.</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7c3aed', marginBottom: '10px' }}>Curriculum</div>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', color: '#0a0a0f', letterSpacing: '-0.03em', marginBottom: '12px' }}>What You'll Master</div>
+          <p style={{ color: '#5e5d6e', fontSize: '1rem', marginBottom: '44px', lineHeight: 1.7, maxWidth: '560px' }}>Practical modules built around what top employers actually need.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px' }}>
             {curriculum.map((c, i) => (
               <div key={i} className="pgdm-cur-card">
-                <div style={{ fontSize: '1.7rem', marginBottom: '10px' }}>{c.icon}</div>
-                <h4 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.92rem', color: '#e2e8f0', marginBottom: '5px' }}>{c.title}</h4>
-                <p style={{ fontSize: '0.8rem', color: '#475569', lineHeight: 1.5 }}>{c.desc}</p>
+                <div style={{ fontSize: '1.8rem', marginBottom: '12px' }}>{c.icon}</div>
+                <h4 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.98rem', color: '#0a0a0f', marginBottom: '6px', letterSpacing: '-0.01em' }}>{c.title}</h4>
+                <p style={{ fontSize: '0.85rem', color: '#6b6a7a', lineHeight: 1.55 }}>{c.desc}</p>
               </div>
             ))}
           </div>
@@ -655,20 +680,20 @@ export default function PGDMCustomerSuccess() {
       </section>
 
       {/* ELIGIBILITY TEST GATE */}
-      <section style={{ padding: '72px 5vw', background: 'rgba(255,255,255,0.015)', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+      <section style={{ padding: '96px 5vw', background: '#ffffff' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#818cf8', marginBottom: '8px' }}>Eligibility</div>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)', color: '#f1f5f9', letterSpacing: '-0.02em', marginBottom: '12px' }}>Are You the Right Fit?</div>
-          <p style={{ color: '#475569', fontSize: '0.92rem', marginBottom: '40px', maxWidth: '520px', lineHeight: 1.7 }}>
-            We don't just accept everyone. To keep the quality of every cohort high — and ensure you get placed — we ask all applicants to clear a short eligibility test first.
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7c3aed', marginBottom: '10px' }}>Eligibility</div>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', color: '#0a0a0f', letterSpacing: '-0.03em', marginBottom: '14px' }}>Are You the Right Fit?</div>
+          <p style={{ color: '#5e5d6e', fontSize: '1rem', marginBottom: '44px', maxWidth: '560px', lineHeight: 1.7 }}>
+            We don't just accept everyone. To keep the quality of every 2026 Batch cohort high — and ensure you get the paid internship you're promised — we ask all applicants to clear a short eligibility test first.
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', maxWidth: '860px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '18px', maxWidth: '900px' }}>
 
             {/* What the test checks */}
-            <div style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '20px', padding: '28px' }}>
-              <div style={{ fontSize: '1.8rem', marginBottom: '14px' }}>🧪</div>
-              <h4 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, color: '#c4b5fd', marginBottom: '12px', fontSize: '1rem' }}>What the Test Checks</h4>
+            <div style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '20px', padding: '30px' }}>
+              <div style={{ fontSize: '1.9rem', marginBottom: '14px' }}>🧪</div>
+              <h4 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, color: '#5b21b6', marginBottom: '14px', fontSize: '1.05rem', letterSpacing: '-0.01em' }}>What the Test Checks</h4>
               {[
                 "Basic English communication ability",
                 "Logical & analytical thinking",
@@ -676,17 +701,17 @@ export default function PGDMCustomerSuccess() {
                 "Aptitude for learning new tools",
                 "Motivation & career intent",
               ].map((t, i) => (
-                <div key={i} style={{ display: 'flex', gap: '9px', marginBottom: '10px', fontSize: '0.85rem', color: '#94a3b8', alignItems: 'flex-start' }}>
-                  <CheckCircle size={14} color="#a78bfa" style={{ flexShrink: 0, marginTop: '2px' }} /> {t}
+                <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: '10px', fontSize: '0.88rem', color: '#5e5d6e', alignItems: 'flex-start' }}>
+                  <CheckCircle size={15} color="#7c3aed" style={{ flexShrink: 0, marginTop: '2px' }} /> {t}
                 </div>
               ))}
             </div>
 
             {/* Test details + CTA */}
-            <div style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.12), rgba(59,130,246,0.08))', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '20px', padding: '28px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', borderRadius: '20px', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: 'white', boxShadow: '0 12px 32px rgba(124,58,237,0.2)' }}>
               <div>
-                <div style={{ fontSize: '1.8rem', marginBottom: '14px' }}>⚡</div>
-                <h4 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, color: '#f1f5f9', marginBottom: '12px', fontSize: '1rem' }}>Quick & Free to Take</h4>
+                <div style={{ fontSize: '1.9rem', marginBottom: '14px' }}>⚡</div>
+                <h4 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, color: '#ffffff', marginBottom: '14px', fontSize: '1.05rem', letterSpacing: '-0.01em' }}>Quick & Free to Take</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '24px' }}>
                   {[
                     { label: "Duration", val: "20 mins" },
@@ -694,32 +719,32 @@ export default function PGDMCustomerSuccess() {
                     { label: "Cost", val: "Free" },
                     { label: "Result", val: "Instant" },
                   ].map((d, i) => (
-                    <div key={i} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '10px', padding: '10px 12px' }}>
-                      <div style={{ fontSize: '0.68rem', color: '#475569', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '2px' }}>{d.label}</div>
-                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.95rem', color: '#c4b5fd' }}>{d.val}</div>
+                    <div key={i} style={{ background: 'rgba(255,255,255,0.12)', borderRadius: '10px', padding: '10px 12px', border: '1px solid rgba(255,255,255,0.15)' }}>
+                      <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '2px' }}>{d.label}</div>
+                      <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.98rem', color: '#ffffff' }}>{d.val}</div>
                     </div>
                   ))}
                 </div>
-                <p style={{ fontSize: '0.82rem', color: '#475569', lineHeight: 1.6, marginBottom: '20px' }}>
-                  Clear the test and you're eligible to enroll. It's designed to be fair — not hard. We're looking for potential, not perfection.
+                <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, marginBottom: '22px' }}>
+                  Clear the test and you're eligible to enroll in the 2026 Batch. It's designed to be fair — not hard. We're looking for potential, not perfection.
                 </p>
               </div>
               <a
                 href="https://app.goodfit.so/jobs/skill-veda/Customer-Success-Skill-Veda-Assessment?id=Vlfk1AU6"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'linear-gradient(135deg, #7c3aed, #3b82f6)', color: 'white', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.92rem', padding: '13px 24px', borderRadius: '10px', textDecoration: 'none', transition: 'opacity 0.2s' }}
-                onMouseOver={e => (e.currentTarget.style.opacity = '0.85')}
-                onMouseOut={e => (e.currentTarget.style.opacity = '1')}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#ffffff', color: '#5b21b6', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.94rem', padding: '14px 24px', borderRadius: '10px', textDecoration: 'none', transition: 'transform 0.15s' }}
+                onMouseOver={e => (e.currentTarget.style.transform = 'translateY(-1px)')}
+                onMouseOut={e => (e.currentTarget.style.transform = 'translateY(0)')}
               >
                 Take the Eligibility Test →
               </a>
             </div>
 
             {/* Who this is for */}
-            <div style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.18)', borderRadius: '20px', padding: '28px' }}>
-              <div style={{ fontSize: '1.8rem', marginBottom: '14px' }}>✅</div>
-              <h4 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, color: '#86efac', marginBottom: '12px', fontSize: '1rem' }}>Who Typically Clears It</h4>
+            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '20px', padding: '30px' }}>
+              <div style={{ fontSize: '1.9rem', marginBottom: '14px' }}>✅</div>
+              <h4 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, color: '#15803d', marginBottom: '14px', fontSize: '1.05rem', letterSpacing: '-0.01em' }}>Who Typically Clears It</h4>
               {[
                 "Fresh graduates in any discipline",
                 "Career switchers with people skills",
@@ -727,8 +752,8 @@ export default function PGDMCustomerSuccess() {
                 "Self-motivated learners",
                 "Those ready to commit 12 months",
               ].map((t, i) => (
-                <div key={i} style={{ display: 'flex', gap: '9px', marginBottom: '10px', fontSize: '0.85rem', color: '#94a3b8', alignItems: 'flex-start' }}>
-                  <CheckCircle size={14} color="#86efac" style={{ flexShrink: 0, marginTop: '2px' }} /> {t}
+                <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: '10px', fontSize: '0.88rem', color: '#5e5d6e', alignItems: 'flex-start' }}>
+                  <CheckCircle size={15} color="#16a34a" style={{ flexShrink: 0, marginTop: '2px' }} /> {t}
                 </div>
               ))}
             </div>
@@ -738,18 +763,18 @@ export default function PGDMCustomerSuccess() {
       </section>
 
       {/* FAQ */}
-      <section style={{ padding: '72px 5vw' }}>
-        <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#818cf8', marginBottom: '8px' }}>FAQ</div>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)', color: '#f1f5f9', letterSpacing: '-0.02em', marginBottom: '28px' }}>Common Questions</div>
+      <section style={{ padding: '96px 5vw', background: '#faf9fc', borderTop: '1px solid #ebe8f5' }}>
+        <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7c3aed', marginBottom: '10px' }}>FAQ</div>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', color: '#0a0a0f', letterSpacing: '-0.03em', marginBottom: '36px' }}>Common Questions</div>
           {faqs.map((faq, i) => (
             <div key={i} className={`pgdm-faq ${openFaq === i ? 'open' : ''}`}>
               <button className="pgdm-faq-btn" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
                 <span>{faq.q}</span>
-                {openFaq === i ? <ChevronUp size={15} color="#a78bfa" /> : <ChevronDown size={15} color="#475569" />}
+                {openFaq === i ? <ChevronUp size={16} color="#7c3aed" /> : <ChevronDown size={16} color="#9b9aab" />}
               </button>
               {openFaq === i && (
-                <div style={{ padding: '0 20px 16px', fontSize: '0.86rem', color: '#64748b', lineHeight: 1.7 }}>{faq.a}</div>
+                <div style={{ padding: '0 22px 20px', fontSize: '0.92rem', color: '#5e5d6e', lineHeight: 1.7 }}>{faq.a}</div>
               )}
             </div>
           ))}
@@ -757,17 +782,22 @@ export default function PGDMCustomerSuccess() {
       </section>
 
       {/* BOTTOM CTA */}
-      <section style={{ padding: '80px 5vw', textAlign: 'center', background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(59,130,246,0.1))', borderTop: '1px solid rgba(124,58,237,0.2)' }}>
-        <div style={{ maxWidth: '560px', margin: '0 auto' }}>
-          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.7rem, 3vw, 2.4rem)', color: '#f1f5f9', letterSpacing: '-0.02em', marginBottom: '12px', lineHeight: 1.15 }}>
+      <section style={{ padding: '104px 5vw', textAlign: 'center', background: 'linear-gradient(135deg, #7c3aed, #5b21b6)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '-100px', right: '-80px', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', bottom: '-150px', left: '-100px', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)' }} />
+        <div style={{ maxWidth: '600px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: 'clamp(1.9rem, 3.4vw, 2.6rem)', color: '#ffffff', letterSpacing: '-0.03em', marginBottom: '16px', lineHeight: 1.1 }}>
             Ready to Launch Your Career<br />
-            <span className="pgdm-gradient-text">in Customer Success?</span>
+            in Customer Success?
           </div>
-          <p style={{ color: '#475569', fontSize: '0.92rem', marginBottom: '28px', lineHeight: 1.7 }}>
-            Pay only ₹12,000 to begin. Get placed within 60 days — or exit completely free.
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1rem', marginBottom: '32px', lineHeight: 1.7 }}>
+            ₹99,000 upfront programme fee · Guaranteed 6-month paid internship built in. Apply for the 2026 Batch today.
           </p>
-          <button className="pgdm-btn-inline" style={{ fontSize: '1rem', padding: '15px 40px' }} onClick={handleApply}>
-            Apply for This Program <ArrowRight size={17} />
+          <button onClick={handleApply} style={{ background: '#ffffff', color: '#5b21b6', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1rem', padding: '16px 40px', border: 'none', borderRadius: '12px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 10px 30px rgba(0,0,0,0.15)', transition: 'transform 0.15s' }}
+            onMouseOver={e => (e.currentTarget.style.transform = 'translateY(-1px)')}
+            onMouseOut={e => (e.currentTarget.style.transform = 'translateY(0)')}
+          >
+            Apply for 2026 Batch <ArrowRight size={17} />
           </button>
         </div>
       </section>
