@@ -31,7 +31,7 @@ import krishnaImg from "@assets/WhatsApp_Image_2026-04-13_at_1.19.17_PM_17760773
 import patriciaImg from "@assets/WhatsApp_Image_2026-04-13_at_12.34.47_PM_1776077374835.jpeg";
 import saurabhSImg from "@assets/WhatsApp_Image_2026-04-23_at_2.54.40_PM_1776936399712.jpeg";
 import shwetaImg from "@assets/WhatsApp_Image_2026-04-23_at_2.54.40_PM-2_1776936399712.jpeg";
-import trishaImg from "@assets/WhatsApp_Image_2026-05-07_at_19.21.06_(1)_1778489882108.jpeg";
+import anilaImg from "@assets/WhatsApp Image 2026-05-20 at 13.06.13.jpeg";
 import shubhamImg from "@assets/63ed68f5-a6f4-47a2-8c88-90a17a58f9bd_1772887369377.jpeg";
 import yashoImg from "@assets/cd4939ef-96ea-4525-889a-2c0ba73f03c9_1772887709524.jpeg";
 import logoFlexiple from "@assets/681d7392-00f3-4c88-9b4c-6ce975f29fdc_1772888365785.jpeg";
@@ -145,7 +145,7 @@ export default function Home() {
       {/* Hero Carousel */}
       <HeroCarousel>
         {/* Slide 1 — Webinar Banner */}
-        <WebinarSlide himanshuImg={preritImg} preritImg={trishaImg} onRegister={openWebinarModal} />
+        <WebinarSlide himanshuImg={preritImg} preritImg={anilaImg} onRegister={openWebinarModal} />
 
         {/* Slide 2 — Original Hero */}
         <section className="relative overflow-hidden flex items-center" style={{ background: "linear-gradient(135deg, #0f0a2e 0%, #1a1145 30%, #0d1b3e 60%, #0a0f2e 100%)", minHeight: "100%" }}>
