@@ -1,9 +1,9 @@
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
+import { drizzle as drizzleWs } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
 import * as schema from "@shared/schema";
-
-neonConfig.webSocketConstructor = ws;
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -17,21 +17,14 @@ if (!process.env.HIRE_DB_URL) {
   );
 }
 
-// Default DB (Neon) — for blog, jobs, applications, candidates, leads, etc.
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  connectionTimeoutMillis: 10000,
-  idleTimeoutMillis: 20000,
-  max: 5,
-});
+// Main DB (Neon) — HTTP driver so each query wakes the compute even after auto-suspend.
+// Do NOT use a WebSocket Pool here: idle pool connections go stale when Neon
+// auto-suspends the compute, producing "endpoint disabled" errors on every form submit.
+const sql = neon(process.env.DATABASE_URL);
+export const db = drizzle(sql, { schema });
 
-pool.on("error", (err) => {
-  console.error("[db] pool client error:", err.message);
-});
-
-export const db = drizzle({ client: pool, schema });
-
-// Hire DB (Supabase, Mumbai region) — for Hire dashboard only
+// Hire DB (Supabase, Mumbai region) — Pool is fine here; Supabase never auto-suspends.
+neonConfig.webSocketConstructor = ws;
 export const hirePool = new Pool({
   connectionString: process.env.HIRE_DB_URL,
   connectionTimeoutMillis: 10000,
@@ -43,4 +36,4 @@ hirePool.on("error", (err) => {
   console.error("[hireDb] pool client error:", err.message);
 });
 
-export const hireDb = drizzle({ client: hirePool, schema });
+export const hireDb = drizzleWs({ client: hirePool, schema });
