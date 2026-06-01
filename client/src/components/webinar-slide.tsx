@@ -337,7 +337,7 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
             What Will Change in the Next 3 Years
           </div>
           <div className="ws2-date-box">
-            <div className="ws2-date-text">23rd May, 2026</div>
+            <div className="ws2-date-text">6th June, 2026</div>
             <div className="ws2-time-text">12:00 PM IST</div>
           </div>
           <div className="ws2-free-label">— Free & Live Session —</div>
@@ -349,12 +349,12 @@ export default function WebinarSlide({ himanshuImg, preritImg, onRegister }: Web
         <div className="ws2-speaker-card">
           <div className="ws2-photo-wrap">
             <span className="ws2-speaker-badge ws2-badge-teal">Speaker</span>
-            <img src={preritImg} alt="Anila Rose" />
+            <img src={preritImg} alt="Roshan R M" />
             <div className="ws2-photo-overlay" />
           </div>
           <div className="ws2-speaker-info">
-            <div className="ws2-speaker-name">Anila Rose</div>
-            <div className="ws2-speaker-role">Customer Experience Leader</div>
+            <div className="ws2-speaker-name">Roshan R M</div>
+            <div className="ws2-speaker-role">Sr. Director, Customer Success · Loop Health</div>
           </div>
         </div>
       </div>
